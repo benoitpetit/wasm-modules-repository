@@ -1,0 +1,166 @@
+{
+  "name": "math-wasm",
+  "description": "High-performance mathematical calculation module written in Go and compiled to WebAssembly",
+  "version": "1.0.0",
+  "author": "Ben",
+  "license": "MIT",
+  "tags": [
+    "math",
+    "calculator",
+    "arithmetic",
+    "wasm",
+    "go"
+  ],
+  "functions": [
+    {
+      "name": "add",
+      "description": "Add two numbers",
+      "parameters": [
+        {
+          "name": "a",
+          "type": "number",
+          "description": "First number to add"
+        },
+        {
+          "name": "b",
+          "type": "number",
+          "description": "Second number to add"
+        }
+      ],
+      "returnType": "number",
+      "example": "const result = mathWasm.add(5, 3); // returns 8"
+    },
+    {
+      "name": "subtract",
+      "description": "Subtract two numbers",
+      "parameters": [
+        {
+          "name": "a",
+          "type": "number",
+          "description": "First number"
+        },
+        {
+          "name": "b",
+          "type": "number",
+          "description": "Number to subtract"
+        }
+      ],
+      "returnType": "number",
+      "example": "const result = mathWasm.subtract(10, 3); // returns 7"
+    },
+    {
+      "name": "multiply",
+      "description": "Multiply two numbers",
+      "parameters": [
+        {
+          "name": "a",
+          "type": "number",
+          "description": "First number"
+        },
+        {
+          "name": "b",
+          "type": "number",
+          "description": "Second number"
+        }
+      ],
+      "returnType": "number",
+      "example": "const result = mathWasm.multiply(4, 7); // returns 28"
+    },
+    {
+      "name": "divide",
+      "description": "Divide two numbers",
+      "parameters": [
+        {
+          "name": "a",
+          "type": "number",
+          "description": "Dividend"
+        },
+        {
+          "name": "b",
+          "type": "number",
+          "description": "Divisor"
+        }
+      ],
+      "returnType": "number",
+      "example": "const result = mathWasm.divide(15, 3); // returns 5"
+    },
+    {
+      "name": "power",
+      "description": "Raise a number to a power",
+      "parameters": [
+        {
+          "name": "base",
+          "type": "number",
+          "description": "Base number"
+        },
+        {
+          "name": "exponent",
+          "type": "number",
+          "description": "Exponent"
+        }
+      ],
+      "returnType": "number",
+      "example": "const result = mathWasm.power(2, 3); // returns 8"
+    },
+    {
+      "name": "factorial",
+      "description": "Calculate the factorial of a number",
+      "parameters": [
+        {
+          "name": "n",
+          "type": "number",
+          "description": "The number to calculate factorial for"
+        }
+      ],
+      "returnType": "number",
+      "example": "const result = mathWasm.factorial(5); // returns 120"
+    },
+    {
+      "name": "setSilentMode",
+      "description": "Enable/disable silent mode for logs",
+      "parameters": [
+        {
+          "name": "silent",
+          "type": "boolean",
+          "description": "true to enable silent mode, false to disable it"
+        }
+      ],
+      "returnType": "boolean",
+      "example": "mathWasm.setSilentMode(true); // enable silent mode"
+    },
+    {
+      "name": "getAvailableFunctions",
+      "description": "Get the list of available functions",
+      "parameters": [],
+      "returnType": "array",
+      "example": "const functions = mathWasm.getAvailableFunctions(); // returns the list of functions"
+    }
+  ],
+  "examples": [
+    {
+      "title": "Basic calculator usage",
+      "description": "Simple example showing basic arithmetic operations",
+      "code": "// Loading the WASM module\nconst go = new Go();\nconst result = await WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject);\ngo.run(result.instance);\n\n// Using the functions\nconsole.log('5 + 3 =', window.add(5, 3));\nconsole.log('10 - 4 =', window.subtract(10, 4));\nconsole.log('4 * 7 =', window.multiply(4, 7));\nconsole.log('15 / 3 =', window.divide(15, 3));\nconsole.log('2^3 =', window.power(2, 3));\nconsole.log('5! =', window.factorial(5));",
+      "language": "javascript"
+    },
+    {
+      "title": "Silent mode",
+      "description": "How to use silent mode to avoid console logs",
+      "code": "// Enable silent mode\nwindow.setSilentMode(true);\n\n// Operations will no longer produce logs\nconst result = window.multiply(100, 200);\n\n// Disable silent mode\nwindow.setSilentMode(false);",
+      "language": "javascript"
+    }
+  ],
+  "buildInfo": {
+    "language": "Go",
+    "target": "js/wasm",
+    "buildCommand": "./build.sh",
+    "outputFile": "main.wasm",
+    "goModule": true
+  },
+  "dependencies": [],
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "goWasmExecRequired": true,
+    "globalFunctions": true
+  }
+}

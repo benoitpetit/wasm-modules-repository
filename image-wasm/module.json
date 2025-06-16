@@ -1,0 +1,155 @@
+{
+    "name": "image-wasm",
+    "description": "High-performance image processing module written in Go and compiled to WebAssembly",
+    "version": "1.0.0",
+    "author": "Ben",
+    "license": "MIT",
+    "tags": [
+        "image",
+        "processing",
+        "compression",
+        "resize",
+        "wasm",
+        "go"
+    ],
+    "functions": [
+        {
+            "name": "compressJPEG",
+            "description": "Compress a JPEG image with specified quality",
+            "parameters": [
+                {
+                    "name": "imageData",
+                    "type": "Uint8Array",
+                    "description": "Image data as Uint8Array"
+                },
+                {
+                    "name": "quality",
+                    "type": "number",
+                    "description": "Compression quality (1-100)"
+                }
+            ],
+            "returnType": "Uint8Array",
+            "example": "const compressed = imageWasm.compressJPEG(imageData, 80);"
+        },
+        {
+            "name": "compressPNG",
+            "description": "Compress a PNG image",
+            "parameters": [
+                {
+                    "name": "imageData",
+                    "type": "Uint8Array",
+                    "description": "Image data as Uint8Array"
+                }
+            ],
+            "returnType": "Uint8Array",
+            "example": "const compressed = imageWasm.compressPNG(imageData);"
+        },
+        {
+            "name": "resizeImage",
+            "description": "Resize an image",
+            "parameters": [
+                {
+                    "name": "imageData",
+                    "type": "Uint8Array",
+                    "description": "Image data as Uint8Array"
+                },
+                {
+                    "name": "newWidth",
+                    "type": "number",
+                    "description": "New width"
+                },
+                {
+                    "name": "newHeight",
+                    "type": "number",
+                    "description": "New height"
+                }
+            ],
+            "returnType": "Uint8Array",
+            "example": "const resized = imageWasm.resizeImage(imageData, 800, 600);"
+        },
+        {
+            "name": "convertToWebP",
+            "description": "Convert an image to WebP format",
+            "parameters": [
+                {
+                    "name": "imageData",
+                    "type": "Uint8Array",
+                    "description": "Image data as Uint8Array"
+                },
+                {
+                    "name": "quality",
+                    "type": "number",
+                    "description": "WebP compression quality (1-100)"
+                }
+            ],
+            "returnType": "Uint8Array",
+            "example": "const webp = imageWasm.convertToWebP(imageData, 85);"
+        },
+        {
+            "name": "getImageInfo",
+            "description": "Get image information",
+            "parameters": [
+                {
+                    "name": "imageData",
+                    "type": "Uint8Array",
+                    "description": "Image data as Uint8Array"
+                }
+            ],
+            "returnType": "object",
+            "example": "const info = imageWasm.getImageInfo(imageData); // {width, height, format}"
+        },
+        {
+            "name": "setSilentMode",
+            "description": "Enable/disable silent mode for logs",
+            "parameters": [
+                {
+                    "name": "silent",
+                    "type": "boolean",
+                    "description": "true to enable silent mode, false to disable it"
+                }
+            ],
+            "returnType": "boolean",
+            "example": "imageWasm.setSilentMode(true);"
+        },
+        {
+            "name": "getAvailableFunctions",
+            "description": "Get the list of available functions",
+            "parameters": [],
+            "returnType": "array",
+            "example": "const functions = imageWasm.getAvailableFunctions();"
+        }
+    ],
+    "examples": [
+        {
+            "title": "JPEG image compression",
+            "description": "Example of compressing a JPEG image",
+            "code": "// Loading the WASM module\nconst go = new Go();\nconst result = await WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject);\ngo.run(result.instance);\n\n// Image compression\nconst fileInput = document.querySelector('input[type=\"file\"]');\nfileInput.addEventListener('change', async (e) => {\n  const file = e.target.files[0];\n  const arrayBuffer = await file.arrayBuffer();\n  const imageData = new Uint8Array(arrayBuffer);\n  \n  // Compress at 80% quality\n  const compressed = window.compressJPEG(imageData, 80);\n  \n  // Create a blob and download\n  const blob = new Blob([compressed], { type: 'image/jpeg' });\n  const url = URL.createObjectURL(blob);\n  // ... use the URL\n});",
+            "language": "javascript"
+        },
+        {
+            "title": "Image resizing",
+            "description": "How to resize an image",
+            "code": "// Get image information\nconst info = window.getImageInfo(imageData);\nconsole.log(`Current image: ${info.width}x${info.height}`);\n\n// Resize to 800x600\nconst resized = window.resizeImage(imageData, 800, 600);\n\n// Create a blob with the resized image\nconst blob = new Blob([resized], { type: 'image/png' });\nconst resizedUrl = URL.createObjectURL(blob);",
+            "language": "javascript"
+        },
+        {
+            "title": "WebP conversion",
+            "description": "Convert an image to WebP format",
+            "code": "// Enable silent mode\nwindow.setSilentMode(true);\n\n// Convert to WebP with quality 90\nconst webpData = window.convertToWebP(imageData, 90);\n\n// Create a WebP blob\nconst webpBlob = new Blob([webpData], { type: 'image/webp' });\nconst webpUrl = URL.createObjectURL(webpBlob);",
+            "language": "javascript"
+        }
+    ],
+    "buildInfo": {
+        "language": "Go",
+        "target": "js/wasm",
+        "buildCommand": "./build.sh",
+        "outputFile": "main.wasm",
+        "goModule": true
+    },
+    "dependencies": [],
+    "wasmConfig": {
+        "filename": "main.wasm",
+        "goWasmExecRequired": true,
+        "globalFunctions": true
+    }
+}
