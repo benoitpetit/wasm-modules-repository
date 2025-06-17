@@ -62,6 +62,12 @@ check_module() {
     return 0
 }
 
+# Navigate to project root
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+project_root="$(dirname "$script_dir")"
+
+cd "$project_root"
+
 # Test all modules
 modules_passed=0
 modules_total=0

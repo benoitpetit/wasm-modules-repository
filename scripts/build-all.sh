@@ -168,6 +168,12 @@ generate_report() {
 main() {
     local start_time=$(date +%s)
     
+    # Navigate to project root
+    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    project_root="$(dirname "$script_dir")"
+    
+    cd "$project_root"
+    
     # Check dependencies first
     check_dependencies
     

@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Script d'installation des outils d'optimisation WASM
-# Installe les dépendances nécessaires pour optimiser les builds WASM
+# WASM optimization tools installation script
+# Installs necessary dependencies to optimize WASM builds
 
 set -e
 
-echo "🔧 Installation des outils d'optimisation WASM..."
-echo "================================================"
+echo "🔧 Installing WASM optimization tools..."
+echo "========================================"
 
-# Détection de l'OS
+# OS detection
 detect_os() {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         if command -v apt-get &> /dev/null; then
@@ -30,7 +30,7 @@ detect_os() {
 install_binaryen() {
     local os=$(detect_os)
     
-    echo "📦 Installation de Binaryen (wasm-opt)..."
+    echo "📦 Installing Binaryen (wasm-opt)..."
     
     case $os in
         "ubuntu")
@@ -61,9 +61,9 @@ install_binaryen() {
             fi
             ;;
         *)
-            echo "⚠️  OS non détecté automatiquement. Installation manuelle requise:"
-            echo "   Visitez: https://github.com/WebAssembly/binaryen/releases"
-            echo "   Ou compilez depuis les sources:"
+            echo "⚠️  OS not automatically detected. Manual installation required:"
+            echo "   Visit: https://github.com/WebAssembly/binaryen/releases"
+            echo "   Or compile from sources:"
             echo "   git clone https://github.com/WebAssembly/binaryen.git"
             echo "   cd binaryen && cmake . && make"
             return 1
@@ -74,7 +74,7 @@ install_binaryen() {
 install_wabt() {
     local os=$(detect_os)
     
-    echo "📦 Installation de WABT (WebAssembly Binary Toolkit)..."
+    echo "📦 Installing WABT (WebAssembly Binary Toolkit)..."
     
     case $os in
         "ubuntu")
@@ -99,8 +99,8 @@ install_wabt() {
             if [[ "$os" == "linux" ]]; then
                 download_url=$(curl -s $latest_url | grep "browser_download_url.*linux" | cut -d'"' -f4 | head -n1)
             else
-                echo "⚠️  Installation manuelle requise pour votre OS"
-                echo "   Visitez: https://github.com/WebAssembly/wabt/releases"
+                echo "⚠️  Manual installation required for your OS"
+                echo "   Visit: https://github.com/WebAssembly/wabt/releases"
                 return 1
             fi
             
@@ -123,81 +123,81 @@ install_wabt() {
 }
 
 verify_installation() {
-    echo "✅ Vérification des installations..."
+    echo "✅ Verifying installations..."
     
     local all_good=true
     
-    # Vérifier wasm-opt
+    # Check wasm-opt
     if command -v wasm-opt &> /dev/null; then
         local version=$(wasm-opt --version | head -n1)
         echo "✅ wasm-opt: $version"
     else
-        echo "❌ wasm-opt non trouvé"
+        echo "❌ wasm-opt not found"
         all_good=false
     fi
     
-    # Vérifier wasm2wat
+    # Check wasm2wat
     if command -v wasm2wat &> /dev/null; then
         local version=$(wasm2wat --version | head -n1)
         echo "✅ wasm2wat: $version"
     else
-        echo "⚠️  wasm2wat non trouvé (optionnel)"
+        echo "⚠️  wasm2wat not found (optional)"
     fi
     
-    # Vérifier wat2wasm
+    # Check wat2wasm
     if command -v wat2wasm &> /dev/null; then
         local version=$(wat2wasm --version | head -n1)
         echo "✅ wat2wasm: $version"
     else
-        echo "⚠️  wat2wasm non trouvé (optionnel)"
+        echo "⚠️  wat2wasm not found (optional)"
     fi
     
-    # Vérifier gzip
+    # Check gzip
     if command -v gzip &> /dev/null; then
-        echo "✅ gzip: disponible"
+        echo "✅ gzip: available"
     else
-        echo "❌ gzip non trouvé"
+        echo "❌ gzip not found"
         all_good=false
     fi
     
-    # Vérifier base64
+    # Check base64
     if command -v base64 &> /dev/null; then
-        echo "✅ base64: disponible"
+        echo "✅ base64: available"
     else
-        echo "❌ base64 non trouvé"
+        echo "❌ base64 not found"
         all_good=false
     fi
     
     if $all_good; then
         echo ""
-        echo "🎉 Tous les outils essentiels sont installés!"
+        echo "🎉 All essential tools are installed!"
         echo ""
-        echo "📋 Outils disponibles:"
-        echo "   • wasm-opt: Optimisation des fichiers WASM"
-        echo "   • gzip: Compression des fichiers"
-        echo "   • base64: Génération de hash d'intégrité"
+        echo "📋 Available tools:"
+        echo "   • wasm-opt: WASM file optimization"
+        echo "   • gzip: File compression"
+        echo "   • base64: Integrity hash generation"
         echo ""
-        echo "🚀 Vous pouvez maintenant utiliser les builds optimisés!"
+        echo "🚀 You can now use optimized builds!"
         return 0
     else
         echo ""
-        echo "❌ Certains outils essentiels manquent. Veuillez les installer manuellement."
+        echo "❌ Some essential tools are missing. Please install them manually."
         return 1
     fi
 }
 
 show_usage() {
-    echo "🔧 Script d'installation des outils d'optimisation WASM"
+    echo "🔧 WASM optimization tools installation script"
     echo ""
     echo "Usage: $0 [options]"
     echo ""
     echo "Options:"
-    echo "  --binaryen    Installer seulement Binaryen (wasm-opt)"
-    echo "  --wabt        Installer seulement WABT"
-    echo "  --check       Vérifier les installations existantes"
-    echo "  --help        Afficher cette aide"
+    echo "  --binaryen    Install only Binaryen (wasm-opt)"
+    echo "  --wabt        Install only WABT"
+    echo "  --check       Check existing installations"
+    echo "  --help        Show this help"
     echo ""
-    echo "Sans options, installe tous les outils disponibles."
+    echo "Without options, installs all available tools."
 }
 
 main() {
@@ -217,7 +217,7 @@ main() {
             show_usage
             ;;
         "all"|"")
-            echo "🚀 Installation complète des outils d'optimisation..."
+            echo "🚀 Complete optimization tools installation..."
             echo ""
             
             install_binaryen
@@ -227,7 +227,7 @@ main() {
             verify_installation
             ;;
         *)
-            echo "❌ Option inconnue: $1"
+            echo "❌ Unknown option: $1"
             show_usage
             exit 1
             ;;

@@ -136,14 +136,55 @@
       "example": "const functions = mathWasm.getAvailableFunctions(); // returns ['add', 'subtract', 'multiply', 'divide', 'power', 'factorial', 'getAvailableFunctions', 'setSilentMode']"
     }
   ],
+  "types": [
+    {
+      "name": "MathError",
+      "description": "Mathematical operation error",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "Error message describing the mathematical issue"
+        },
+        "operation": {
+          "type": "string",
+          "description": "The operation that caused the error"
+        },
+        "parameters": {
+          "type": "Array<number>",
+          "description": "The parameters that were passed to the operation"
+        }
+      }
+    },
+    {
+      "name": "MathResult",
+      "description": "Result of a mathematical operation",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "The computed result"
+        },
+        "operation": {
+          "type": "string",
+          "description": "The operation that was performed"
+        },
+        "inputs": {
+          "type": "Array<number>",
+          "description": "The input parameters used"
+        }
+      }
+    }
+  ],
   "security": {
     "features": [
       "Input validation for numerical parameters",
       "Safe arithmetic operations with overflow protection",
       "Memory-safe Go implementation",
-      "No external dependencies"
+      "No external dependencies",
+      "Protection against division by zero",
+      "Factorial input bounds checking"
     ],
-    "limitations": "Division by zero returns error, factorial limited to reasonable inputs"
+    "cors": "N/A - Mathematical operations only",
+    "ssl": "N/A - No network operations"
   },
   "compatibility": {
     "browsers": [
@@ -159,21 +200,27 @@
       "Compiled WebAssembly for optimal performance",
       "Native Go math operations",
       "Minimal JavaScript overhead",
-      "No external library dependencies"
+      "No external library dependencies",
+      "Efficient integer calculations",
+      "Optimized floating-point operations"
     ]
   },
   "examples": [
     {
-      "title": "Basic calculator usage",
-      "description": "Simple example showing basic arithmetic operations",
-      "code": "// Loading the WASM module\nconst go = new Go();\nconst result = await WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject);\ngo.run(result.instance);\n\n// Using the functions\nconsole.log('5 + 3 =', window.add(5, 3));\nconsole.log('10 - 4 =', window.subtract(10, 4));\nconsole.log('4 * 7 =', window.multiply(4, 7));\nconsole.log('15 / 3 =', window.divide(15, 3));\nconsole.log('2^3 =', window.power(2, 3));\nconsole.log('5! =', window.factorial(5));",
-      "language": "javascript"
+      "title": "Basic Arithmetic Operations",
+      "code": "// Loading the WASM module\nconst go = new Go();\nconst result = await WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject);\ngo.run(result.instance);\n\n// Basic calculations\nconst sum = add(5, 3);        // 8\nconst diff = subtract(10, 4); // 6\nconst product = multiply(4, 7); // 28\nconst quotient = divide(15, 3); // 5\n\nconsole.log('Results:', { sum, diff, product, quotient });"
     },
     {
-      "title": "Silent mode",
-      "description": "How to use silent mode to avoid console logs",
-      "code": "// Enable silent mode\nwindow.setSilentMode(true);\n\n// Operations will no longer produce logs\nconst result = window.multiply(100, 200);\n\n// Disable silent mode\nwindow.setSilentMode(false);",
-      "language": "javascript"
+      "title": "Advanced Operations",
+      "code": "// Power and factorial calculations\nconst squared = power(2, 3);    // 8\nconst fact = factorial(5);      // 120\n\nconsole.log('2^3 =', squared);\nconsole.log('5! =', fact);\n\n// Error handling\ntry {\n  const invalid = divide(10, 0);  // Returns error string\n  console.log('Division result:', invalid);\n} catch (error) {\n  console.error('Math error:', error);\n}"
+    },
+    {
+      "title": "Silent Mode Usage",
+      "code": "// Enable silent mode to reduce console output\nsetSilentMode(true);\n\n// Operations will no longer produce logs\nconst result = multiply(100, 200);\n\n// Check available functions\nconst functions = getAvailableFunctions();\nconsole.log('Available functions:', functions);\n\n// Disable silent mode\nsetSilentMode(false);"
+    },
+    {
+      "title": "Batch Calculations",
+      "code": "// Process multiple calculations efficiently\nsetSilentMode(true); // Reduce logging for batch operations\n\nconst numbers = [1, 2, 3, 4, 5];\nconst results = {\n  sums: numbers.map(n => add(n, 10)),\n  squares: numbers.map(n => power(n, 2)),\n  factorials: numbers.filter(n => n <= 5).map(n => factorial(n))\n};\n\nconsole.log('Batch results:', results);\nsetSilentMode(false);"
     }
   ],
   "buildInfo": {
@@ -181,12 +228,19 @@
     "target": "js/wasm",
     "buildCommand": "./build.sh",
     "outputFile": "main.wasm",
-    "goModule": true
+    "goModule": true,
+    "buildTime": "Generated during build process",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm"
+    ]
   },
   "dependencies": [],
   "wasmConfig": {
     "filename": "main.wasm",
     "goWasmExecRequired": true,
-    "globalFunctions": true
+    "globalFunctions": true,
+    "memoryInitialPages": 256,
+    "memoryMaximumPages": 512
   }
 }
