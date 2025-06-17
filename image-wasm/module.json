@@ -1,7 +1,7 @@
 {
     "name": "image-wasm",
     "description": "WebAssembly module for image processing, compression, and format conversion",
-    "version": "1.0.0",
+    "version": "0.2.1",
     "author": "WASM Projects Team",
     "license": "MIT",
     "tags": ["image", "compression", "webp", "jpeg", "png", "processing", "gowm"],
@@ -257,8 +257,8 @@
         "compressionRatio": "70%"
     },
     "changelog": {
-        "version": "1.0.0",
-        "releaseDate": "2024-01-25",
+        "version": "0.3.0",
+        "releaseDate": "2025-06-17",
         "changes": [
             "Multi-format image processing support",
             "JPEG/PNG compression with quality control",

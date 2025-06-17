@@ -1,7 +1,7 @@
 {
   "name": "math-wasm",
   "description": "High-performance mathematical calculation module written in Go and compiled to WebAssembly. Optimized for GoWM integration.",
-  "version": "1.0.0",
+  "version": "0.1.9",
   "author": "Ben",
   "license": "MIT",
   "tags": [
@@ -280,8 +280,8 @@
     "compressionRatio": "69%"
   },
   "changelog": {
-    "version": "1.0.0",
-    "releaseDate": "2024-01-15",
+    "version": "0.1.0",
+            "releaseDate": "2025-06-17",
     "changes": [
       "Initial release with basic arithmetic operations",
       "Added error handling for edge cases",

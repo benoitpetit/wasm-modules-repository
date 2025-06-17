@@ -1,7 +1,7 @@
 {
     "name": "crypto-wasm",
     "description": "Secure cryptographic operations module written in Go and compiled to WebAssembly. Provides comprehensive cryptographic functions with GoWM integration.",
-    "version": "1.0.0",
+    "version": "0.2.1",
     "author": "Ben",
     "license": "MIT",
     "tags": [
@@ -501,8 +501,8 @@
         "compressionRatio": "71%"
     },
     "changelog": {
-        "version": "1.0.0",
-        "releaseDate": "2024-01-20",
+        "version": "0.2.0",
+        "releaseDate": "2025-06-17",
         "changes": [
             "Complete cryptographic suite implementation",
             "Added JWT support with HMAC-SHA256",

@@ -1,7 +1,7 @@
 {
     "name": "goxios-wasm",
     "description": "Secure and complete HTTP client library written in Go and compiled to WebAssembly. Provides an axios-like interface optimized for GoWM integration.",
-    "version": "1.0.0",
+    "version": "0.2.2",
     "author": "Ben",
     "license": "MIT",
     "tags": [
@@ -382,8 +382,8 @@
         "compressionRatio": "71%"
     },
     "changelog": {
-        "version": "1.0.0",
-        "releaseDate": "2024-01-30",
+        "version": "0.4.0",
+        "releaseDate": "2025-06-17",
         "changes": [
             "Full axios-like HTTP client implementation",
             "Support for all HTTP methods (GET, POST, PUT, DELETE, PATCH)",
