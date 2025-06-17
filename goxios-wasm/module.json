@@ -1,0 +1,340 @@
+{
+    "name": "goxios-wasm",
+    "description": "Secure and complete HTTP client library written in Go and compiled to WebAssembly, providing an axios-like interface for making HTTP requests",
+    "version": "1.0.0",
+    "author": "Ben",
+    "license": "MIT",
+    "tags": [
+        "http",
+        "client",
+        "axios",
+        "requests",
+        "wasm",
+        "go",
+        "security",
+        "api"
+    ],
+    "functions": [
+        {
+            "name": "get",
+            "description": "Make a GET request",
+            "parameters": [
+                {
+                    "name": "url",
+                    "type": "string",
+                    "description": "The URL to make the request to"
+                },
+                {
+                    "name": "config",
+                    "type": "object",
+                    "description": "Optional configuration object",
+                    "optional": true,
+                    "properties": {
+                        "headers": {
+                            "type": "object",
+                            "description": "Request headers"
+                        },
+                        "timeout": {
+                            "type": "number",
+                            "description": "Request timeout in milliseconds (default: 5000)"
+                        }
+                    }
+                }
+            ],
+            "returnType": "Promise<Response>",
+            "example": "const response = await goxios.get('https://api.example.com/users');"
+        },
+        {
+            "name": "post",
+            "description": "Make a POST request",
+            "parameters": [
+                {
+                    "name": "url",
+                    "type": "string",
+                    "description": "The URL to make the request to"
+                },
+                {
+                    "name": "data",
+                    "type": "any",
+                    "description": "The data to send in the request body",
+                    "optional": true
+                },
+                {
+                    "name": "config",
+                    "type": "object",
+                    "description": "Optional configuration object",
+                    "optional": true
+                }
+            ],
+            "returnType": "Promise<Response>",
+            "example": "const response = await goxios.post('https://api.example.com/users', { name: 'John' });"
+        },
+        {
+            "name": "put",
+            "description": "Make a PUT request",
+            "parameters": [
+                {
+                    "name": "url",
+                    "type": "string",
+                    "description": "The URL to make the request to"
+                },
+                {
+                    "name": "data",
+                    "type": "any",
+                    "description": "The data to send in the request body",
+                    "optional": true
+                },
+                {
+                    "name": "config",
+                    "type": "object",
+                    "description": "Optional configuration object",
+                    "optional": true
+                }
+            ],
+            "returnType": "Promise<Response>",
+            "example": "const response = await goxios.put('https://api.example.com/users/1', { name: 'John Updated' });"
+        },
+        {
+            "name": "delete",
+            "description": "Make a DELETE request",
+            "parameters": [
+                {
+                    "name": "url",
+                    "type": "string",
+                    "description": "The URL to make the request to"
+                },
+                {
+                    "name": "config",
+                    "type": "object",
+                    "description": "Optional configuration object",
+                    "optional": true
+                }
+            ],
+            "returnType": "Promise<Response>",
+            "example": "const response = await goxios.delete('https://api.example.com/users/1');"
+        },
+        {
+            "name": "patch",
+            "description": "Make a PATCH request",
+            "parameters": [
+                {
+                    "name": "url",
+                    "type": "string",
+                    "description": "The URL to make the request to"
+                },
+                {
+                    "name": "data",
+                    "type": "any",
+                    "description": "The data to send in the request body",
+                    "optional": true
+                },
+                {
+                    "name": "config",
+                    "type": "object",
+                    "description": "Optional configuration object",
+                    "optional": true
+                }
+            ],
+            "returnType": "Promise<Response>",
+            "example": "const response = await goxios.patch('https://api.example.com/users/1', { email: 'newemail@example.com' });"
+        },
+        {
+            "name": "request",
+            "description": "Make a generic HTTP request",
+            "parameters": [
+                {
+                    "name": "config",
+                    "type": "object",
+                    "description": "Request configuration object",
+                    "properties": {
+                        "method": {
+                            "type": "string",
+                            "description": "HTTP method (GET, POST, PUT, DELETE, PATCH)"
+                        },
+                        "url": {
+                            "type": "string",
+                            "description": "Request URL"
+                        },
+                        "data": {
+                            "type": "any",
+                            "description": "Request data"
+                        },
+                        "headers": {
+                            "type": "object",
+                            "description": "Request headers"
+                        },
+                        "timeout": {
+                            "type": "number",
+                            "description": "Request timeout in milliseconds"
+                        }
+                    }
+                }
+            ],
+            "returnType": "Promise<Response>",
+            "example": "const response = await goxios.request({ method: 'GET', url: 'https://api.example.com/data' });"
+        },
+        {
+            "name": "create",
+            "description": "Create a new goxios instance with default configuration",
+            "parameters": [
+                {
+                    "name": "config",
+                    "type": "object",
+                    "description": "Default configuration for the instance",
+                    "optional": true,
+                    "properties": {
+                        "baseURL": {
+                            "type": "string",
+                            "description": "Base URL for all requests"
+                        },
+                        "headers": {
+                            "type": "object",
+                            "description": "Default headers"
+                        },
+                        "timeout": {
+                            "type": "number",
+                            "description": "Default timeout in milliseconds"
+                        }
+                    }
+                }
+            ],
+            "returnType": "GoxiosInstance",
+            "example": "const api = goxios.create({ headers: { 'Authorization': 'Bearer token' } });"
+        },
+        {
+            "name": "setSilentMode",
+            "description": "Enable or disable silent mode (logging)",
+            "parameters": [
+                {
+                    "name": "silent",
+                    "type": "boolean",
+                    "description": "Whether to enable silent mode"
+                }
+            ],
+            "returnType": "boolean",
+            "example": "goxios.setSilentMode(true);"
+        }
+    ],
+    "types": [
+        {
+            "name": "Response",
+            "description": "HTTP response object",
+            "properties": {
+                "data": {
+                    "type": "any",
+                    "description": "Response data"
+                },
+                "status": {
+                    "type": "number",
+                    "description": "HTTP status code"
+                },
+                "headers": {
+                    "type": "object",
+                    "description": "Response headers"
+                },
+                "config": {
+                    "type": "RequestConfig",
+                    "description": "Request configuration used"
+                }
+            }
+        },
+        {
+            "name": "RequestConfig",
+            "description": "Request configuration object",
+            "properties": {
+                "method": {
+                    "type": "string",
+                    "description": "HTTP method"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "Request URL"
+                },
+                "data": {
+                    "type": "any",
+                    "description": "Request data"
+                },
+                "headers": {
+                    "type": "object",
+                    "description": "Request headers"
+                },
+                "timeout": {
+                    "type": "number",
+                    "description": "Request timeout in milliseconds"
+                }
+            }
+        },
+        {
+            "name": "HTTPError",
+            "description": "HTTP error object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "Error message"
+                },
+                "status": {
+                    "type": "number",
+                    "description": "HTTP status code"
+                },
+                "response": {
+                    "type": "Response",
+                    "description": "Response object if available"
+                },
+                "config": {
+                    "type": "RequestConfig",
+                    "description": "Request configuration used"
+                }
+            }
+        }
+    ],
+    "security": {
+        "features": [
+            "Input validation and sanitization",
+            "Timeout protection against hanging requests",
+            "Secure HTTP client implementation",
+            "Error handling and proper rejection",
+            "Memory-safe Go implementation"
+        ],
+        "cors": "Respects browser CORS policies",
+        "ssl": "Supports HTTPS/TLS connections"
+    },
+    "compatibility": {
+        "browsers": [
+            "Chrome 57+",
+            "Firefox 52+",
+            "Safari 11+",
+            "Edge 16+"
+        ],
+        "gowm": "Compatible with gowm npm package manager"
+    },
+    "performance": {
+        "features": [
+            "Compiled WebAssembly for optimal performance",
+            "Memory-efficient Go runtime",
+            "Concurrent request handling with goroutines",
+            "Minimal JavaScript overhead"
+        ]
+    },
+    "examples": [
+        {
+            "title": "Basic GET Request",
+            "code": "try {\n  const response = await goxios.get('https://jsonplaceholder.typicode.com/posts/1');\n  console.log(response.data);\n} catch (error) {\n  console.error('Request failed:', error.message);\n}"
+        },
+        {
+            "title": "POST with Data",
+            "code": "try {\n  const response = await goxios.post('https://jsonplaceholder.typicode.com/posts', {\n    title: 'New Post',\n    body: 'This is the content',\n    userId: 1\n  });\n  console.log('Created:', response.data);\n} catch (error) {\n  console.error('Failed to create:', error.message);\n}"
+        },
+        {
+            "title": "Custom Headers",
+            "code": "try {\n  const response = await goxios.get('https://api.example.com/data', {\n    headers: {\n      'Authorization': 'Bearer your-token',\n      'Content-Type': 'application/json'\n    },\n    timeout: 10000\n  });\n  console.log(response.data);\n} catch (error) {\n  console.error('Request failed:', error.message);\n}"
+        },
+        {
+            "title": "Create Instance",
+            "code": "const api = goxios.create({\n  headers: {\n    'Authorization': 'Bearer your-token',\n    'Content-Type': 'application/json'\n  },\n  timeout: 5000\n});\n\ntry {\n  const users = await api.get('/users');\n  const newUser = await api.post('/users', { name: 'John' });\n} catch (error) {\n  console.error('API error:', error.message);\n}"
+        },
+        {
+            "title": "Error Handling",
+            "code": "try {\n  const response = await goxios.get('https://api.example.com/data');\n  console.log('Success:', response.data);\n} catch (error) {\n  if (error.status === 404) {\n    console.log('Resource not found');\n  } else if (error.status >= 500) {\n    console.log('Server error');\n  } else {\n    console.log('Request error:', error.message);\n  }\n}"
+        }
+    ]
+}
