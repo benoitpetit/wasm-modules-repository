@@ -254,7 +254,7 @@
         {
             "title": "GoWM Integration - Basic QR Code",
             "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load QR module\nconst qr = await loadFromGitHub('your-org/wasm-projects', {\n  path: 'qr-wasm',\n  name: 'qr'\n});\n\n// Configure module\nqr.call('setSilentMode', true);\n\n// Generate QR code with error handling\nconst result = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
+            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load QR module\nconst qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  branch: 'main',\n  name: 'qr-wasm'\n});\n\n// Configure module\nqr.call('setSilentMode', true);\n\n// Generate QR code with error handling\nconst result = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
         },
         {
             "title": "vCard Contact QR Generation",

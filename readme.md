@@ -45,9 +45,9 @@ npm install gowm
 import { loadFromGitHub } from 'gowm';
 
 // Load math module
-const math = await loadFromGitHub('your-org/wasm-projects', {
-  path: 'math-wasm',
-  name: 'math'
+const math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
+  branch: 'main',
+  name: 'math-wasm'
 });
 
 // Configure module
@@ -72,10 +72,9 @@ if (typeof result === 'string' && result.includes('Erreur')) {
 
 ```javascript
 // Load math module
-const math = await loadFromGitHub('your-org/wasm-projects', {
-  path: 'math-wasm',
-  filename: 'main.wasm',
-  name: 'math'
+const math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
+  branch: 'main',
+  name: 'math-wasm'
 });
 
 // Enable silent mode for production
@@ -103,9 +102,9 @@ operations.forEach(({ func, args }) => {
 
 ```javascript
 // Load crypto module
-const crypto = await loadFromGitHub('your-org/wasm-projects', {
-  path: 'crypto-wasm',
-  name: 'crypto'
+const crypto = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
+  branch: 'main',
+  name: 'crypto-wasm'
 });
 
 // Hash operations
@@ -143,9 +142,9 @@ if (keyResult.error) {
 
 ```javascript
 // Load QR module
-const qr = await loadFromGitHub('your-org/wasm-projects', {
-  path: 'qr-wasm',
-  name: 'qr'
+const qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
+  branch: 'main',
+  name: 'qr-wasm'
 });
 
 // Enable silent mode for production
@@ -194,9 +193,9 @@ if (barcodeResult.error) {
 
 ```javascript
 // Load image module
-const image = await loadFromGitHub('your-org/wasm-projects', {
-  path: 'image-wasm',
-  name: 'image'
+const image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
+  branch: 'main',
+  name: 'image-wasm'
 });
 
 // Process image with error handling
@@ -220,9 +219,9 @@ import React, { useState, useEffect } from 'react';
 import { useWasmFromGitHub } from 'gowm/hooks/useWasm';
 
 function QRGenerator() {
-  const { wasm: qr, loading, error } = useWasmFromGitHub('your-org/wasm-projects', {
-    path: 'qr-wasm',
-    name: 'qr'
+  const { wasm: qr, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {
+    branch: 'main',
+    name: 'qr-wasm'
   });
   
   const [qrImage, setQrImage] = useState('');
@@ -280,9 +279,9 @@ function QRGenerator() {
 }
 
 function MathCalculator() {
-  const { wasm: math, loading, error } = useWasmFromGitHub('your-org/wasm-projects', {
-    path: 'math-wasm',
-    name: 'math'
+  const { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {
+    branch: 'main',
+    name: 'math-wasm'
   });
   
   const [result, setResult] = useState(null);
@@ -344,9 +343,9 @@ function MathCalculator() {
 import { ref } from 'vue';
 import { useWasmFromGitHub } from 'gowm/composables/useWasm';
 
-const { wasm: crypto, loading, error } = useWasmFromGitHub('your-org/wasm-projects', {
-  path: 'crypto-wasm',
-  name: 'crypto'
+const { wasm: crypto, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {
+  branch: 'main',
+  name: 'crypto-wasm'
 });
 
 const message = ref('Hello World');
