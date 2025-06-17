@@ -220,20 +220,25 @@
         }
     },
     "security": {
-        "sandboxed": true,
-        "noFileSystemAccess": true,
-        "noNetworkAccess": true,
-        "memoryIsolation": true,
-        "inputValidation": true,
-        "errorHandling": "secure"
+        "features": [
+            "Memory-safe Go implementation",
+            "Input validation and sanitization",
+            "Secure memory handling",
+            "Protection against malicious QR codes",
+            "No file system access",
+            "No network access",
+            "Sandboxed execution environment"
+        ]
     },
     "performance": {
-        "optimizedBuild": true,
-        "compressionRatio": "~65%",
-        "memoryEfficient": true,
-        "cpuOptimized": true,
-        "streamingSupport": false,
-        "batchProcessing": false
+        "features": [
+            "Compiled WebAssembly for optimal performance",
+            "Native Go QR/barcode implementations",
+            "Efficient memory usage",
+            "Optimized image processing",
+            "Silent mode for production environments",
+            "Optimized for GoWM integration"
+        ]
     },
     "compatibility": {
         "browsers": [
@@ -242,42 +247,31 @@
             "Safari 11+",
             "Edge 16+"
         ],
-        "nodeJS": "16+",
-        "frameworks": [
-            "React",
-            "Vue.js",
-            "Angular",
-            "Vanilla JS"
-        ],
-        "bundlers": [
-            "Webpack",
-            "Vite",
-            "Rollup",
-            "Parcel"
-        ]
+        "gowm": "1.0.0+",
+        "nodejs": "14.0.0+"
     },
-    "examples": {
-        "basicQRCode": {
-            "description": "Generate basic QR code",
-            "code": "const qr = await loadFromGitHub('your-org/wasm-projects', {\n  path: 'qr-wasm',\n  name: 'qr'\n});\n\nconst result = qr.call('generateQRCode', 'Hello QR Code!', 256);\nif (!result.error) {\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
+    "examples": [
+        {
+            "title": "GoWM Integration - Basic QR Code",
+            "language": "javascript",
+            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load QR module\nconst qr = await loadFromGitHub('your-org/wasm-projects', {\n  path: 'qr-wasm',\n  name: 'qr'\n});\n\n// Configure module\nqr.call('setSilentMode', true);\n\n// Generate QR code with error handling\nconst result = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
         },
-        "vCardExample": {
-            "description": "Generate contact QR code",
-            "code": "const contact = {\n  name: 'Alice Smith',\n  organization: 'TechCorp Inc.',\n  phone: '+1-555-0123',\n  email: 'alice@techcorp.com',\n  url: 'https://alice.techcorp.com'\n};\n\nconst result = qr.call('generateVCard', contact, 300);\nconsole.log('vCard QR generated:', result.base64Image);"
+        {
+            "title": "vCard Contact QR Generation",
+            "language": "javascript",
+            "code": "const contact = {\n  name: 'Alice Smith',\n  organization: 'TechCorp Inc.',\n  phone: '+1-555-0123',\n  email: 'alice@techcorp.com',\n  url: 'https://alice.techcorp.com'\n};\n\nconst result = qr.call('generateVCard', contact, 300);\nif (!result.error) {\n  console.log('vCard QR generated:', result.base64Image);\n}"
         },
-        "wifiExample": {
-            "description": "Generate WiFi connection QR code",
-            "code": "const wifi = {\n  ssid: 'MyOfficeWiFi',\n  password: 'SecurePassword123',\n  security: 'WPA',\n  hidden: false\n};\n\nconst result = qr.call('generateWiFiQR', wifi, 256);\n// Users can scan this QR to auto-connect to WiFi"
+        {
+            "title": "WiFi Connection QR Code",
+            "language": "javascript",
+            "code": "const wifi = {\n  ssid: 'MyOfficeWiFi',\n  password: 'SecurePassword123',\n  security: 'WPA',\n  hidden: false\n};\n\nconst result = qr.call('generateWiFiQR', wifi, 256);\nif (!result.error) {\n  console.log('WiFi QR generated for network:', wifi.ssid);\n  // Users can scan this QR to auto-connect to WiFi\n}"
         },
-        "barcodeExample": {
-            "description": "Generate product barcode",
-            "code": "const result = qr.call('generateBarcode', '1234567890128', 'ean13', 400, 200);\nif (!result.error) {\n  console.log('Barcode type:', result.type);\n  console.log('Dimensions:', result.width + 'x' + result.height);\n}"
-        },
-        "reactIntegration": {
-            "description": "React component for QR generation",
-            "code": "import { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction QRGenerator() {\n  const { wasm: qr, loading } = useWasmFromGitHub('your-org/wasm-projects', {\n    path: 'qr-wasm',\n    name: 'qr'\n  });\n  \n  const [qrImage, setQrImage] = useState('');\n  \n  const generateQR = (text) => {\n    if (!qr) return;\n    const result = qr.call('generateQRCode', text, 256);\n    if (!result.error) {\n      setQrImage('data:image/png;base64,' + result.base64Image);\n    }\n  };\n  \n  return (\n    <div>\n      <button onClick={() => generateQR('Hello World!')}>Generate QR</button>\n      {qrImage && <img src={qrImage} alt=\"QR Code\" />}\n    </div>\n  );\n}"
+        {
+            "title": "Barcode Generation",
+            "language": "javascript",
+            "code": "const result = qr.call('generateBarcode', '1234567890128', 'ean13', 400, 200);\nif (!result.error) {\n  console.log('Barcode type:', result.type);\n  console.log('Dimensions:', result.width + 'x' + result.height);\n  console.log('Base64 image:', result.base64Image);\n}"
         }
-    },
+    ],
     "buildInfo": {
         "goVersion": "1.21+",
         "wasmTargetFeatures": [
@@ -322,5 +316,42 @@
         ],
         "troubleshooting": "Common issues and solutions",
         "performanceTips": "Optimization guidelines for production"
+    },
+    "ecosystem": {
+        "category": "image-processing",
+        "subcategory": "qr-barcode",
+        "relatedModules": [
+            "image-wasm"
+        ],
+        "useCase": [
+            "mobile-apps",
+            "contact-sharing",
+            "wifi-setup",
+            "inventory",
+            "marketing"
+        ],
+        "industry": [
+            "retail",
+            "hospitality",
+            "events",
+            "mobile-development"
+        ]
+    },
+    "fileInfo": {
+        "sourceLines": 600,
+        "binarySize": "3.2MB",
+        "compressedSize": "920KB",
+        "compressionRatio": "71%"
+    },
+    "changelog": {
+        "version": "0.1.0",
+        "releaseDate": "2025-06-17",
+        "changes": [
+            "Initial release with QR code generation",
+            "Support for multiple barcode formats",
+            "vCard contact QR code generation",
+            "WiFi network QR code support",
+            "Optimized for GoWM integration"
+        ]
     }
 }
