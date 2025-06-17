@@ -113,12 +113,44 @@
         },
         {
             "name": "getAvailableFunctions",
-            "description": "Get the list of available functions",
+            "description": "Get list of all available functions in the module",
             "parameters": [],
-            "returnType": "array",
-            "example": "const functions = imageWasm.getAvailableFunctions();"
+            "returnType": "Array<string>",
+            "example": "const functions = imageWasm.getAvailableFunctions(); // returns ['compressJPEG', 'compressPNG', 'convertToWebP', 'resizeImage', 'getImageInfo', 'getAvailableFunctions', 'setSilentMode']"
         }
     ],
+    "security": {
+        "features": [
+            "Input validation for image data",
+            "Memory-safe image processing",
+            "Bounds checking for resize operations",
+            "Safe format conversion",
+            "No external dependencies"
+        ],
+        "limitations": "Large image processing may require significant memory"
+    },
+    "compatibility": {
+        "browsers": [
+            "Chrome 57+",
+            "Firefox 52+",
+            "Safari 11+",
+            "Edge 16+"
+        ],
+        "gowm": "Compatible with gowm npm package manager",
+        "formats": [
+            "JPEG",
+            "PNG",
+            "WebP"
+        ]
+    },
+    "performance": {
+        "features": [
+            "Compiled WebAssembly for optimal performance",
+            "Native Go image processing libraries",
+            "Memory-efficient processing",
+            "Concurrent processing capabilities"
+        ]
+    },
     "examples": [
         {
             "title": "JPEG image compression",

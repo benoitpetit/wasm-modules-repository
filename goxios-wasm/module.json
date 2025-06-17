@@ -213,6 +213,13 @@
             ],
             "returnType": "boolean",
             "example": "goxios.setSilentMode(true);"
+        },
+        {
+            "name": "getAvailableFunctions",
+            "description": "Get list of all available functions in the module",
+            "parameters": [],
+            "returnType": "Array<string>",
+            "example": "const functions = goxios.getAvailableFunctions(); // returns ['get', 'post', 'put', 'delete', 'patch', 'request', 'create', 'getAvailableFunctions', 'setSilentMode']"
         }
     ],
     "types": [

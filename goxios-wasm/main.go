@@ -46,6 +46,14 @@ func setSilentMode(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(silentMode)
 }
 
+// getAvailableFunctions - Get list of available functions
+func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
+	functions := []string{
+		"get", "post", "put", "delete", "patch", "request", "create", "getAvailableFunctions", "setSilentMode",
+	}
+	return js.ValueOf(functions)
+}
+
 // Fonction GET
 func get(this js.Value, args []js.Value) interface{} {
 	if len(args) < 1 {
@@ -636,6 +644,7 @@ func main() {
 	goxios.Set("patch", js.FuncOf(patch))
 	goxios.Set("request", js.FuncOf(request))
 	goxios.Set("create", js.FuncOf(create))
+	goxios.Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
 	goxios.Set("setSilentMode", js.FuncOf(setSilentMode))
 
 	// Exposer l'objet goxios globalement

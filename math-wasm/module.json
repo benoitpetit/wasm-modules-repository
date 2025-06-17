@@ -130,12 +130,38 @@
     },
     {
       "name": "getAvailableFunctions",
-      "description": "Get the list of available functions",
+      "description": "Get list of all available functions in the module",
       "parameters": [],
-      "returnType": "array",
-      "example": "const functions = mathWasm.getAvailableFunctions(); // returns the list of functions"
+      "returnType": "Array<string>",
+      "example": "const functions = mathWasm.getAvailableFunctions(); // returns ['add', 'subtract', 'multiply', 'divide', 'power', 'factorial', 'getAvailableFunctions', 'setSilentMode']"
     }
   ],
+  "security": {
+    "features": [
+      "Input validation for numerical parameters",
+      "Safe arithmetic operations with overflow protection",
+      "Memory-safe Go implementation",
+      "No external dependencies"
+    ],
+    "limitations": "Division by zero returns error, factorial limited to reasonable inputs"
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "gowm": "Compatible with gowm npm package manager"
+  },
+  "performance": {
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Native Go math operations",
+      "Minimal JavaScript overhead",
+      "No external library dependencies"
+    ]
+  },
   "examples": [
     {
       "title": "Basic calculator usage",
