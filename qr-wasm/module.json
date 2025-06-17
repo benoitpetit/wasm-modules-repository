@@ -168,56 +168,97 @@
         }
     ],
     "gowmConfig": {
+        "supportedBranches": ["master", "stable"],
+        "preferredFilename": "main.wasm",
         "autoDetect": true,
-        "filename": "main.wasm",
-        "compressionSupport": true,
-        "integrityCheck": true,
         "readySignal": "__gowm_ready",
-        "errorHandling": "consistent",
-        "functionDiscovery": "getAvailableFunctions",
-        "silentMode": "setSilentMode"
+        "standardFunctions": ["getAvailableFunctions", "setSilentMode"],
+        "errorPattern": "object-based"
     },
-    "types": {
-        "QRResult": {
-            "data": "string",
-            "size": "number",
-            "base64Image": "string",
-            "errorLevel": "string",
-            "contentType": "string",
-            "originalData": "string",
-            "error": "string | undefined"
+    "types": [
+        {
+            "name": "QRResult",
+            "description": "Result type for QR code operations",
+            "properties": {
+                "data": "string (encoded data)",
+                "size": "number (image size in pixels)",
+                "base64Image": "string (base64-encoded PNG image)",
+                "errorLevel": "string (error correction level)",
+                "contentType": "string (MIME type)",
+                "originalData": "string (original input data)",
+                "error": "string (optional, present on failure)"
+            }
         },
-        "BarcodeResult": {
-            "data": "string",
-            "type": "string",
-            "base64Image": "string",
-            "width": "number",
-            "height": "number",
-            "contentType": "string",
-            "originalData": "string",
-            "error": "string | undefined"
+        {
+            "name": "BarcodeResult",
+            "description": "Result type for barcode operations", 
+            "properties": {
+                "data": "string (encoded data)",
+                "type": "string (barcode type)",
+                "base64Image": "string (base64-encoded image)",
+                "width": "number (image width)",
+                "height": "number (image height)", 
+                "contentType": "string (MIME type)",
+                "originalData": "string (original input data)",
+                "error": "string (optional, present on failure)"
+            }
         },
-        "VCardData": {
-            "name": "string",
-            "organization": "string | undefined",
-            "phone": "string | undefined",
-            "email": "string | undefined",
-            "url": "string | undefined",
-            "address": "string | undefined"
+        {
+            "name": "VCardData",
+            "description": "Input data structure for vCard QR codes",
+            "properties": {
+                "name": "string (contact name)",
+                "organization": "string (optional, organization name)",
+                "phone": "string (optional, phone number)",
+                "email": "string (optional, email address)",
+                "url": "string (optional, website URL)",
+                "address": "string (optional, physical address)"
+            }
         },
-        "WiFiData": {
-            "ssid": "string",
-            "password": "string | undefined",
-            "security": "string | undefined",
-            "hidden": "boolean | undefined"
+        {
+            "name": "WiFiData", 
+            "description": "Input data structure for WiFi QR codes",
+            "properties": {
+                "ssid": "string (network name)",
+                "password": "string (optional, network password)",
+                "security": "string (optional, security type: WPA/WEP/nopass)",
+                "hidden": "boolean (optional, whether network is hidden)"
+            }
         },
-        "DecodeResult": {
-            "success": "boolean",
-            "data": "string | undefined",
-            "type": "string",
-            "confidence": "number | undefined",
-            "error": "string | undefined"
-        }
+        {
+            "name": "DecodeResult",
+            "description": "Result type for decode operations",
+            "properties": {
+                "success": "boolean (decode success status)",
+                "data": "string (optional, decoded data)",
+                "type": "string (detected code type)",
+                "confidence": "number (optional, confidence level)",
+                "error": "string (optional, present on failure)"
+            }
+                 }
+    ],
+    "errorHandling": {
+        "pattern": "object-based",
+        "description": "QR module returns objects with 'error' field when operations fail",
+        "examples": [
+            {
+                "error": "Error: invalid QR code size (must be between 1-4096)",
+                "cause": "Called generateQRCode() with invalid size parameter"
+            },
+            {
+                "error": "Error: unsupported barcode type",
+                "cause": "Called generateBarcode() with unsupported type parameter"
+            },
+            {
+                "error": "Error: invalid vCard data structure",
+                "cause": "Called generateVCard() with malformed contact data"
+            },
+            {
+                "error": "Error: invalid WiFi configuration",
+                "cause": "Called generateWiFiQR() with incomplete network data"
+            }
+        ],
+        "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
     },
     "security": {
         "features": [
@@ -273,29 +314,24 @@
         }
     ],
     "buildInfo": {
-        "goVersion": "1.21+",
-        "wasmTargetFeatures": [
-            "bulk-memory",
-            "mutable-globals"
-        ],
-        "optimizations": [
-            "dead-code-elimination",
-            "size-optimization",
-            "gzip-compression"
-        ],
-        "dependencies": [
-            "github.com/skip2/go-qrcode",
-            "github.com/boombuler/barcode",
-            "golang.org/x/image"
+        "language": "Go",
+        "target": "js/wasm",
+        "buildCommand": "./build.sh",
+        "outputFile": "main.wasm",
+        "goModule": true,
+        "buildTime": "Generated during build process",
+        "compilerFlags": [
+            "GOOS=js",
+            "GOARCH=wasm"
         ]
     },
     "wasmConfig": {
-        "stackSize": "64KB",
-        "heapSize": "16MB",
-        "memoryGrowth": "enabled",
-        "threadsSupport": false,
-        "atomicsSupport": false,
-        "bulkMemorySupport": true
+        "filename": "main.wasm",
+        "goWasmExecRequired": true,
+        "globalFunctions": true,
+        "readySignal": "__gowm_ready",
+        "memoryInitialPages": 512,
+        "memoryMaximumPages": 2048
     },
     "useCases": [
         "Mobile app QR code generation",

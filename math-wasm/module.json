@@ -28,9 +28,9 @@
           "description": "Second number to add"
         }
       ],
-      "returnType": "number | string",
-      "errorPattern": "Returns error string if validation fails",
-      "example": "const result = math.call('add', 5, 3); // returns 8\nconst error = math.call('add', 5); // returns \"Erreur: deux arguments requis pour add\""
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = math.call('add', 5, 3);\nif (result.error) {\n  console.error('Addition error:', result.error);\n} else {\n  console.log('5 + 3 =', result.value);\n}"
     },
     {
       "name": "subtract",
@@ -47,9 +47,9 @@
           "description": "Number to subtract"
         }
       ],
-      "returnType": "number | string",
-      "errorPattern": "Returns error string if validation fails",
-      "example": "const result = math.call('subtract', 10, 3); // returns 7"
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = math.call('subtract', 10, 3);\n// Returns: { value: 7, operation: 'subtract' }"
     },
     {
       "name": "multiply",
@@ -66,9 +66,9 @@
           "description": "Second number"
         }
       ],
-      "returnType": "number | string",
-      "errorPattern": "Returns error string if validation fails",
-      "example": "const result = math.call('multiply', 4, 7); // returns 28"
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = math.call('multiply', 4, 7);\n// Returns: { value: 28, operation: 'multiply' }"
     },
     {
       "name": "divide",
@@ -85,9 +85,9 @@
           "description": "Divisor"
         }
       ],
-      "returnType": "number | string",
-      "errorPattern": "Returns \"Erreur: division par zéro\" if divisor is 0",
-      "example": "const result = math.call('divide', 15, 3); // returns 5\nconst error = math.call('divide', 10, 0); // returns \"Erreur: division par zéro\""
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field if divisor is 0",
+      "example": "const result = math.call('divide', 15, 3);\nif (result.error) {\n  console.error('Division error:', result.error);\n} else {\n  console.log('15 / 3 =', result.value);\n}"
     },
     {
       "name": "power",
@@ -104,9 +104,9 @@
           "description": "Exponent (must be positive)"
         }
       ],
-      "returnType": "number | string",
-      "errorPattern": "Returns error string for negative exponents",
-      "example": "const result = math.call('power', 2, 3); // returns 8\nconst error = math.call('power', 2, -1); // returns \"Erreur: exposant négatif non supporté\""
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field for negative exponents",
+      "example": "const result = math.call('power', 2, 3);\nif (result.error) {\n  console.error('Power error:', result.error);\n} else {\n  console.log('2^3 =', result.value);\n}"
     },
     {
       "name": "factorial",
@@ -118,9 +118,9 @@
           "description": "The number to calculate factorial for (must be non-negative)"
         }
       ],
-      "returnType": "number | string",
-      "errorPattern": "Returns error string for negative numbers",
-      "example": "const result = math.call('factorial', 5); // returns 120\nconst error = math.call('factorial', -5); // returns \"Erreur: factorielle non définie pour les nombres négatifs\""
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field for negative numbers",
+      "example": "const result = math.call('factorial', 5);\nif (result.error) {\n  console.error('Factorial error:', result.error);\n} else {\n  console.log('5! =', result.value);\n}"
     },
     {
       "name": "setSilentMode",
@@ -140,31 +140,31 @@
       "description": "Get list of all available functions in the module",
       "parameters": [],
       "returnType": "Array<string>",
-      "example": "const functions = math.call('getAvailableFunctions'); // returns ['add', 'subtract', 'multiply', 'divide', 'power', 'factorial', 'getAvailableFunctions', 'setSilentMode']"
+      "example": "const functions = math.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);"
     }
   ],
   "errorHandling": {
-    "pattern": "string-based",
-    "description": "Math module returns error strings when operations fail",
+    "pattern": "object-based",
+    "description": "Math module returns objects with 'error' field when operations fail",
     "examples": [
       {
-        "error": "Erreur: deux arguments requis pour add",
+        "error": "Error: insufficient arguments for add operation",
         "cause": "Called add() with insufficient arguments"
       },
       {
-        "error": "Erreur: division par zéro",
+        "error": "Error: division by zero",
         "cause": "Called divide() with divisor = 0"
       },
       {
-        "error": "Erreur: factorielle non définie pour les nombres négatifs",
+        "error": "Error: factorial not defined for negative numbers",
         "cause": "Called factorial() with negative number"
       },
       {
-        "error": "Erreur: exposant négatif non supporté",
+        "error": "Error: negative exponent not supported",
         "cause": "Called power() with negative exponent"
       }
     ],
-    "detection": "if (typeof result === 'string' && result.includes('Erreur')) { /* handle error */ }"
+    "detection": "if (result.error) { /* handle error */ } else { /* use result.value */ }"
   },
   "gowmConfig": {
     "supportedBranches": ["master", "stable"],
@@ -172,14 +172,18 @@
     "autoDetect": true,
     "readySignal": "__gowm_ready",
     "standardFunctions": ["getAvailableFunctions", "setSilentMode"],
-    "errorPattern": "string-based"
+    "errorPattern": "object-based"
   },
   "types": [
     {
       "name": "MathResult",
       "description": "Result type for math operations",
-      "type": "number | string",
-      "details": "Returns number on success, error string on failure"
+      "properties": {
+        "value": "number (calculation result)",
+        "operation": "string (operation performed)",
+        "operands": "array (input values used)",
+        "error": "string (optional, present on failure)"
+      }
     }
   ],
   "security": {
@@ -215,22 +219,22 @@
     {
       "title": "GoWM Integration - Basic Usage",
       "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load math module\nconst math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  name: 'math-wasm',\n  branch: 'master'\n});\n\n// Configure module\nmath.call('setSilentMode', true);\n\n// Basic calculations with error handling\nconst result = math.call('add', 5, 3);\nif (typeof result === 'string' && result.includes('Erreur')) {\n  console.error('Math error:', result);\n} else {\n  console.log('5 + 3 =', result); // 8\n}"
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load math module\nconst math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  name: 'math-wasm',\n  branch: 'master'\n});\n\n// Configure module\nmath.call('setSilentMode', true);\n\n// Basic calculations with error handling\nconst result = math.call('add', 5, 3);\nif (result.error) {\n  console.error('Math error:', result.error);\n} else {\n  console.log('5 + 3 =', result.value); // 8\n}"
     },
     {
       "title": "React Hook Integration",
       "language": "jsx",
-      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction MathCalculator() {\n  const { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    name: 'math-wasm',\n    branch: 'master'\n  });\n  \n  const [result, setResult] = useState(null);\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() => {\n    if (math) {\n      math.call('setSilentMode', true);\n      const availableFunctions = math.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [math]);\n\n  const calculate = (operation, a, b) => {\n    if (!math) return;\n    \n    const result = math.call(operation, a, b);\n    if (typeof result === 'string' && result.includes('Erreur')) {\n      setResult(`Error: ${result}`);\n    } else {\n      setResult(result);\n    }\n  };\n\n  if (loading) return <div>Loading math module...</div>;\n  if (error) return <div>Error: {error.message}</div>;\n\n  return (\n    <div>\n      <h3>Functions: {functions.join(', ')}</h3>\n      <button onClick={() => calculate('add', 10, 5)}>10 + 5</button>\n      <button onClick={() => calculate('factorial', 5)}>5!</button>\n      {result !== null && <div>Result: {result}</div>}\n    </div>\n  );\n}"
+      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction MathCalculator() {\n  const { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    name: 'math-wasm',\n    branch: 'master'\n  });\n  \n  const [result, setResult] = useState(null);\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() => {\n    if (math) {\n      math.call('setSilentMode', true);\n      const availableFunctions = math.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [math]);\n\n  const calculate = (operation, a, b) => {\n    if (!math) return;\n    \n    const result = math.call(operation, a, b);\n    if (result.error) {\n      setResult(`Error: ${result.error}`);\n    } else {\n      setResult(result.value);\n    }\n  };\n\n  if (loading) return <div>Loading math module...</div>;\n  if (error) return <div>Error: {error.message}</div>;\n\n  return (\n    <div>\n      <h3>Functions: {functions.join(', ')}</h3>\n      <button onClick={() => calculate('add', 10, 5)}>10 + 5</button>\n      <button onClick={() => calculate('factorial', 5)}>5!</button>\n      {result !== null && <div>Result: {result}</div>}\n    </div>\n  );\n}"
     },
     {
       "title": "Error Handling Patterns",
       "language": "javascript",
-      "code": "// Helper function for consistent error handling\nfunction handleMathResult(result, successCallback, errorCallback) {\n  if (typeof result === 'string' && result.includes('Erreur')) {\n    errorCallback(result);\n  } else {\n    successCallback(result);\n  }\n}\n\n// Usage examples\nconst operations = [\n  { func: 'add', args: [10, 5] },\n  { func: 'divide', args: [10, 0] }, // Will return error\n  { func: 'factorial', args: [-5] }, // Will return error\n  { func: 'power', args: [2, 8] }\n];\n\noperations.forEach(({ func, args }) => {\n  const result = math.call(func, ...args);\n  handleMathResult(\n    result,\n    (value) => console.log(`${func}(${args.join(', ')}) = ${value}`),\n    (error) => console.error(`${func}(${args.join(', ')}) failed: ${error}`)\n  );\n});"
+      "code": "// Helper function for consistent error handling\nfunction handleMathResult(result, successCallback, errorCallback) {\n  if (result.error) {\n    errorCallback(result.error);\n  } else {\n    successCallback(result);\n  }\n}\n\n// Usage examples\nconst operations = [\n  { func: 'add', args: [10, 5] },\n  { func: 'divide', args: [10, 0] }, // Will return error\n  { func: 'factorial', args: [-5] }, // Will return error\n  { func: 'power', args: [2, 8] }\n];\n\noperations.forEach(({ func, args }) => {\n  const result = math.call(func, ...args);\n  handleMathResult(\n    result,\n    (data) => console.log(`${func}(${args.join(', ')}) = ${data.value}`),\n    (error) => console.error(`${func}(${args.join(', ')}) failed: ${error}`)\n  );\n});"
     },
     {
       "title": "Vue.js Composable Integration",
       "language": "vue",
-      "code": "<template>\n  <div>\n    <div v-if=\"loading\">Loading math module...</div>\n    <div v-else-if=\"error\">Error: {{ error.message }}</div>\n    <div v-else>\n      <h3>Available Functions: {{ functions.join(', ') }}</h3>\n      <input v-model.number=\"num1\" type=\"number\" placeholder=\"First number\" />\n      <input v-model.number=\"num2\" type=\"number\" placeholder=\"Second number\" />\n      <button @click=\"calculate('add')\">Add</button>\n      <button @click=\"calculate('multiply')\">Multiply</button>\n      <div v-if=\"result !== null\">Result: {{ result }}</div>\n    </div>\n  </div>\n</template>\n\n<script setup>\nimport { ref, watch } from 'vue';\nimport { useWasmFromGitHub } from 'gowm/composables/useWasm';\n\nconst { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n  name: 'math-wasm',\n  branch: 'master'\n});\n\nconst num1 = ref(10);\nconst num2 = ref(5);\nconst result = ref(null);\nconst functions = ref([]);\n\nwatch(math, (newMath) => {\n  if (newMath) {\n    newMath.call('setSilentMode', true);\n    functions.value = newMath.call('getAvailableFunctions');\n  }\n}, { immediate: true });\n\nconst calculate = (operation) => {\n  if (!math.value) return;\n  \n  const calcResult = math.value.call(operation, num1.value, num2.value);\n  if (typeof calcResult === 'string' && calcResult.includes('Erreur')) {\n    result.value = `Error: ${calcResult}`;\n  } else {\n    result.value = calcResult;\n  }\n};\n</script>"
+      "code": "<template>\n  <div>\n    <div v-if=\"loading\">Loading math module...</div>\n    <div v-else-if=\"error\">Error: {{ error.message }}</div>\n    <div v-else>\n      <h3>Available Functions: {{ functions.join(', ') }}</h3>\n      <input v-model.number=\"num1\" type=\"number\" placeholder=\"First number\" />\n      <input v-model.number=\"num2\" type=\"number\" placeholder=\"Second number\" />\n      <button @click=\"calculate('add')\">Add</button>\n      <button @click=\"calculate('multiply')\">Multiply</button>\n      <div v-if=\"result !== null\">Result: {{ result }}</div>\n    </div>\n  </div>\n</template>\n\n<script setup>\nimport { ref, watch } from 'vue';\nimport { useWasmFromGitHub } from 'gowm/composables/useWasm';\n\nconst { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n  name: 'math-wasm',\n  branch: 'master'\n});\n\nconst num1 = ref(10);\nconst num2 = ref(5);\nconst result = ref(null);\nconst functions = ref([]);\n\nwatch(math, (newMath) => {\n  if (newMath) {\n    newMath.call('setSilentMode', true);\n    functions.value = newMath.call('getAvailableFunctions');\n  }\n}, { immediate: true });\n\nconst calculate = (operation) => {\n  if (!math.value) return;\n  \n  const calcResult = math.value.call(operation, num1.value, num2.value);\n  if (calcResult.error) {\n    result.value = `Error: ${calcResult.error}`;\n  } else {\n    result.value = calcResult.value;\n  }\n};\n</script>"
     }
   ],
   "buildInfo": {
@@ -279,9 +283,9 @@
     "compressedSize": "688KB",
     "compressionRatio": "69%"
   },
-      "changelog": {
-        "version": "0.1.9",
-            "releaseDate": "2025-06-17",
+  "changelog": {
+    "version": "0.1.9",
+    "releaseDate": "2025-06-17",
     "changes": [
       "Initial release with basic arithmetic operations",
       "Added error handling for edge cases",
