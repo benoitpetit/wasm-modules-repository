@@ -17,22 +17,6 @@
         "wasm",
         "go"
     ],
-    "security": {
-        "level": "high",
-        "features": [
-            "Secure random number generation",
-            "Authenticated encryption (AES-GCM)",
-            "Strong password hashing (bcrypt)",
-            "JWT token security",
-            "Input validation",
-            "Memory-safe operations"
-        ],
-        "compliance": [
-            "OWASP guidelines",
-            "Cryptographic best practices",
-            "Secure by default configuration"
-        ]
-    },
     "functions": [
         {
             "name": "hashSHA256",
@@ -45,11 +29,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "hash": "string (hex-encoded SHA256 hash)",
-                "algorithm": "string ('SHA256')"
-            },
-            "security": "SHA256 is cryptographically secure for integrity verification",
             "example": "const result = hashSHA256('Hello World'); // { hash: 'a591a6d40bf420404a011733cfb7b190d62c65bf0bcda32b57b277d9ad9f146e', algorithm: 'SHA256' }"
         },
         {
@@ -63,12 +42,7 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "hash": "string (hex-encoded SHA512 hash)",
-                "algorithm": "string ('SHA512')"
-            },
-            "security": "SHA512 provides higher security than SHA256 but at computational cost",
-            "example": "const result = hashSHA512('Hello World');"
+            "example": "const result = hashSHA512('Hello World'); // { hash: '...', algorithm: 'SHA512' }"
         },
         {
             "name": "hashMD5",
@@ -81,12 +55,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "hash": "string (hex-encoded MD5 hash)",
-                "algorithm": "string ('MD5')",
-                "warning": "string (security warning)"
-            },
-            "security": "⚠️ MD5 is cryptographically broken - use only for legacy compatibility",
             "example": "const result = hashMD5('Hello World'); // Includes security warning"
         },
         {
@@ -96,17 +64,10 @@
                 {
                     "name": "keySize",
                     "type": "number",
-                    "description": "Key size in bytes (16=128bit, 24=192bit, 32=256bit)",
-                    "optional": true,
-                    "default": 32
+                    "description": "Key size in bytes (16=128bit, 24=192bit, 32=256bit)"
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "key": "string (base64-encoded key)",
-                "keySize": "number (key size in bits)"
-            },
-            "security": "Uses cryptographically secure random number generation",
             "example": "const key = generateAESKey(32); // 256-bit key"
         },
         {
@@ -125,11 +86,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "encryptedData": "string (base64-encoded encrypted data with nonce)",
-                "algorithm": "string ('AES-GCM')"
-            },
-            "security": "AES-GCM provides both confidentiality and authenticity",
             "example": "const encrypted = encryptAES('secret data', key.key);"
         },
         {
@@ -148,11 +104,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "decryptedData": "string (original plaintext)",
-                "algorithm": "string ('AES-GCM')"
-            },
-            "security": "Automatic verification of authenticity tag",
             "example": "const decrypted = decryptAES(encrypted.encryptedData, key.key);"
         },
         {
@@ -162,18 +113,10 @@
                 {
                     "name": "keySize",
                     "type": "number",
-                    "description": "Key size in bits (1024-4096)",
-                    "optional": true,
-                    "default": 2048
+                    "description": "Key size in bits (1024-4096)"
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "publicKey": "string (PEM-formatted public key)",
-                "privateKey": "string (PEM-formatted private key)",
-                "keySize": "number (key size in bits)"
-            },
-            "security": "2048-bit minimum recommended for security",
             "example": "const keyPair = generateRSAKeyPair(2048);"
         },
         {
@@ -192,11 +135,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "encryptedData": "string (base64-encoded encrypted data)",
-                "algorithm": "string ('RSA-PKCS1v15')"
-            },
-            "security": "Data size limited to key size minus padding",
             "example": "const encrypted = encryptRSA('secret', keyPair.publicKey);"
         },
         {
@@ -215,11 +153,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "decryptedData": "string (original plaintext)",
-                "algorithm": "string ('RSA-PKCS1v15')"
-            },
-            "security": "Private key must be kept secure",
             "example": "const decrypted = decryptRSA(encrypted.encryptedData, keyPair.privateKey);"
         },
         {
@@ -239,18 +172,10 @@
                 {
                     "name": "expirationHours",
                     "type": "number",
-                    "description": "Token expiration in hours",
-                    "optional": true,
-                    "default": 24
+                    "description": "Token expiration in hours"
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "token": "string (JWT token)",
-                "expiresIn": "number (expiration in seconds)",
-                "algorithm": "string ('HS256')"
-            },
-            "security": "Secret must be cryptographically strong",
             "example": "const jwt = generateJWT('{\"userId\":123}', 'strong-secret', 24);"
         },
         {
@@ -269,13 +194,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "valid": "boolean (token validity)",
-                "claims": "string (JSON of claims if valid)",
-                "algorithm": "string ('HS256')",
-                "error": "string (error message if invalid)"
-            },
-            "security": "Automatically checks signature and expiration",
             "example": "const verification = verifyJWT(jwt.token, 'strong-secret');"
         },
         {
@@ -290,18 +208,10 @@
                 {
                     "name": "cost",
                     "type": "number",
-                    "description": "Cost factor (4-31, higher = more secure but slower)",
-                    "optional": true,
-                    "default": 10
+                    "description": "Cost factor (4-31, higher = more secure but slower)"
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "hash": "string (bcrypt hash)",
-                "cost": "number (cost factor used)",
-                "algorithm": "string ('bcrypt')"
-            },
-            "security": "Industry standard for password hashing",
             "example": "const hash = bcryptHash('myPassword', 12);"
         },
         {
@@ -320,12 +230,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "valid": "boolean (password match)",
-                "algorithm": "string ('bcrypt')",
-                "error": "string (error message if invalid)"
-            },
-            "security": "Constant-time comparison prevents timing attacks",
             "example": "const isValid = bcryptVerify('myPassword', hash.hash);"
         },
         {
@@ -333,11 +237,6 @@
             "description": "Generate a UUID v4 (random UUID)",
             "parameters": [],
             "returnType": "object",
-            "returnProperties": {
-                "uuid": "string (UUID v4)",
-                "version": "number (4)"
-            },
-            "security": "Uses cryptographically secure random number generation",
             "example": "const uuid = generateUUID(); // { uuid: '550e8400-e29b-41d4-a716-446655440000', version: 4 }"
         },
         {
@@ -351,12 +250,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "bytes": "string (base64-encoded random bytes)",
-                "length": "number (byte length)",
-                "encoding": "string ('base64')"
-            },
-            "security": "Uses OS entropy source",
             "example": "const randomBytes = generateRandomBytes(32);"
         },
         {
@@ -370,11 +263,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "encoded": "string (base64-encoded data)",
-                "originalLength": "number (original byte length)",
-                "encodedLength": "number (encoded string length)"
-            },
             "example": "const encoded = base64Encode('Hello World');"
         },
         {
@@ -388,11 +276,6 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "decoded": "string (decoded data)",
-                "encodedLength": "number (encoded string length)",
-                "decodedLength": "number (decoded byte length)"
-            },
             "example": "const decoded = base64Decode(encoded.encoded);"
         },
         {
@@ -406,22 +289,7 @@
                 }
             ],
             "returnType": "object",
-            "returnProperties": {
-                "score": "number (strength score 0-100)",
-                "strength": "string (very_weak|weak|medium|strong|very_strong)",
-                "issues": "array (list of validation issues)",
-                "valid": "boolean (meets minimum requirements)"
-            },
-            "security": "Enforces OWASP password guidelines",
             "example": "const validation = validatePasswordStrength('MySecure123!');"
-        },
-        {
-            "name": "getAvailableFunctions",
-            "description": "Get list of all available cryptographic functions",
-            "parameters": [],
-            "returnType": "array",
-            "returnProperties": "Array of function names",
-            "example": "const functions = getAvailableFunctions();"
         },
         {
             "name": "setSilentMode",
@@ -434,28 +302,149 @@
                 }
             ],
             "returnType": "boolean",
-            "returnProperties": "Current silent mode state",
             "example": "setSilentMode(true);"
+        },
+        {
+            "name": "getAvailableFunctions",
+            "description": "Get list of all available cryptographic functions",
+            "parameters": [],
+            "returnType": "Array<string>",
+            "example": "const functions = getAvailableFunctions();"
         }
     ],
-    "types": {
-        "TypeScript": "declare module 'crypto-wasm' {\n  export interface CryptoResult {\n    error?: string;\n  }\n\n  export interface HashResult extends CryptoResult {\n    hash: string;\n    algorithm: string;\n    warning?: string;\n  }\n\n  export interface KeyResult extends CryptoResult {\n    key: string;\n    keySize: number;\n  }\n\n  export interface EncryptionResult extends CryptoResult {\n    encryptedData: string;\n    algorithm: string;\n  }\n\n  export interface DecryptionResult extends CryptoResult {\n    decryptedData: string;\n    algorithm: string;\n  }\n\n  export interface KeyPairResult extends CryptoResult {\n    publicKey: string;\n    privateKey: string;\n    keySize: number;\n  }\n\n  export interface JWTResult extends CryptoResult {\n    token: string;\n    expiresIn: number;\n    algorithm: string;\n  }\n\n  export interface JWTVerificationResult extends CryptoResult {\n    valid: boolean;\n    claims?: string;\n    algorithm: string;\n  }\n\n  export interface HashingResult extends CryptoResult {\n    hash: string;\n    cost: number;\n    algorithm: string;\n  }\n\n  export interface VerificationResult extends CryptoResult {\n    valid: boolean;\n    algorithm: string;\n  }\n\n  export interface UUIDResult extends CryptoResult {\n    uuid: string;\n    version: number;\n  }\n\n  export interface RandomBytesResult extends CryptoResult {\n    bytes: string;\n    length: number;\n    encoding: string;\n  }\n\n  export interface EncodingResult extends CryptoResult {\n    encoded?: string;\n    decoded?: string;\n    originalLength?: number;\n    encodedLength?: number;\n    decodedLength?: number;\n  }\n\n  export interface PasswordValidation extends CryptoResult {\n    score: number;\n    strength: 'very_weak' | 'weak' | 'medium' | 'strong' | 'very_strong';\n    issues: string[];\n    valid: boolean;\n  }\n\n  // Function declarations\n  export function hashSHA256(data: string): HashResult;\n  export function hashSHA512(data: string): HashResult;\n  export function hashMD5(data: string): HashResult;\n  export function generateAESKey(keySize?: number): KeyResult;\n  export function encryptAES(data: string, key: string): EncryptionResult;\n  export function decryptAES(encryptedData: string, key: string): DecryptionResult;\n  export function generateRSAKeyPair(keySize?: number): KeyPairResult;\n  export function encryptRSA(data: string, publicKey: string): EncryptionResult;\n  export function decryptRSA(encryptedData: string, privateKey: string): DecryptionResult;\n  export function generateJWT(payload: string, secret: string, expirationHours?: number): JWTResult;\n  export function verifyJWT(token: string, secret: string): JWTVerificationResult;\n  export function bcryptHash(password: string, cost?: number): HashingResult;\n  export function bcryptVerify(password: string, hash: string): VerificationResult;\n  export function generateUUID(): UUIDResult;\n  export function generateRandomBytes(length: number): RandomBytesResult;\n  export function base64Encode(data: string): EncodingResult;\n  export function base64Decode(encodedData: string): EncodingResult;\n  export function validatePasswordStrength(password: string): PasswordValidation;\n  export function getAvailableFunctions(): string[];\n  export function setSilentMode(silent: boolean): boolean;\n}"
-    },
-    "performance": {
-        "optimizations": [
-            "Go compiler optimizations (-ldflags=\"-s -w\")",
-            "WebAssembly size optimization",
-            "Efficient memory management",
-            "Minimal external dependencies",
-            "Fast cryptographic implementations"
-        ],
-        "benchmarks": {
-            "SHA256": "~50,000 ops/sec for 1KB data",
-            "AES-256 encryption": "~10,000 ops/sec for 1KB data",
-            "RSA-2048 encryption": "~500 ops/sec",
-            "bcrypt (cost 10)": "~100 ops/sec",
-            "JWT generation": "~5,000 ops/sec"
+    "types": [
+        {
+            "name": "CryptoError",
+            "description": "Cryptographic operation error",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "description": "Error message describing the cryptographic issue"
+                },
+                "operation": {
+                    "type": "string",
+                    "description": "The operation that caused the error"
+                }
+            }
+        },
+        {
+            "name": "HashResult",
+            "description": "Result of a hash operation",
+            "properties": {
+                "hash": {
+                    "type": "string",
+                    "description": "The computed hash value"
+                },
+                "algorithm": {
+                    "type": "string",
+                    "description": "The hashing algorithm used"
+                },
+                "warning": {
+                    "type": "string",
+                    "description": "Security warning if applicable"
+                }
+            }
+        },
+        {
+            "name": "EncryptionResult",
+            "description": "Result of an encryption operation",
+            "properties": {
+                "encryptedData": {
+                    "type": "string",
+                    "description": "The encrypted data"
+                },
+                "algorithm": {
+                    "type": "string",
+                    "description": "The encryption algorithm used"
+                }
+            }
+        },
+        {
+            "name": "DecryptionResult",
+            "description": "Result of a decryption operation",
+            "properties": {
+                "decryptedData": {
+                    "type": "string",
+                    "description": "The decrypted data"
+                },
+                "algorithm": {
+                    "type": "string",
+                    "description": "The decryption algorithm used"
+                }
+            }
+        },
+        {
+            "name": "KeyPairResult",
+            "description": "Result of key pair generation",
+            "properties": {
+                "publicKey": {
+                    "type": "string",
+                    "description": "The generated public key in PEM format"
+                },
+                "privateKey": {
+                    "type": "string",
+                    "description": "The generated private key in PEM format"
+                },
+                "keySize": {
+                    "type": "number",
+                    "description": "The key size in bits"
+                }
+            }
+        },
+        {
+            "name": "JWTResult",
+            "description": "Result of JWT token generation",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "description": "The generated JWT token"
+                },
+                "expiresIn": {
+                    "type": "number",
+                    "description": "Token expiration time in seconds"
+                },
+                "algorithm": {
+                    "type": "string",
+                    "description": "The signing algorithm used"
+                }
+            }
+        },
+        {
+            "name": "PasswordValidation",
+            "description": "Result of password strength validation",
+            "properties": {
+                "score": {
+                    "type": "number",
+                    "description": "Password strength score (0-100)"
+                },
+                "strength": {
+                    "type": "string",
+                    "description": "Password strength level"
+                },
+                "issues": {
+                    "type": "Array<string>",
+                    "description": "List of validation issues"
+                },
+                "valid": {
+                    "type": "boolean",
+                    "description": "Whether password meets minimum requirements"
+                }
+            }
         }
+    ],
+    "security": {
+        "features": [
+            "Secure random number generation using OS entropy",
+            "Authenticated encryption with AES-GCM mode",
+            "Strong password hashing with bcrypt",
+            "JWT token security with HMAC-SHA256",
+            "Input validation for all cryptographic operations",
+            "Memory-safe Go implementation",
+            "Protection against timing attacks",
+            "Constant-time comparisons where applicable"
+        ],
+        "cors": "N/A - Cryptographic operations only",
+        "ssl": "N/A - No network operations"
     },
     "compatibility": {
         "browsers": [
@@ -464,56 +453,70 @@
             "Safari 11+",
             "Edge 16+"
         ],
-        "node": "16+",
-        "frameworks": [
-            "React 16+",
-            "Vue.js 2.6+/3.0+",
-            "Angular 8+",
-            "Next.js",
-            "Nuxt.js"
+        "gowm": "Compatible with gowm npm package manager"
+    },
+    "performance": {
+        "features": [
+            "Compiled WebAssembly for optimal performance",
+            "Native Go cryptographic implementations",
+            "Efficient memory management",
+            "Minimal JavaScript overhead",
+            "Fast hash computations",
+            "Optimized encryption/decryption operations",
+            "Hardware acceleration where available"
         ]
     },
-    "examples": {
-        "javascript": {
-            "basic_hashing": "// Hash data with SHA256\nconst hash = hashSHA256('Hello World');\nconsole.log(hash.hash); // hex string",
-            "aes_encryption": "// Encrypt/decrypt with AES\nconst key = generateAESKey(32);\nconst encrypted = encryptAES('secret data', key.key);\nconst decrypted = decryptAES(encrypted.encryptedData, key.key);",
-            "rsa_encryption": "// RSA key pair and encryption\nconst keyPair = generateRSAKeyPair(2048);\nconst encrypted = encryptRSA('secret', keyPair.publicKey);\nconst decrypted = decryptRSA(encrypted.encryptedData, keyPair.privateKey);",
-            "jwt_handling": "// JWT token generation and verification\nconst payload = JSON.stringify({userId: 123, role: 'admin'});\nconst jwt = generateJWT(payload, 'secret-key', 24);\nconst verification = verifyJWT(jwt.token, 'secret-key');",
-            "password_security": "// Secure password handling\nconst validation = validatePasswordStrength('MySecure123!');\nif (validation.valid) {\n  const hash = bcryptHash('MySecure123!', 12);\n  const isValid = bcryptVerify('MySecure123!', hash.hash);\n}"
+    "examples": [
+        {
+            "title": "Basic Hashing Operations",
+            "code": "// Loading the WASM module\nconst go = new Go();\nconst result = await WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject);\ngo.run(result.instance);\n\n// Generate hashes\nconst sha256 = hashSHA256('Hello World');\nconst sha512 = hashSHA512('Hello World');\n\nconsole.log('SHA256:', sha256.hash);\nconsole.log('SHA512:', sha512.hash);\n\n// MD5 (with warning)\nconst md5 = hashMD5('Hello World');\nconsole.log('MD5:', md5.hash, 'Warning:', md5.warning);"
         },
-        "react": "import { useState, useEffect } from 'react';\nimport { load } from 'gowm';\n\nfunction CryptoComponent() {\n  const [crypto, setCrypto] = useState(null);\n  const [hash, setHash] = useState('');\n\n  useEffect(() => {\n    async function loadCrypto() {\n      const cryptoWasm = await load('./crypto-wasm/main.wasm');\n      setCrypto(cryptoWasm);\n    }\n    loadCrypto();\n  }, []);\n\n  const handleHash = () => {\n    if (crypto) {\n      const result = crypto.call('hashSHA256', 'Hello World');\n      setHash(result.hash);\n    }\n  };\n\n  return (\n    <div>\n      <button onClick={handleHash}>Generate Hash</button>\n      <p>Hash: {hash}</p>\n    </div>\n  );\n}",
-        "vue": "<template>\n  <div>\n    <button @click=\"generateHash\">Generate Hash</button>\n    <p>Hash: {{ hash }}</p>\n  </div>\n</template>\n\n<script>\nimport { useWasm } from 'gowm/composables';\n\nexport default {\n  setup() {\n    const { wasm: crypto } = useWasm('./crypto-wasm/main.wasm');\n    const hash = ref('');\n\n    const generateHash = () => {\n      if (crypto.value) {\n        const result = crypto.value.call('hashSHA256', 'Hello World');\n        hash.value = result.hash;\n      }\n    };\n\n    return { hash, generateHash };\n  }\n};\n</script>"
-    },
+        {
+            "title": "AES Encryption/Decryption",
+            "code": "// Generate a secure AES key\nconst key = generateAESKey(32); // 256-bit key\nconsole.log('Generated key:', key.key);\n\n// Encrypt sensitive data\nconst plaintext = 'This is confidential information';\nconst encrypted = encryptAES(plaintext, key.key);\nconsole.log('Encrypted:', encrypted.encryptedData);\n\n// Decrypt the data\nconst decrypted = decryptAES(encrypted.encryptedData, key.key);\nconsole.log('Decrypted:', decrypted.decryptedData);\n\n// Verify integrity\nif (decrypted.decryptedData === plaintext) {\n  console.log('✅ Encryption/Decryption successful!');\n}"
+        },
+        {
+            "title": "RSA Key Pair and Encryption",
+            "code": "// Generate RSA key pair\nconst keyPair = generateRSAKeyPair(2048);\nconsole.log('Public Key:', keyPair.publicKey);\nconsole.log('Private Key:', keyPair.privateKey);\n\n// Encrypt with public key\nconst message = 'Secret message';\nconst rsaEncrypted = encryptRSA(message, keyPair.publicKey);\nconsole.log('RSA Encrypted:', rsaEncrypted.encryptedData);\n\n// Decrypt with private key\nconst rsaDecrypted = decryptRSA(rsaEncrypted.encryptedData, keyPair.privateKey);\nconsole.log('RSA Decrypted:', rsaDecrypted.decryptedData);\n\nif (rsaDecrypted.decryptedData === message) {\n  console.log('✅ RSA Encryption/Decryption successful!');\n}"
+        },
+        {
+            "title": "JWT Token Management",
+            "code": "// Create JWT payload\nconst payload = JSON.stringify({\n  userId: 12345,\n  username: 'john_doe',\n  roles: ['user', 'admin'],\n  iat: Math.floor(Date.now() / 1000)\n});\n\n// Generate JWT token\nconst secret = 'my-super-secret-key-change-in-production';\nconst jwt = generateJWT(payload, secret, 24); // 24 hours expiration\nconsole.log('JWT Token:', jwt.token);\nconsole.log('Expires in:', jwt.expiresIn, 'seconds');\n\n// Verify JWT token\nconst verification = verifyJWT(jwt.token, secret);\nif (verification.valid) {\n  const claims = JSON.parse(verification.claims);\n  console.log('✅ Token is valid!');\n  console.log('User ID:', claims.userId);\n  console.log('Username:', claims.username);\n  console.log('Roles:', claims.roles);\n} else {\n  console.log('❌ Token is invalid:', verification.error);\n}"
+        },
+        {
+            "title": "Password Security Best Practices",
+            "code": "// Enable silent mode for batch operations\nsetSilentMode(true);\n\n// Validate password strength\nconst password = 'MySecure123!@#';\nconst validation = validatePasswordStrength(password);\n\nconsole.log('Password Validation:');\nconsole.log('  Score:', validation.score + '/100');\nconsole.log('  Strength:', validation.strength);\nconsole.log('  Valid:', validation.valid);\nif (validation.issues.length > 0) {\n  console.log('  Issues:', validation.issues);\n}\n\n// Hash password if it's strong enough\nif (validation.valid) {\n  const hashedPassword = bcryptHash(password, 12); // High cost for security\n  console.log('Password hash:', hashedPassword.hash);\n  \n  // Verify password\n  const isValid = bcryptVerify(password, hashedPassword.hash);\n  console.log('Password verification:', isValid.valid);\n  \n  // Test with wrong password\n  const wrongPassword = bcryptVerify('WrongPassword', hashedPassword.hash);\n  console.log('Wrong password test:', wrongPassword.valid);\n}\n\nsetSilentMode(false);"
+        },
+        {
+            "title": "Utility Functions and Random Generation",
+            "code": "// Generate secure random data\nconst randomBytes = generateRandomBytes(32);\nconsole.log('Random bytes:', randomBytes.bytes);\nconsole.log('Length:', randomBytes.length, 'bytes');\n\n// Generate UUID for unique identifiers\nconst uuid = generateUUID();\nconsole.log('UUID:', uuid.uuid);\nconsole.log('Version:', uuid.version);\n\n// Base64 encoding/decoding\nconst originalData = 'This is some data to encode';\nconst encoded = base64Encode(originalData);\nconsole.log('Original:', originalData);\nconsole.log('Encoded:', encoded.encoded);\n\nconst decoded = base64Decode(encoded.encoded);\nconsole.log('Decoded:', decoded.decoded);\nconsole.log('Match:', decoded.decoded === originalData);\n\n// List all available functions\nconst functions = getAvailableFunctions();\nconsole.log('Available functions:', functions);"
+        }
+    ],
     "buildInfo": {
-        "goVersion": "1.21+",
-        "targetOS": "js",
-        "targetArch": "wasm",
-        "buildFlags": [
-            "-ldflags=\"-s -w\"",
-            "-trimpath",
-            "-buildmode=default"
+        "language": "Go",
+        "target": "js/wasm",
+        "buildCommand": "./build.sh",
+        "outputFile": "main.wasm",
+        "goModule": true,
+        "buildTime": "Generated during build process",
+        "compilerFlags": [
+            "GOOS=js",
+            "GOARCH=wasm"
         ],
         "dependencies": [
             "golang.org/x/crypto",
             "github.com/golang-jwt/jwt/v5"
-        ],
-        "securityFeatures": [
-            "CGO_ENABLED=0",
-            "Stripped debug symbols",
-            "Path trimming",
-            "Dependency auditing"
         ]
     },
+    "dependencies": [
+        "golang.org/x/crypto",
+        "github.com/golang-jwt/jwt/v5"
+    ],
     "wasmConfig": {
-        "memoryInitial": "256 pages (16MB)",
-        "memoryMaximum": "512 pages (32MB)",
-        "tableInitial": "1",
-        "tableMaximum": "1",
-        "globalMutable": true,
-        "exportTable": false,
-        "features": [
-            "bulk-memory",
-            "sign-extension"
-        ]
+        "filename": "main.wasm",
+        "goWasmExecRequired": true,
+        "globalFunctions": true,
+        "memoryInitialPages": 256,
+        "memoryMaximumPages": 512
     }
 }

@@ -9,6 +9,7 @@ High-performance WebAssembly modules collection written in Go.
 | **goxios-wasm** | HTTP Client (axios-like) | get, post, put, delete, patch, request, create | 9.9M → 2.7M |
 | **math-wasm** | Mathematical calculations | add, subtract, multiply, divide, power, factorial | 2.4M → 688K |
 | **image-wasm** | Image processing | compressJPEG, compressPNG, convertToWebP, resizeImage | 3.0M → 852K |
+| **crypto-wasm** | Cryptographic operations | hashSHA256, encryptAES, generateRSA, JWT, bcrypt, UUID | 6.1M → 1.7M |
 
 ## Quick Start
 

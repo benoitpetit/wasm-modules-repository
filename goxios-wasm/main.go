@@ -630,8 +630,7 @@ func convertToJSValue(data interface{}) js.Value {
 }
 
 func main() {
-	// Signaler que le module est prêt
-	fmt.Println("Goxios WASM module initialized successfully")
+	fmt.Println("Goxios WASM module initializing...")
 
 	// Créer l'objet global goxios
 	goxios := js.Global().Get("Object").New()
@@ -649,6 +648,22 @@ func main() {
 
 	// Exposer l'objet goxios globalement
 	js.Global().Set("goxios", goxios)
+
+	// Exposer aussi les fonctions directement sur l'objet global
+	js.Global().Set("get", js.FuncOf(get))
+	js.Global().Set("post", js.FuncOf(post))
+	js.Global().Set("put", js.FuncOf(put))
+	js.Global().Set("delete", js.FuncOf(delete))
+	js.Global().Set("patch", js.FuncOf(patch))
+	js.Global().Set("request", js.FuncOf(request))
+	js.Global().Set("create", js.FuncOf(create))
+	js.Global().Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
+	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
+
+	// Ready signal for GoWM
+	js.Global().Set("__gowm_ready", js.ValueOf(true))
+
+	fmt.Println("Goxios WASM module initialized successfully")
 
 	// Garder le programme en vie
 	select {}

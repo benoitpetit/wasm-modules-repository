@@ -789,28 +789,44 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 }
 
 func main() {
+	// Create the crypto object
+	crypto := js.Global().Get("Object").New()
+
 	// Hash functions
 	js.Global().Set("hashSHA256", js.FuncOf(hashSHA256))
 	js.Global().Set("hashSHA512", js.FuncOf(hashSHA512))
 	js.Global().Set("hashMD5", js.FuncOf(hashMD5))
+	crypto.Set("hashSHA256", js.FuncOf(hashSHA256))
+	crypto.Set("hashSHA512", js.FuncOf(hashSHA512))
+	crypto.Set("hashMD5", js.FuncOf(hashMD5))
 
 	// AES encryption
 	js.Global().Set("generateAESKey", js.FuncOf(generateAESKey))
 	js.Global().Set("encryptAES", js.FuncOf(encryptAES))
 	js.Global().Set("decryptAES", js.FuncOf(decryptAES))
+	crypto.Set("generateAESKey", js.FuncOf(generateAESKey))
+	crypto.Set("encryptAES", js.FuncOf(encryptAES))
+	crypto.Set("decryptAES", js.FuncOf(decryptAES))
 
 	// RSA encryption
 	js.Global().Set("generateRSAKeyPair", js.FuncOf(generateRSAKeyPair))
 	js.Global().Set("encryptRSA", js.FuncOf(encryptRSA))
 	js.Global().Set("decryptRSA", js.FuncOf(decryptRSA))
+	crypto.Set("generateRSAKeyPair", js.FuncOf(generateRSAKeyPair))
+	crypto.Set("encryptRSA", js.FuncOf(encryptRSA))
+	crypto.Set("decryptRSA", js.FuncOf(decryptRSA))
 
 	// JWT
 	js.Global().Set("generateJWT", js.FuncOf(generateJWT))
 	js.Global().Set("verifyJWT", js.FuncOf(verifyJWT))
+	crypto.Set("generateJWT", js.FuncOf(generateJWT))
+	crypto.Set("verifyJWT", js.FuncOf(verifyJWT))
 
 	// Password hashing
 	js.Global().Set("bcryptHash", js.FuncOf(bcryptHash))
 	js.Global().Set("bcryptVerify", js.FuncOf(bcryptVerify))
+	crypto.Set("bcryptHash", js.FuncOf(bcryptHash))
+	crypto.Set("bcryptVerify", js.FuncOf(bcryptVerify))
 
 	// Utilities
 	js.Global().Set("generateUUID", js.FuncOf(generateUUID))
@@ -818,11 +834,26 @@ func main() {
 	js.Global().Set("base64Encode", js.FuncOf(base64Encode))
 	js.Global().Set("base64Decode", js.FuncOf(base64Decode))
 	js.Global().Set("validatePasswordStrength", js.FuncOf(validatePasswordStrength))
+	crypto.Set("generateUUID", js.FuncOf(generateUUID))
+	crypto.Set("generateRandomBytes", js.FuncOf(generateRandomBytes))
+	crypto.Set("base64Encode", js.FuncOf(base64Encode))
+	crypto.Set("base64Decode", js.FuncOf(base64Decode))
+	crypto.Set("validatePasswordStrength", js.FuncOf(validatePasswordStrength))
 
 	// Standard functions
 	js.Global().Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
 	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
+	crypto.Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
+	crypto.Set("setSilentMode", js.FuncOf(setSilentMode))
 
+	// Expose the crypto object globally
+	js.Global().Set("crypto", crypto)
+
+	// Signal that the module is ready
 	fmt.Println("Go WASM Crypto module initialized")
+	
+	// Set a ready flag that can be checked by the loader (consistent with other modules)
+	js.Global().Set("__gowm_ready", js.ValueOf(true))
+	
 	select {}
 }
