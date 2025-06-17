@@ -90,6 +90,18 @@ if check_module "image-wasm" "image-wasm"; then
     ((modules_passed++))
 fi
 
+# Test crypto-wasm
+((modules_total++))
+if check_module "crypto-wasm" "crypto-wasm"; then
+    ((modules_passed++))
+fi
+
+# Test qr-wasm
+((modules_total++))
+if check_module "qr-wasm" "qr-wasm"; then
+    ((modules_passed++))
+fi
+
 echo
 echo "=================================================="
 echo "📊 Test Results:"

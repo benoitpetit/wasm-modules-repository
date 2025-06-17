@@ -10,6 +10,7 @@ High-performance WebAssembly modules collection written in Go, designed for seam
 | **math-wasm** | Mathematical calculations | add, subtract, multiply, divide, power, factorial | 2.4M → 688K |
 | **image-wasm** | Image processing | compressJPEG, compressPNG, convertToWebP, resizeImage | 3.0M → 852K |
 | **crypto-wasm** | Cryptographic operations | hashSHA256, encryptAES, generateRSA, JWT, bcrypt, UUID | 6.1M → 1.7M |
+| **qr-wasm** | QR Codes & Barcodes | generateQRCode, generateBarcode, generateVCard, generateWiFiQR | 3.1M → 800K |
 
 ## Quick Start
 
@@ -138,7 +139,58 @@ if (keyResult.error) {
 }
 ```
 
-#### Image Module
+#### QR Module
+
+```javascript
+// Load QR module
+const qr = await loadFromGitHub('your-org/wasm-projects', {
+  path: 'qr-wasm',
+  name: 'qr'
+});
+
+// Enable silent mode for production
+qr.call('setSilentMode', true);
+
+// Generate basic QR code
+const qrResult = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');
+if (qrResult.error) {
+  console.error('QR generation failed:', qrResult.error);
+} else {
+  console.log('QR Base64:', qrResult.base64Image);
+  // Display QR code
+  const img = document.createElement('img');
+  img.src = 'data:image/png;base64,' + qrResult.base64Image;
+  document.body.appendChild(img);
+}
+
+// Generate vCard contact QR
+const contact = {
+  name: 'John Doe',
+  organization: 'Tech Corp',
+  phone: '+1234567890',
+  email: 'john@example.com',
+  url: 'https://johndoe.com'
+};
+const vCardResult = qr.call('generateVCard', contact, 300);
+
+// Generate WiFi connection QR
+const wifi = {
+  ssid: 'MyNetwork',
+  password: 'mypassword',
+  security: 'WPA',
+  hidden: false
+};
+const wifiResult = qr.call('generateWiFiQR', wifi, 256);
+
+// Generate barcode
+const barcodeResult = qr.call('generateBarcode', '1234567890128', 'ean13', 400, 200);
+if (barcodeResult.error) {
+  console.error('Barcode generation failed:', barcodeResult.error);
+} else {
+  console.log('Barcode type:', barcodeResult.type);
+  console.log('Dimensions:', barcodeResult.width + 'x' + barcodeResult.height);
+}
+```
 
 ```javascript
 // Load image module
@@ -166,6 +218,66 @@ if (compressResult.error) {
 ```jsx
 import React, { useState, useEffect } from 'react';
 import { useWasmFromGitHub } from 'gowm/hooks/useWasm';
+
+function QRGenerator() {
+  const { wasm: qr, loading, error } = useWasmFromGitHub('your-org/wasm-projects', {
+    path: 'qr-wasm',
+    name: 'qr'
+  });
+  
+  const [qrImage, setQrImage] = useState('');
+  const [text, setText] = useState('Hello QR World!');
+
+  useEffect(() => {
+    if (qr) {
+      qr.call('setSilentMode', true);
+    }
+  }, [qr]);
+
+  const generateQR = () => {
+    if (!qr) return;
+    
+    const result = qr.call('generateQRCode', text, 256, 'HIGH');
+    if (result.error) {
+      console.error('QR generation error:', result.error);
+    } else {
+      setQrImage('data:image/png;base64,' + result.base64Image);
+    }
+  };
+
+  const generateVCard = () => {
+    if (!qr) return;
+    
+    const contact = {
+      name: 'John Doe',
+      organization: 'Tech Corp',
+      phone: '+1234567890',
+      email: 'john@example.com'
+    };
+    
+    const result = qr.call('generateVCard', contact, 256);
+    if (!result.error) {
+      setQrImage('data:image/png;base64,' + result.base64Image);
+    }
+  };
+
+  if (loading) return <div>Loading QR module...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <div>
+      <h3>QR Code Generator</h3>
+      <input 
+        value={text} 
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Enter text for QR code" 
+      />
+      <button onClick={generateQR}>Generate QR Code</button>
+      <button onClick={generateVCard}>Generate vCard</button>
+      {qrImage && <img src={qrImage} alt="QR Code" style={{margin: '10px'}} />}
+    </div>
+  );
+}
 
 function MathCalculator() {
   const { wasm: math, loading, error } = useWasmFromGitHub('your-org/wasm-projects', {
@@ -408,6 +520,7 @@ wasm-projects/
 ├── math-wasm/              # Math operations module
 ├── image-wasm/             # Image processing module
 ├── crypto-wasm/            # Cryptographic operations module
+├── qr-wasm/                # QR codes and barcodes module
 └── readme.md               # This file
 ```
 
@@ -438,8 +551,9 @@ These modules are showcased in the [WASM Manager website](../website) which prov
 - **Error Handling**: Consistent error patterns across all modules
 - **Function Discovery**: Standard introspection capabilities
 - **Complete TypeScript types** for auto-completion
-- **Optimized compression**: 16MB → 4.1MB (74% reduction)
+- **Optimized compression**: 19.1MB → 4.9MB (74% reduction)
 - **SHA256 integrity hash** for security
 - **Standardized build scripts** with optimizations
 - **Complete documentation** with practical GoWM examples
+- **QR & Barcode Support**: Comprehensive code generation capabilities
 - **Consistent structure** across all modules
