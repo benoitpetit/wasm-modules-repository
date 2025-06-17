@@ -92,7 +92,7 @@ echo -e "   Functions: generateQRCode, generateBarcode, generateVCard, generateW
 echo ""
 echo -e "${YELLOW}📝 Usage Examples:${NC}"
 echo -e "   const qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {"
-echo -e "     branch: 'main', name: 'qr-wasm'"
+echo -e "     branch: 'master', name: 'qr-wasm'"
 echo -e "   });"
 echo -e "   const result = qr.call('generateQRCode', 'Hello World', 256);"
 echo ""

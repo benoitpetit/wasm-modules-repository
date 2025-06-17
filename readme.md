@@ -46,7 +46,7 @@ import { loadFromGitHub } from 'gowm';
 
 // Load math module
 const math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'main',
+  branch: 'master',
   name: 'math-wasm'
 });
 
@@ -73,7 +73,7 @@ if (typeof result === 'string' && result.includes('Erreur')) {
 ```javascript
 // Load math module
 const math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'main',
+  branch: 'master',
   name: 'math-wasm'
 });
 
@@ -103,7 +103,7 @@ operations.forEach(({ func, args }) => {
 ```javascript
 // Load crypto module
 const crypto = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'main',
+  branch: 'master',
   name: 'crypto-wasm'
 });
 
@@ -143,7 +143,7 @@ if (keyResult.error) {
 ```javascript
 // Load QR module
 const qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'main',
+  branch: 'master',
   name: 'qr-wasm'
 });
 
@@ -194,7 +194,7 @@ if (barcodeResult.error) {
 ```javascript
 // Load image module
 const image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'main',
+  branch: 'master',
   name: 'image-wasm'
 });
 
@@ -220,7 +220,7 @@ import { useWasmFromGitHub } from 'gowm/hooks/useWasm';
 
 function QRGenerator() {
   const { wasm: qr, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {
-    branch: 'main',
+    branch: 'master',
     name: 'qr-wasm'
   });
   
@@ -280,7 +280,7 @@ function QRGenerator() {
 
 function MathCalculator() {
   const { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {
-    branch: 'main',
+    branch: 'master',
     name: 'math-wasm'
   });
   
@@ -344,7 +344,7 @@ import { ref } from 'vue';
 import { useWasmFromGitHub } from 'gowm/composables/useWasm';
 
 const { wasm: crypto, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'main',
+  branch: 'master',
   name: 'crypto-wasm'
 });
 

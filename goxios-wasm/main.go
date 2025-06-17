@@ -12,6 +12,10 @@ import (
 )
 
 var silentMode = false
+var globalDefaults = RequestConfig{
+	Timeout: 5000, // Default timeout of 5 seconds
+	Headers: make(map[string]string),
+}
 
 // RequestConfig structure pour la configuration des requêtes
 type RequestConfig struct {
@@ -32,10 +36,10 @@ type Response struct {
 
 // Error structure pour les erreurs
 type HTTPError struct {
-	Message    string        `json:"message"`
-	Status     int           `json:"status"`
-	Response   *Response     `json:"response,omitempty"`
-	Config     RequestConfig `json:"config"`
+	Message  string        `json:"message"`
+	Status   int           `json:"status"`
+	Response *Response     `json:"response,omitempty"`
+	Config   RequestConfig `json:"config"`
 }
 
 // Fonction pour activer/désactiver le mode silencieux
@@ -46,10 +50,54 @@ func setSilentMode(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(silentMode)
 }
 
+// setDefaults - Set global default configuration
+func setDefaults(this js.Value, args []js.Value) interface{} {
+	if len(args) < 1 {
+		return js.ValueOf(map[string]interface{}{
+			"error": "Configuration object required for setDefaults",
+		})
+	}
+
+	config := parseConfig(args[0])
+
+	// Merge with existing defaults
+	if config.Timeout > 0 {
+		globalDefaults.Timeout = config.Timeout
+	}
+	if config.Headers != nil {
+		if globalDefaults.Headers == nil {
+			globalDefaults.Headers = make(map[string]string)
+		}
+		for key, value := range config.Headers {
+			globalDefaults.Headers[key] = value
+		}
+	}
+	if config.URL != "" {
+		globalDefaults.URL = config.URL
+	}
+
+	if !silentMode {
+		fmt.Printf("Goxios WASM: Global defaults updated\n")
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"success": true,
+		"config":  convertToJSValue(globalDefaults),
+	})
+}
+
+// getDefaults - Get current global default configuration
+func getDefaults(this js.Value, args []js.Value) interface{} {
+	return js.ValueOf(map[string]interface{}{
+		"config": convertToJSValue(globalDefaults),
+	})
+}
+
 // getAvailableFunctions - Get list of available functions
 func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 	functions := []string{
-		"get", "post", "put", "delete", "patch", "request", "create", "getAvailableFunctions", "setSilentMode",
+		"get", "post", "put", "delete", "patch", "request", "create",
+		"setDefaults", "getDefaults", "getAvailableFunctions", "setSilentMode",
 	}
 	return js.ValueOf(functions)
 }
@@ -63,10 +111,14 @@ func get(this js.Value, args []js.Value) interface{} {
 	url := args[0].String()
 	var config RequestConfig
 
+	// Start with global defaults
+	config = globalDefaults
+
 	// Configuration optionnelle
 	if len(args) > 1 && !args[1].IsUndefined() {
 		configJS := args[1]
-		config = parseConfig(configJS)
+		userConfig := parseConfig(configJS)
+		config = mergeConfig(config, userConfig)
 	}
 
 	config.Method = "GET"
@@ -82,8 +134,10 @@ func post(this js.Value, args []js.Value) interface{} {
 	}
 
 	url := args[0].String()
-	var config RequestConfig
 	var data interface{}
+
+	// Start with global defaults
+	config := globalDefaults
 
 	// Data optionnelle
 	if len(args) > 1 && !args[1].IsUndefined() {
@@ -92,7 +146,8 @@ func post(this js.Value, args []js.Value) interface{} {
 
 	// Configuration optionnelle
 	if len(args) > 2 && !args[2].IsUndefined() {
-		config = parseConfig(args[2])
+		userConfig := parseConfig(args[2])
+		config = mergeConfig(config, userConfig)
 	}
 
 	config.Method = "POST"
@@ -561,10 +616,10 @@ func makeRequest(config RequestConfig) interface{} {
 
 			// Créer la réponse
 			response := Response{
-				Data:   responseData,
-				Status: resp.StatusCode,
+				Data:    responseData,
+				Status:  resp.StatusCode,
 				Headers: make(map[string]string),
-				Config: config,
+				Config:  config,
 			}
 
 			// Copier les headers de réponse
@@ -643,6 +698,8 @@ func main() {
 	goxios.Set("patch", js.FuncOf(patch))
 	goxios.Set("request", js.FuncOf(request))
 	goxios.Set("create", js.FuncOf(create))
+	goxios.Set("setDefaults", js.FuncOf(setDefaults))
+	goxios.Set("getDefaults", js.FuncOf(getDefaults))
 	goxios.Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
 	goxios.Set("setSilentMode", js.FuncOf(setSilentMode))
 
@@ -657,6 +714,8 @@ func main() {
 	js.Global().Set("patch", js.FuncOf(patch))
 	js.Global().Set("request", js.FuncOf(request))
 	js.Global().Set("create", js.FuncOf(create))
+	js.Global().Set("setDefaults", js.FuncOf(setDefaults))
+	js.Global().Set("getDefaults", js.FuncOf(getDefaults))
 	js.Global().Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
 	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
 

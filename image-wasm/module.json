@@ -123,7 +123,7 @@
         "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
     },
     "gowmConfig": {
-        "supportedBranches": ["main", "stable"],
+        "supportedBranches": ["master", "stable"],
         "preferredFilename": "main.wasm",
         "autoDetect": true,
         "readySignal": "__gowm_ready",
@@ -198,7 +198,7 @@
         {
             "title": "GoWM Integration - Basic Image Compression",
             "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load image module\nconst image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  name: 'image-wasm',\n  branch: 'main'\n});\n\n// Configure module\nimage.call('setSilentMode', true);\n\n// Convert file to base64\nconst fileInput = document.getElementById('imageFile');\nconst file = fileInput.files[0];\nconst base64 = await fileToBase64(file);\n\n// Compress JPEG with error handling\nconst result = image.call('compressJPEG', base64, 80);\nif (result.error) {\n  console.error('Compression failed:', result.error);\n} else {\n  console.log('Original size:', result.originalSize, 'bytes');\n  console.log('Compressed size:', result.newSize, 'bytes');\n  console.log('Compression ratio:', result.compressionRatio);\n}\n\n// Helper function\nfunction fileToBase64(file) {\n  return new Promise((resolve, reject) => {\n    const reader = new FileReader();\n    reader.readAsDataURL(file);\n    reader.onload = () => resolve(reader.result.split(',')[1]);\n    reader.onerror = error => reject(error);\n  });\n}"
+            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load image module\nconst image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  name: 'image-wasm',\n  branch: 'master'\n});\n\n// Configure module\nimage.call('setSilentMode', true);\n\n// Convert file to base64\nconst fileInput = document.getElementById('imageFile');\nconst file = fileInput.files[0];\nconst base64 = await fileToBase64(file);\n\n// Compress JPEG with error handling\nconst result = image.call('compressJPEG', base64, 80);\nif (result.error) {\n  console.error('Compression failed:', result.error);\n} else {\n  console.log('Original size:', result.originalSize, 'bytes');\n  console.log('Compressed size:', result.newSize, 'bytes');\n  console.log('Compression ratio:', result.compressionRatio);\n}\n\n// Helper function\nfunction fileToBase64(file) {\n  return new Promise((resolve, reject) => {\n    const reader = new FileReader();\n    reader.readAsDataURL(file);\n    reader.onload = () => resolve(reader.result.split(',')[1]);\n    reader.onerror = error => reject(error);\n  });\n}"
         },
         {
             "title": "Image Processing Pipeline",
