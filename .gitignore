@@ -116,14 +116,6 @@ site/
 generated/
 auto-generated/
 
-# WASM module subdirectories (build artifacts)
-crypto-wasm/crypto-wasm/
-goxios-wasm/goxios-wasm/
-image-wasm/image-wasm/
-math-wasm/math-wasm/
-pdf-wasm/pdf-wasm/
-qr-wasm/qr-wasm/
-
 # Performance profiling
 *.prof
 *.cpu

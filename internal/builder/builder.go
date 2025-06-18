@@ -447,23 +447,6 @@ func dirExists(path string) bool {
 	return err == nil && stat.IsDir()
 }
 
-func copyFile(src, dst string) error {
-	sourceFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer sourceFile.Close()
-
-	destFile, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destFile.Close()
-
-	_, err = io.Copy(destFile, sourceFile)
-	return err
-}
-
 func formatBytes(bytes int64) string {
 	const unit = 1024
 	if bytes < unit {

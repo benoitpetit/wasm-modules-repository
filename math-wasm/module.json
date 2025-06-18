@@ -1,462 +1,161 @@
 {
-  "name": "math-wasm",
-  "description": "Comprehensive high-performance mathematical calculation module written in Go and compiled to WebAssembly. Features basic arithmetic, advanced mathematics, trigonometry, logarithms, number theory, statistics, and utility functions. Optimized for GoWM integration.",
-  "version": "0.2.0",
   "author": "Ben",
-  "license": "MIT",
-  "tags": [
-    "math",
-    "calculator",
-    "arithmetic",
-    "trigonometry",
-    "statistics",
-    "number-theory",
-    "logarithms",
-    "advanced-math",
-    "wasm",
-    "go",
-    "gowm"
-  ],
-  "functions": [
+  "buildInfo": {
+    "buildCommand": "wasm-manager build",
+    "buildTime": "2025-06-18T22:12:37+02:00",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm",
+      "CGO_ENABLED=0",
+      "-ldflags=-s -w -buildid=",
+      "-trimpath",
+      "-buildmode=default",
+      "-tags=netgo,osusergo",
+      "-a",
+      "-gcflags=-l=4 -B",
+      "wasm-opt=-Oz --enable-bulk-memory"
+    ],
+    "goModule": true,
+    "goVersion": "1.24.3",
+    "language": "Go",
+    "lastModified": "2025-06-18T22:12:35+02:00",
+    "optimizations": [
+      "Strip debugging symbols (-ldflags=\"-s -w\")",
+      "Trim path information (-trimpath)",
+      "Disable CGO for security",
+      "wasm-opt optimization when available"
+    ],
+    "outputFile": "main.wasm",
+    "target": "js/wasm",
+    "wasmOptUsed": true
+  },
+  "buildTime": 1750277557,
+  "changelog": {
+    "changes": [
+      "Added comprehensive trigonometric functions (sin, cos, tan)",
+      "Implemented logarithmic functions (log, log10)",
+      "Added number theory functions (gcd, lcm, isPrime, fibonacci)",
+      "Implemented statistical functions (mean, median, standardDeviation)",
+      "Added utility functions (round, ceil, floor, min, max)",
+      "Enhanced error handling and input validation",
+      "Improved power function using native math library",
+      "Added overflow protection for factorial and fibonacci",
+      "Updated documentation with comprehensive examples",
+      "Optimized performance for all mathematical operations"
+    ],
+    "releaseDate": "2025-01-20",
+    "version": "0.2.0"
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "14.0.0+"
+  },
+  "dependencies": [],
+  "description": "Comprehensive high-performance mathematical calculation module written in Go and compiled to WebAssembly. Features basic arithmetic, advanced mathematics, trigonometry, logarithms, number theory, statistics, and utility functions. Optimized for GoWM integration.",
+  "ecosystem": {
+    "category": "mathematics",
+    "industry": [
+      "finance",
+      "education",
+      "engineering",
+      "research",
+      "data-science",
+      "gaming",
+      "simulation"
+    ],
+    "relatedModules": [
+      "crypto-wasm",
+      "pdf-wasm"
+    ],
+    "subcategory": "comprehensive-math",
+    "useCase": [
+      "web-calculators",
+      "scientific-computing",
+      "data-analysis",
+      "educational-tools",
+      "financial-calculations",
+      "engineering-applications",
+      "statistical-analysis",
+      "trigonometric-calculations"
+    ]
+  },
+  "errorHandling": {
+    "description": "Math module returns error strings when operations fail, otherwise returns the calculated result",
+    "detection": "if (typeof result === 'string' \u0026\u0026 result.startsWith('Error:')) { /* handle error */ } else { /* use result */ }",
+    "examples": [
+      {
+        "cause": "Called add() with insufficient arguments",
+        "error": "Error: two arguments required for add"
+      },
+      {
+        "cause": "Called divide() with divisor = 0",
+        "error": "Error: division by zero"
+      },
+      {
+        "cause": "Called factorial() with negative number",
+        "error": "Error: factorial not defined for negative numbers"
+      },
+      {
+        "cause": "Called sqrt() with negative number",
+        "error": "Error: square root of negative number"
+      },
+      {
+        "cause": "Called log() or log10() with non-positive number",
+        "error": "Error: logarithm of non-positive number"
+      },
+      {
+        "cause": "Called tan() with value like π/2 where tangent is undefined",
+        "error": "Error: tangent is undefined for this value"
+      }
+    ],
+    "pattern": "string-based"
+  },
+  "examples": [
     {
-      "name": "add",
-      "description": "Add two numbers with error validation",
-      "category": "Basic Arithmetic",
-      "parameters": [
-        {
-          "name": "a",
-          "type": "number",
-          "description": "First number to add"
-        },
-        {
-          "name": "b",
-          "type": "number",
-          "description": "Second number to add"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('add', 5, 3); // Returns: 8"
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load enhanced math module\nconst math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'math-wasm',\n  filename: 'main.wasm',\n  name: 'math-wasm',\n  branch: 'master'\n});\n\n// Configure for production use\nmath.call('setSilentMode', true);\n\n// Basic arithmetic\nconsole.log('Addition:', math.call('add', 15, 25)); // 40\nconsole.log('Division:', math.call('divide', 100, 4)); // 25\nconsole.log('Power:', math.call('power', 2, 10)); // 1024\n\n// Advanced functions\nconsole.log('Square root:', math.call('sqrt', 144)); // 12\nconsole.log('Factorial:', math.call('factorial', 7)); // 5040\nconsole.log('Fibonacci:', math.call('fibonacci', 15)); // 610",
+      "language": "javascript",
+      "title": "Basic Calculator Implementation"
     },
     {
-      "name": "subtract",
-      "description": "Subtract two numbers with error validation",
-      "category": "Basic Arithmetic",
-      "parameters": [
-        {
-          "name": "a",
-          "type": "number",
-          "description": "First number"
-        },
-        {
-          "name": "b",
-          "type": "number",
-          "description": "Number to subtract"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('subtract', 10, 3); // Returns: 7"
+      "code": "// Trigonometric calculations\nconst angle = Math.PI / 4; // 45 degrees in radians\nconsole.log('sin(π/4):', math.call('sin', angle)); // ~0.707\nconsole.log('cos(π/4):', math.call('cos', angle)); // ~0.707\nconsole.log('tan(π/4):', math.call('tan', angle)); // ~1\n\n// Logarithmic calculations\nconsole.log('ln(e):', math.call('log', Math.E)); // 1\nconsole.log('log10(1000):', math.call('log10', 1000)); // 3\n\n// Number theory\nconsole.log('GCD(48, 18):', math.call('gcd', 48, 18)); // 6\nconsole.log('LCM(12, 8):', math.call('lcm', 12, 8)); // 24\nconsole.log('Is 17 prime?:', math.call('isPrime', 17)); // true\nconsole.log('Is 15 prime?:', math.call('isPrime', 15)); // false",
+      "language": "javascript",
+      "title": "Scientific Calculator Functions"
     },
     {
-      "name": "multiply",
-      "description": "Multiply two numbers with error validation",
-      "category": "Basic Arithmetic",
-      "parameters": [
-        {
-          "name": "a",
-          "type": "number",
-          "description": "First number"
-        },
-        {
-          "name": "b",
-          "type": "number",
-          "description": "Second number"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('multiply', 4, 7); // Returns: 28"
+      "code": "// Sample data set\nconst data = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];\n\n// Calculate statistics\nconst mean = math.call('mean', ...data);\nconst median = math.call('median', ...data);\nconst stdDev = math.call('standardDeviation', ...data);\nconst minimum = math.call('min', ...data);\nconst maximum = math.call('max', ...data);\n\nconsole.log('Dataset analysis:');\nconsole.log('Mean:', mean); // 11\nconsole.log('Median:', median); // 11\nconsole.log('Standard Deviation:', stdDev.toFixed(2)); // ~5.74\nconsole.log('Range:', minimum, 'to', maximum); // 2 to 20\n\n// Utility functions\nconsole.log('Rounded mean:', math.call('round', mean, 1)); // 11.0\nconsole.log('Ceiling of std dev:', math.call('ceil', stdDev)); // 6\nconsole.log('Floor of std dev:', math.call('floor', stdDev)); // 5",
+      "language": "javascript",
+      "title": "Statistical Analysis"
     },
     {
-      "name": "divide",
-      "description": "Divide two numbers with division by zero protection",
-      "category": "Basic Arithmetic",
-      "parameters": [
-        {
-          "name": "a",
-          "type": "number",
-          "description": "Dividend"
-        },
-        {
-          "name": "b",
-          "type": "number",
-          "description": "Divisor"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message if divisor is 0",
-      "example": "const result = math.call('divide', 15, 3); // Returns: 5"
+      "code": "// Helper function for safe math operations\nfunction safeMath(operation, ...args) {\n  const result = math.call(operation, ...args);\n  \n  if (typeof result === 'string' \u0026\u0026 result.startsWith('Error:')) {\n    throw new Error(`Math operation '${operation}' failed: ${result}`);\n  }\n  \n  return result;\n}\n\n// Safe usage examples\ntry {\n  console.log('Safe division:', safeMath('divide', 10, 2)); // 5\n  console.log('Safe square root:', safeMath('sqrt', 25)); // 5\n  \n  // These will throw errors\n  safeMath('divide', 10, 0); // Throws: division by zero\n  safeMath('sqrt', -1); // Throws: square root of negative\n  safeMath('log', 0); // Throws: logarithm of non-positive\n  \n} catch (error) {\n  console.error('Math error:', error.message);\n}",
+      "language": "javascript",
+      "title": "Error Handling Best Practices"
     },
     {
-      "name": "power",
-      "description": "Raise a number to a power using native math library",
-      "category": "Basic Arithmetic",
-      "parameters": [
-        {
-          "name": "base",
-          "type": "number",
-          "description": "Base number"
-        },
-        {
-          "name": "exponent",
-          "type": "number",
-          "description": "Exponent (supports negative and fractional values)"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message for invalid results",
-      "example": "const result = math.call('power', 2, 3); // Returns: 8"
-    },
-    {
-      "name": "factorial",
-      "description": "Calculate the factorial of a non-negative integer (up to 170)",
-      "category": "Basic Arithmetic",
-      "parameters": [
-        {
-          "name": "n",
-          "type": "number",
-          "description": "The number to calculate factorial for (0 ≤ n ≤ 170)"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message for negative numbers or overflow",
-      "example": "const result = math.call('factorial', 5); // Returns: 120"
-    },
-    {
-      "name": "sqrt",
-      "description": "Calculate the square root of a number",
-      "category": "Advanced Math",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "The number to calculate square root for (must be non-negative)"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message for negative numbers",
-      "example": "const result = math.call('sqrt', 16); // Returns: 4"
-    },
-    {
-      "name": "abs",
-      "description": "Calculate the absolute value of a number",
-      "category": "Advanced Math",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "The number to calculate absolute value for"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('abs', -5); // Returns: 5"
-    },
-    {
-      "name": "min",
-      "description": "Find the minimum value among multiple numbers",
-      "category": "Advanced Math",
-      "parameters": [
-        {
-          "name": "...numbers",
-          "type": "number",
-          "description": "At least two numbers to compare"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message if less than 2 arguments",
-      "example": "const result = math.call('min', 5, 2, 8, 1); // Returns: 1"
-    },
-    {
-      "name": "max",
-      "description": "Find the maximum value among multiple numbers",
-      "category": "Advanced Math",
-      "parameters": [
-        {
-          "name": "...numbers",
-          "type": "number",
-          "description": "At least two numbers to compare"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message if less than 2 arguments",
-      "example": "const result = math.call('max', 5, 2, 8, 1); // Returns: 8"
-    },
-    {
-      "name": "sin",
-      "description": "Calculate the sine of an angle in radians",
-      "category": "Trigonometry",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "Angle in radians"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('sin', Math.PI / 2); // Returns: 1"
-    },
-    {
-      "name": "cos",
-      "description": "Calculate the cosine of an angle in radians",
-      "category": "Trigonometry",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "Angle in radians"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('cos', 0); // Returns: 1"
-    },
-    {
-      "name": "tan",
-      "description": "Calculate the tangent of an angle in radians",
-      "category": "Trigonometry",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "Angle in radians"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message for undefined values (e.g., π/2)",
-      "example": "const result = math.call('tan', Math.PI / 4); // Returns: 1"
-    },
-    {
-      "name": "log",
-      "description": "Calculate the natural logarithm (ln) of a number",
-      "category": "Logarithms",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "The number to calculate natural logarithm for (must be positive)"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message for non-positive numbers",
-      "example": "const result = math.call('log', Math.E); // Returns: 1"
-    },
-    {
-      "name": "log10",
-      "description": "Calculate the base-10 logarithm of a number",
-      "category": "Logarithms",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "The number to calculate base-10 logarithm for (must be positive)"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message for non-positive numbers",
-      "example": "const result = math.call('log10', 100); // Returns: 2"
-    },
-    {
-      "name": "gcd",
-      "description": "Calculate the Greatest Common Divisor of two integers",
-      "category": "Number Theory",
-      "parameters": [
-        {
-          "name": "a",
-          "type": "number",
-          "description": "First integer"
-        },
-        {
-          "name": "b",
-          "type": "number",
-          "description": "Second integer"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('gcd', 48, 18); // Returns: 6"
-    },
-    {
-      "name": "lcm",
-      "description": "Calculate the Least Common Multiple of two integers",
-      "category": "Number Theory",
-      "parameters": [
-        {
-          "name": "a",
-          "type": "number",
-          "description": "First integer"
-        },
-        {
-          "name": "b",
-          "type": "number",
-          "description": "Second integer"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('lcm', 4, 6); // Returns: 12"
-    },
-    {
-      "name": "isPrime",
-      "description": "Check if a number is prime",
-      "category": "Number Theory",
-      "parameters": [
-        {
-          "name": "n",
-          "type": "number",
-          "description": "The integer to check for primality"
-        }
-      ],
-      "returnType": "boolean",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('isPrime', 17); // Returns: true"
-    },
-    {
-      "name": "fibonacci",
-      "description": "Calculate the nth Fibonacci number (up to n=92)",
-      "category": "Number Theory",
-      "parameters": [
-        {
-          "name": "n",
-          "type": "number",
-          "description": "The position in Fibonacci sequence (0 ≤ n ≤ 92)"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message for negative numbers or overflow",
-      "example": "const result = math.call('fibonacci', 10); // Returns: 55"
-    },
-    {
-      "name": "mean",
-      "description": "Calculate the arithmetic mean (average) of multiple numbers",
-      "category": "Statistics",
-      "parameters": [
-        {
-          "name": "...numbers",
-          "type": "number",
-          "description": "At least one number to calculate mean for"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message if no arguments provided",
-      "example": "const result = math.call('mean', 1, 2, 3, 4, 5); // Returns: 3"
-    },
-    {
-      "name": "median",
-      "description": "Calculate the median of multiple numbers",
-      "category": "Statistics",
-      "parameters": [
-        {
-          "name": "...numbers",
-          "type": "number",
-          "description": "At least one number to calculate median for"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message if no arguments provided",
-      "example": "const result = math.call('median', 1, 2, 3, 4, 5); // Returns: 3"
-    },
-    {
-      "name": "standardDeviation",
-      "description": "Calculate the population standard deviation of multiple numbers",
-      "category": "Statistics",
-      "parameters": [
-        {
-          "name": "...numbers",
-          "type": "number",
-          "description": "At least two numbers to calculate standard deviation for"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message if less than 2 arguments",
-      "example": "const result = math.call('standardDeviation', 2, 4, 4, 4, 5, 5, 7, 9); // Returns: 2"
-    },
-    {
-      "name": "round",
-      "description": "Round a number to specified decimal places",
-      "category": "Utilities",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "The number to round"
-        },
-        {
-          "name": "precision",
-          "type": "number",
-          "description": "Number of decimal places (optional, default: 0)"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('round', 3.14159, 2); // Returns: 3.14"
-    },
-    {
-      "name": "ceil",
-      "description": "Round a number up to the nearest integer",
-      "category": "Utilities",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "The number to round up"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('ceil', 3.14); // Returns: 4"
-    },
-    {
-      "name": "floor",
-      "description": "Round a number down to the nearest integer",
-      "category": "Utilities",
-      "parameters": [
-        {
-          "name": "x",
-          "type": "number",
-          "description": "The number to round down"
-        }
-      ],
-      "returnType": "number",
-      "errorPattern": "Returns string with error message on failure",
-      "example": "const result = math.call('floor', 3.14); // Returns: 3"
-    },
-    {
-      "name": "setSilentMode",
-      "description": "Enable/disable silent mode for console logs",
-      "category": "System",
-      "parameters": [
-        {
-          "name": "silent",
-          "type": "boolean",
-          "description": "true to enable silent mode, false to disable it"
-        }
-      ],
-      "returnType": "boolean",
-      "example": "math.call('setSilentMode', true); // Returns: true and enables silent mode"
-    },
-    {
-      "name": "getAvailableFunctions",
-      "description": "Get list of all available functions in the module",
-      "category": "System",
-      "parameters": [],
-      "returnType": "Array<string>",
-      "example": "const functions = math.call('getAvailableFunctions'); // Returns array of function names"
+      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction AdvancedCalculator() {\n  const { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'math-wasm',\n    filename: 'main.wasm',\n    name: 'math-wasm'\n  });\n  \n  const [display, setDisplay] = useState('0');\n  const [functions, setFunctions] = useState([]);\n  const [selectedCategory, setSelectedCategory] = useState('Basic Arithmetic');\n\n  useEffect(() =\u003e {\n    if (math) {\n      math.call('setSilentMode', true);\n      const allFunctions = math.call('getAvailableFunctions');\n      setFunctions(allFunctions);\n    }\n  }, [math]);\n\n  const calculate = (operation, ...args) =\u003e {\n    if (!math) return;\n    \n    const result = math.call(operation, ...args);\n    if (typeof result === 'string' \u0026\u0026 result.startsWith('Error:')) {\n      setDisplay(result);\n    } else {\n      setDisplay(result.toString());\n    }\n  };\n\n  const categories = {\n    'Basic Arithmetic': ['add', 'subtract', 'multiply', 'divide'],\n    'Advanced Math': ['sqrt', 'abs', 'power', 'factorial'],\n    'Trigonometry': ['sin', 'cos', 'tan'],\n    'Statistics': ['mean', 'median', 'standardDeviation']\n  };\n\n  if (loading) return \u003cdiv\u003eLoading calculator...\u003c/div\u003e;\n  if (error) return \u003cdiv\u003eError: {error.message}\u003c/div\u003e;\n\n  return (\n    \u003cdiv className=\"calculator\"\u003e\n      \u003cdiv className=\"display\"\u003e{display}\u003c/div\u003e\n      \n      \u003cdiv className=\"categories\"\u003e\n        {Object.keys(categories).map(category =\u003e (\n          \u003cbutton\n            key={category}\n            onClick={() =\u003e setSelectedCategory(category)}\n            className={selectedCategory === category ? 'active' : ''}\n          \u003e\n            {category}\n          \u003c/button\u003e\n        ))}\n      \u003c/div\u003e\n      \n      \u003cdiv className=\"functions\"\u003e\n        {categories[selectedCategory]?.map(func =\u003e (\n          \u003cbutton\n            key={func}\n            onClick={() =\u003e {\n              // Example usage - in real app, you'd have input fields\n              if (func === 'add') calculate('add', 5, 3);\n              if (func === 'sqrt') calculate('sqrt', 16);\n              if (func === 'sin') calculate('sin', Math.PI / 2);\n            }}\n          \u003e\n            {func}\n          \u003c/button\u003e\n        ))}\n      \u003c/div\u003e\n    \u003c/div\u003e\n  );\n}",
+      "language": "jsx",
+      "title": "React Calculator Component"
     }
   ],
+  "fileInfo": {
+    "binarySize": "2.3 MB",
+    "compressedSize": "700.7 KB",
+    "compressionRatio": "70%",
+    "sourceLines": 446
+  },
   "functionCategories": {
+    "Advanced Math": [
+      "sqrt",
+      "abs",
+      "min",
+      "max"
+    ],
     "Basic Arithmetic": [
       "add",
       "subtract",
@@ -464,17 +163,6 @@
       "divide",
       "power",
       "factorial"
-    ],
-    "Advanced Math": [
-      "sqrt",
-      "abs",
-      "min",
-      "max"
-    ],
-    "Trigonometry": [
-      "sin",
-      "cos",
-      "tan"
     ],
     "Logarithms": [
       "log",
@@ -491,71 +179,501 @@
       "median",
       "standardDeviation"
     ],
+    "System": [
+      "setSilentMode",
+      "getAvailableFunctions"
+    ],
+    "Trigonometry": [
+      "sin",
+      "cos",
+      "tan"
+    ],
     "Utilities": [
       "round",
       "ceil",
       "floor"
-    ],
-    "System": [
-      "setSilentMode",
-      "getAvailableFunctions"
     ]
   },
-  "errorHandling": {
-    "pattern": "string-based",
-    "description": "Math module returns error strings when operations fail, otherwise returns the calculated result",
-    "examples": [
-      {
-        "error": "Error: two arguments required for add",
-        "cause": "Called add() with insufficient arguments"
-      },
-      {
-        "error": "Error: division by zero",
-        "cause": "Called divide() with divisor = 0"
-      },
-      {
-        "error": "Error: factorial not defined for negative numbers",
-        "cause": "Called factorial() with negative number"
-      },
-      {
-        "error": "Error: square root of negative number",
-        "cause": "Called sqrt() with negative number"
-      },
-      {
-        "error": "Error: logarithm of non-positive number",
-        "cause": "Called log() or log10() with non-positive number"
-      },
-      {
-        "error": "Error: tangent is undefined for this value",
-        "cause": "Called tan() with value like π/2 where tangent is undefined"
-      }
-    ],
-    "detection": "if (typeof result === 'string' && result.startsWith('Error:')) { /* handle error */ } else { /* use result */ }"
-  },
+  "functions": [
+    {
+      "category": "Basic Arithmetic",
+      "description": "Add two numbers with error validation",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('add', 5, 3); // Returns: 8",
+      "name": "add",
+      "parameters": [
+        {
+          "description": "First number to add",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "Second number to add",
+          "name": "b",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Basic Arithmetic",
+      "description": "Subtract two numbers with error validation",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('subtract', 10, 3); // Returns: 7",
+      "name": "subtract",
+      "parameters": [
+        {
+          "description": "First number",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "Number to subtract",
+          "name": "b",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Basic Arithmetic",
+      "description": "Multiply two numbers with error validation",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('multiply', 4, 7); // Returns: 28",
+      "name": "multiply",
+      "parameters": [
+        {
+          "description": "First number",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "Second number",
+          "name": "b",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Basic Arithmetic",
+      "description": "Divide two numbers with division by zero protection",
+      "errorPattern": "Returns string with error message if divisor is 0",
+      "example": "const result = math.call('divide', 15, 3); // Returns: 5",
+      "name": "divide",
+      "parameters": [
+        {
+          "description": "Dividend",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "Divisor",
+          "name": "b",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Basic Arithmetic",
+      "description": "Raise a number to a power using native math library",
+      "errorPattern": "Returns string with error message for invalid results",
+      "example": "const result = math.call('power', 2, 3); // Returns: 8",
+      "name": "power",
+      "parameters": [
+        {
+          "description": "Base number",
+          "name": "base",
+          "type": "number"
+        },
+        {
+          "description": "Exponent (supports negative and fractional values)",
+          "name": "exponent",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Basic Arithmetic",
+      "description": "Calculate the factorial of a non-negative integer (up to 170)",
+      "errorPattern": "Returns string with error message for negative numbers or overflow",
+      "example": "const result = math.call('factorial', 5); // Returns: 120",
+      "name": "factorial",
+      "parameters": [
+        {
+          "description": "The number to calculate factorial for (0 ≤ n ≤ 170)",
+          "name": "n",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Advanced Math",
+      "description": "Calculate the square root of a number",
+      "errorPattern": "Returns string with error message for negative numbers",
+      "example": "const result = math.call('sqrt', 16); // Returns: 4",
+      "name": "sqrt",
+      "parameters": [
+        {
+          "description": "The number to calculate square root for (must be non-negative)",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Advanced Math",
+      "description": "Calculate the absolute value of a number",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('abs', -5); // Returns: 5",
+      "name": "abs",
+      "parameters": [
+        {
+          "description": "The number to calculate absolute value for",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Advanced Math",
+      "description": "Find the minimum value among multiple numbers",
+      "errorPattern": "Returns string with error message if less than 2 arguments",
+      "example": "const result = math.call('min', 5, 2, 8, 1); // Returns: 1",
+      "name": "min",
+      "parameters": [
+        {
+          "description": "At least two numbers to compare",
+          "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Advanced Math",
+      "description": "Find the maximum value among multiple numbers",
+      "errorPattern": "Returns string with error message if less than 2 arguments",
+      "example": "const result = math.call('max', 5, 2, 8, 1); // Returns: 8",
+      "name": "max",
+      "parameters": [
+        {
+          "description": "At least two numbers to compare",
+          "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Trigonometry",
+      "description": "Calculate the sine of an angle in radians",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('sin', Math.PI / 2); // Returns: 1",
+      "name": "sin",
+      "parameters": [
+        {
+          "description": "Angle in radians",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Trigonometry",
+      "description": "Calculate the cosine of an angle in radians",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('cos', 0); // Returns: 1",
+      "name": "cos",
+      "parameters": [
+        {
+          "description": "Angle in radians",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Trigonometry",
+      "description": "Calculate the tangent of an angle in radians",
+      "errorPattern": "Returns string with error message for undefined values (e.g., π/2)",
+      "example": "const result = math.call('tan', Math.PI / 4); // Returns: 1",
+      "name": "tan",
+      "parameters": [
+        {
+          "description": "Angle in radians",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Logarithms",
+      "description": "Calculate the natural logarithm (ln) of a number",
+      "errorPattern": "Returns string with error message for non-positive numbers",
+      "example": "const result = math.call('log', Math.E); // Returns: 1",
+      "name": "log",
+      "parameters": [
+        {
+          "description": "The number to calculate natural logarithm for (must be positive)",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Logarithms",
+      "description": "Calculate the base-10 logarithm of a number",
+      "errorPattern": "Returns string with error message for non-positive numbers",
+      "example": "const result = math.call('log10', 100); // Returns: 2",
+      "name": "log10",
+      "parameters": [
+        {
+          "description": "The number to calculate base-10 logarithm for (must be positive)",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Number Theory",
+      "description": "Calculate the Greatest Common Divisor of two integers",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('gcd', 48, 18); // Returns: 6",
+      "name": "gcd",
+      "parameters": [
+        {
+          "description": "First integer",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "Second integer",
+          "name": "b",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Number Theory",
+      "description": "Calculate the Least Common Multiple of two integers",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('lcm', 4, 6); // Returns: 12",
+      "name": "lcm",
+      "parameters": [
+        {
+          "description": "First integer",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "Second integer",
+          "name": "b",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Number Theory",
+      "description": "Check if a number is prime",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('isPrime', 17); // Returns: true",
+      "name": "isPrime",
+      "parameters": [
+        {
+          "description": "The integer to check for primality",
+          "name": "n",
+          "type": "number"
+        }
+      ],
+      "returnType": "boolean"
+    },
+    {
+      "category": "Number Theory",
+      "description": "Calculate the nth Fibonacci number (up to n=92)",
+      "errorPattern": "Returns string with error message for negative numbers or overflow",
+      "example": "const result = math.call('fibonacci', 10); // Returns: 55",
+      "name": "fibonacci",
+      "parameters": [
+        {
+          "description": "The position in Fibonacci sequence (0 ≤ n ≤ 92)",
+          "name": "n",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Statistics",
+      "description": "Calculate the arithmetic mean (average) of multiple numbers",
+      "errorPattern": "Returns string with error message if no arguments provided",
+      "example": "const result = math.call('mean', 1, 2, 3, 4, 5); // Returns: 3",
+      "name": "mean",
+      "parameters": [
+        {
+          "description": "At least one number to calculate mean for",
+          "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Statistics",
+      "description": "Calculate the median of multiple numbers",
+      "errorPattern": "Returns string with error message if no arguments provided",
+      "example": "const result = math.call('median', 1, 2, 3, 4, 5); // Returns: 3",
+      "name": "median",
+      "parameters": [
+        {
+          "description": "At least one number to calculate median for",
+          "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Statistics",
+      "description": "Calculate the population standard deviation of multiple numbers",
+      "errorPattern": "Returns string with error message if less than 2 arguments",
+      "example": "const result = math.call('standardDeviation', 2, 4, 4, 4, 5, 5, 7, 9); // Returns: 2",
+      "name": "standardDeviation",
+      "parameters": [
+        {
+          "description": "At least two numbers to calculate standard deviation for",
+          "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Utilities",
+      "description": "Round a number to specified decimal places",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('round', 3.14159, 2); // Returns: 3.14",
+      "name": "round",
+      "parameters": [
+        {
+          "description": "The number to round",
+          "name": "x",
+          "type": "number"
+        },
+        {
+          "description": "Number of decimal places (optional, default: 0)",
+          "name": "precision",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Utilities",
+      "description": "Round a number up to the nearest integer",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('ceil', 3.14); // Returns: 4",
+      "name": "ceil",
+      "parameters": [
+        {
+          "description": "The number to round up",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Utilities",
+      "description": "Round a number down to the nearest integer",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('floor', 3.14); // Returns: 3",
+      "name": "floor",
+      "parameters": [
+        {
+          "description": "The number to round down",
+          "name": "x",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "System",
+      "description": "Enable/disable silent mode for console logs",
+      "example": "math.call('setSilentMode', true); // Returns: true and enables silent mode",
+      "name": "setSilentMode",
+      "parameters": [
+        {
+          "description": "true to enable silent mode, false to disable it",
+          "name": "silent",
+          "type": "boolean"
+        }
+      ],
+      "returnType": "boolean"
+    },
+    {
+      "category": "System",
+      "description": "Get list of all available functions in the module",
+      "example": "const functions = math.call('getAvailableFunctions'); // Returns array of function names",
+      "name": "getAvailableFunctions",
+      "parameters": [],
+      "returnType": "Array\u003cstring\u003e"
+    }
+  ],
   "gowmConfig": {
-    "supportedBranches": [
-      "master",
-      "stable"
-    ],
-    "preferredFilename": "main.wasm",
     "autoDetect": true,
+    "errorPattern": "string-based",
+    "preferredFilename": "main.wasm",
     "readySignal": "__gowm_ready",
     "standardFunctions": [
       "getAvailableFunctions",
       "setSilentMode"
     ],
-    "errorPattern": "string-based"
+    "supportedBranches": [
+      "master",
+      "stable"
+    ]
   },
-  "types": [
-    {
-      "name": "MathResult",
-      "description": "Result type for math operations",
-      "properties": {
-        "success": "number | boolean (calculation result on success)",
-        "error": "string (error message on failure)"
-      }
-    }
-  ],
+  "gzipSize": 717473,
+  "license": "MIT",
+  "name": "math-wasm",
+  "performance": {
+    "benchmarks": {
+      "basicArithmetic": "\u003c 0.1ms per operation",
+      "numberTheory": "\u003c 1ms for typical inputs",
+      "statistical": "\u003c 2ms for 1000 numbers",
+      "trigonometric": "\u003c 0.5ms per operation"
+    },
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Native Go math operations using math library",
+      "Minimal JavaScript overhead",
+      "Silent mode for production environments",
+      "Optimized algorithms for number theory functions",
+      "Efficient statistical calculations",
+      "Hardware-accelerated trigonometric functions"
+    ]
+  },
+  "quality": {
+    "codeQuality": "production-ready",
+    "documentation": "comprehensive",
+    "maintainability": "high",
+    "stability": "stable",
+    "testing": "extensive"
+  },
   "security": {
     "features": [
       "Input validation for numerical parameters",
@@ -568,151 +686,43 @@
       "Error handling for undefined mathematical operations"
     ]
   },
-  "compatibility": {
-    "browsers": [
-      "Chrome 57+",
-      "Firefox 52+",
-      "Safari 11+",
-      "Edge 16+"
-    ],
-    "gowm": "1.0.0+",
-    "nodejs": "14.0.0+"
-  },
-  "performance": {
-    "features": [
-      "Compiled WebAssembly for optimal performance",
-      "Native Go math operations using math library",
-      "Minimal JavaScript overhead",
-      "Silent mode for production environments",
-      "Optimized algorithms for number theory functions",
-      "Efficient statistical calculations",
-      "Hardware-accelerated trigonometric functions"
-    ],
-    "benchmarks": {
-      "basicArithmetic": "< 0.1ms per operation",
-      "trigonometric": "< 0.5ms per operation",
-      "statistical": "< 2ms for 1000 numbers",
-      "numberTheory": "< 1ms for typical inputs"
-    }
-  },
-  "examples": [
+  "size": 2405391,
+  "tags": [
+    "math",
+    "calculator",
+    "arithmetic",
+    "trigonometry",
+    "statistics",
+    "number-theory",
+    "logarithms",
+    "advanced-math",
+    "wasm",
+    "go",
+    "gowm"
+  ],
+  "types": [
     {
-      "title": "Basic Calculator Implementation",
-      "language": "javascript",
-      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load enhanced math module\nconst math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'math-wasm',\n  filename: 'main.wasm',\n  name: 'math-wasm',\n  branch: 'master'\n});\n\n// Configure for production use\nmath.call('setSilentMode', true);\n\n// Basic arithmetic\nconsole.log('Addition:', math.call('add', 15, 25)); // 40\nconsole.log('Division:', math.call('divide', 100, 4)); // 25\nconsole.log('Power:', math.call('power', 2, 10)); // 1024\n\n// Advanced functions\nconsole.log('Square root:', math.call('sqrt', 144)); // 12\nconsole.log('Factorial:', math.call('factorial', 7)); // 5040\nconsole.log('Fibonacci:', math.call('fibonacci', 15)); // 610"
-    },
-    {
-      "title": "Scientific Calculator Functions",
-      "language": "javascript",
-      "code": "// Trigonometric calculations\nconst angle = Math.PI / 4; // 45 degrees in radians\nconsole.log('sin(π/4):', math.call('sin', angle)); // ~0.707\nconsole.log('cos(π/4):', math.call('cos', angle)); // ~0.707\nconsole.log('tan(π/4):', math.call('tan', angle)); // ~1\n\n// Logarithmic calculations\nconsole.log('ln(e):', math.call('log', Math.E)); // 1\nconsole.log('log10(1000):', math.call('log10', 1000)); // 3\n\n// Number theory\nconsole.log('GCD(48, 18):', math.call('gcd', 48, 18)); // 6\nconsole.log('LCM(12, 8):', math.call('lcm', 12, 8)); // 24\nconsole.log('Is 17 prime?:', math.call('isPrime', 17)); // true\nconsole.log('Is 15 prime?:', math.call('isPrime', 15)); // false"
-    },
-    {
-      "title": "Statistical Analysis",
-      "language": "javascript",
-      "code": "// Sample data set\nconst data = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];\n\n// Calculate statistics\nconst mean = math.call('mean', ...data);\nconst median = math.call('median', ...data);\nconst stdDev = math.call('standardDeviation', ...data);\nconst minimum = math.call('min', ...data);\nconst maximum = math.call('max', ...data);\n\nconsole.log('Dataset analysis:');\nconsole.log('Mean:', mean); // 11\nconsole.log('Median:', median); // 11\nconsole.log('Standard Deviation:', stdDev.toFixed(2)); // ~5.74\nconsole.log('Range:', minimum, 'to', maximum); // 2 to 20\n\n// Utility functions\nconsole.log('Rounded mean:', math.call('round', mean, 1)); // 11.0\nconsole.log('Ceiling of std dev:', math.call('ceil', stdDev)); // 6\nconsole.log('Floor of std dev:', math.call('floor', stdDev)); // 5"
-    },
-    {
-      "title": "Error Handling Best Practices",
-      "language": "javascript",
-      "code": "// Helper function for safe math operations\nfunction safeMath(operation, ...args) {\n  const result = math.call(operation, ...args);\n  \n  if (typeof result === 'string' && result.startsWith('Error:')) {\n    throw new Error(`Math operation '${operation}' failed: ${result}`);\n  }\n  \n  return result;\n}\n\n// Safe usage examples\ntry {\n  console.log('Safe division:', safeMath('divide', 10, 2)); // 5\n  console.log('Safe square root:', safeMath('sqrt', 25)); // 5\n  \n  // These will throw errors\n  safeMath('divide', 10, 0); // Throws: division by zero\n  safeMath('sqrt', -1); // Throws: square root of negative\n  safeMath('log', 0); // Throws: logarithm of non-positive\n  \n} catch (error) {\n  console.error('Math error:', error.message);\n}"
-    },
-    {
-      "title": "React Calculator Component",
-      "language": "jsx",
-      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction AdvancedCalculator() {\n  const { wasm: math, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'math-wasm',\n    filename: 'main.wasm',\n    name: 'math-wasm'\n  });\n  \n  const [display, setDisplay] = useState('0');\n  const [functions, setFunctions] = useState([]);\n  const [selectedCategory, setSelectedCategory] = useState('Basic Arithmetic');\n\n  useEffect(() => {\n    if (math) {\n      math.call('setSilentMode', true);\n      const allFunctions = math.call('getAvailableFunctions');\n      setFunctions(allFunctions);\n    }\n  }, [math]);\n\n  const calculate = (operation, ...args) => {\n    if (!math) return;\n    \n    const result = math.call(operation, ...args);\n    if (typeof result === 'string' && result.startsWith('Error:')) {\n      setDisplay(result);\n    } else {\n      setDisplay(result.toString());\n    }\n  };\n\n  const categories = {\n    'Basic Arithmetic': ['add', 'subtract', 'multiply', 'divide'],\n    'Advanced Math': ['sqrt', 'abs', 'power', 'factorial'],\n    'Trigonometry': ['sin', 'cos', 'tan'],\n    'Statistics': ['mean', 'median', 'standardDeviation']\n  };\n\n  if (loading) return <div>Loading calculator...</div>;\n  if (error) return <div>Error: {error.message}</div>;\n\n  return (\n    <div className=\"calculator\">\n      <div className=\"display\">{display}</div>\n      \n      <div className=\"categories\">\n        {Object.keys(categories).map(category => (\n          <button\n            key={category}\n            onClick={() => setSelectedCategory(category)}\n            className={selectedCategory === category ? 'active' : ''}\n          >\n            {category}\n          </button>\n        ))}\n      </div>\n      \n      <div className=\"functions\">\n        {categories[selectedCategory]?.map(func => (\n          <button\n            key={func}\n            onClick={() => {\n              // Example usage - in real app, you'd have input fields\n              if (func === 'add') calculate('add', 5, 3);\n              if (func === 'sqrt') calculate('sqrt', 16);\n              if (func === 'sin') calculate('sin', Math.PI / 2);\n            }}\n          >\n            {func}\n          </button>\n        ))}\n      </div>\n    </div>\n  );\n}"
+      "description": "Result type for math operations",
+      "name": "MathResult",
+      "properties": {
+        "error": "string (error message on failure)",
+        "success": "number | boolean (calculation result on success)"
+      }
     }
   ],
-  "buildInfo": {
-    "language": "Go",
-    "target": "js/wasm",
-    "buildCommand": "./build.sh",
-    "outputFile": "main.wasm",
-    "goModule": true,
-    "buildTime": "Generated during build process",
-    "compilerFlags": [
-      "GOOS=js",
-      "GOARCH=wasm",
-      "CGO_ENABLED=0"
-    ],
-    "optimizations": [
-      "Strip debugging symbols (-ldflags=\"-s -w\")",
-      "Trim path information (-trimpath)",
-      "Disable CGO for security",
-      "wasm-opt optimization when available"
-    ]
+  "usageStats": {
+    "averageCallTime": "\u003c 1ms",
+    "complexity": "beginner-to-intermediate",
+    "concurrency": "thread-safe",
+    "memoryUsage": "lightweight"
   },
-  "dependencies": [],
+  "version": "0.2.0",
   "wasmConfig": {
     "filename": "main.wasm",
-    "goWasmExecRequired": true,
     "globalFunctions": true,
-    "readySignal": "__gowm_ready",
+    "goWasmExecRequired": true,
     "memoryInitialPages": 256,
-    "memoryMaximumPages": 512
-  },
-  "usageStats": {
-    "complexity": "beginner-to-intermediate",
-    "averageCallTime": "< 1ms",
-    "memoryUsage": "lightweight",
-    "concurrency": "thread-safe"
-  },
-  "quality": {
-    "stability": "stable",
-    "documentation": "comprehensive",
-    "testing": "extensive",
-    "maintainability": "high",
-    "codeQuality": "production-ready"
-  },
-  "ecosystem": {
-    "category": "mathematics",
-    "subcategory": "comprehensive-math",
-    "relatedModules": [
-      "crypto-wasm",
-      "pdf-wasm"
-    ],
-    "useCase": [
-      "web-calculators",
-      "scientific-computing",
-      "data-analysis",
-      "educational-tools",
-      "financial-calculations",
-      "engineering-applications",
-      "statistical-analysis",
-      "trigonometric-calculations"
-    ],
-    "industry": [
-      "finance",
-      "education",
-      "engineering",
-      "research",
-      "data-science",
-      "gaming",
-      "simulation"
-    ]
-  },
-  "fileInfo": {
-    "sourceLines": 450,
-    "binarySize": "~2.5MB",
-    "compressedSize": "~750KB",
-    "compressionRatio": "70%"
-  },
-  "changelog": {
-    "version": "0.2.0",
-    "releaseDate": "2025-01-20",
-    "changes": [
-      "Added comprehensive trigonometric functions (sin, cos, tan)",
-      "Implemented logarithmic functions (log, log10)",
-      "Added number theory functions (gcd, lcm, isPrime, fibonacci)",
-      "Implemented statistical functions (mean, median, standardDeviation)",
-      "Added utility functions (round, ceil, floor, min, max)",
-      "Enhanced error handling and input validation",
-      "Improved power function using native math library",
-      "Added overflow protection for factorial and fibonacci",
-      "Updated documentation with comprehensive examples",
-      "Optimized performance for all mathematical operations"
-    ]
-  },
-  "size": 2408271,
-  "gzipSize": 746998,
-  "buildTime": 1750269469.605329
+    "memoryMaximumPages": 512,
+    "readySignal": "__gowm_ready"
+  }
 }

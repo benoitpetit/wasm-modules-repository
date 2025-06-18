@@ -1,0 +1,620 @@
+{
+  "author": "Ben",
+  "buildInfo": {
+    "buildCommand": "wasm-manager build",
+    "buildTime": "2025-06-18T22:12:57+02:00",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm",
+      "CGO_ENABLED=0",
+      "-ldflags=-s -w -buildid=",
+      "-trimpath",
+      "-buildmode=default",
+      "-tags=netgo,osusergo",
+      "-a",
+      "-gcflags=-l=4 -B",
+      "wasm-opt=-Oz --enable-bulk-memory"
+    ],
+    "dependencies": [
+      "github.com/antchfx/xmlquery",
+      "gopkg.in/yaml.v3",
+      "github.com/antchfx/xpath",
+      "github.com/golang/groupcache",
+      "golang.org/x/net",
+      "golang.org/x/text"
+    ],
+    "goModule": true,
+    "goVersion": "1.24.3",
+    "language": "Go",
+    "lastModified": "2025-06-18T22:12:56+02:00",
+    "optimizations": [
+      "Strip debugging symbols (-ldflags=\"-s -w\")",
+      "Trim path information (-trimpath)",
+      "Disable CGO for security",
+      "wasm-opt optimization when available"
+    ],
+    "outputFile": "main.wasm",
+    "target": "js/wasm",
+    "wasmOptUsed": true
+  },
+  "buildTime": 1750277577,
+  "categories": [
+    {
+      "description": "Parse, validate, stringify, and minify JSON data",
+      "functions": [
+        "parseJSON",
+        "stringifyJSON",
+        "validateJSON",
+        "minifyJSON"
+      ],
+      "name": "JSON Processing"
+    },
+    {
+      "description": "Parse and validate XML documents",
+      "functions": [
+        "parseXML",
+        "validateXML"
+      ],
+      "name": "XML Processing"
+    },
+    {
+      "description": "Convert between JSON, XML, CSV, and YAML formats",
+      "functions": [
+        "xmlToJSON",
+        "jsonToXML",
+        "csvToJSON",
+        "jsonToCSV",
+        "yamlToJSON",
+        "jsonToYAML"
+      ],
+      "name": "Format Conversion"
+    },
+    {
+      "description": "Advanced JSON operations including path extraction and schema validation",
+      "functions": [
+        "extractJSONPath",
+        "validateJSONSchema"
+      ],
+      "name": "Advanced JSON"
+    },
+    {
+      "description": "Helper functions for module management and configuration",
+      "functions": [
+        "getAvailableFunctions",
+        "setSilentMode"
+      ],
+      "name": "Utility"
+    }
+  ],
+  "changelog": {
+    "changes": [
+      "Initial release with comprehensive data format support",
+      "JSON parsing, validation, and manipulation",
+      "XML parsing and JSON/XML bidirectional conversion",
+      "CSV to JSON conversion with type detection",
+      "YAML to JSON bidirectional conversion",
+      "JSON path extraction with dot notation",
+      "Basic JSON schema validation",
+      "Error handling for all operations",
+      "Silent mode for production environments",
+      "GoWM integration with standard functions"
+    ],
+    "releaseDate": "2025-01-20",
+    "version": "0.1.0"
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 69+",
+      "Firefox 62+",
+      "Safari 13+",
+      "Edge 79+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "16+"
+  },
+  "description": "Comprehensive data format conversion and processing module written in Go and compiled to WebAssembly. Features JSON, XML, CSV, and YAML parsing, validation, and transformation capabilities. Optimized for GoWM integration.",
+  "documentation": {
+    "api": "Detailed function documentation",
+    "examples": "Real-world usage scenarios",
+    "integration": "GoWM integration patterns",
+    "performance": "Optimization guidelines",
+    "readme": "Complete usage guide with examples",
+    "troubleshooting": "Common error solutions"
+  },
+  "ecosystem": {
+    "category": "data-processing",
+    "industry": [
+      "web-development",
+      "data-science",
+      "enterprise-software",
+      "content-management",
+      "api-development",
+      "devtools",
+      "integration-platforms"
+    ],
+    "relatedModules": [
+      "crypto-wasm",
+      "pdf-wasm"
+    ],
+    "subcategory": "format-conversion",
+    "useCase": [
+      "web-development",
+      "data-transformation",
+      "api-processing",
+      "configuration-management",
+      "content-processing",
+      "data-validation",
+      "import-export",
+      "developer-tools"
+    ]
+  },
+  "errorHandling": {
+    "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }",
+    "patterns": [
+      {
+        "cause": "Called parseJSON() with malformed JSON string",
+        "error": "Invalid JSON: unexpected character 'a' at position 5"
+      },
+      {
+        "cause": "Called parseXML() or validateXML() with malformed XML",
+        "error": "Invalid XML: element is not closed"
+      },
+      {
+        "cause": "Called csvToJSON() with inconsistent CSV structure",
+        "error": "Invalid CSV: record has wrong number of fields"
+      },
+      {
+        "cause": "Called yamlToJSON() with invalid YAML syntax",
+        "error": "Invalid YAML: mapping values are not allowed here"
+      },
+      {
+        "cause": "Called extractJSONPath() with non-existent path",
+        "error": "JSON path not found: user.profile.invalid"
+      },
+      {
+        "cause": "Called validateJSONSchema() with data that doesn't match schema",
+        "error": "Schema validation failed: required property missing"
+      }
+    ]
+  },
+  "examples": {
+    "basicJSON": {
+      "code": "const result = jsonxml.call('parseJSON', '{\"name\":\"John\",\"age\":30}');\nif (result.valid) {\n  console.log('Parsed data:', result.data);\n}",
+      "description": "Parse and validate JSON data"
+    },
+    "csvProcessing": {
+      "code": "const csvData = 'name,age,active\\nJohn,30,true\\nJane,25,false';\nconst result = jsonxml.call('csvToJSON', csvData);\nconsole.log('JSON array:', result.data);",
+      "description": "Convert CSV to JSON with automatic type detection"
+    },
+    "formatConversion": {
+      "code": "const xmlData = '\u003cperson\u003e\u003cname\u003eJohn\u003c/name\u003e\u003cage\u003e30\u003c/age\u003e\u003c/person\u003e';\nconst result = jsonxml.call('xmlToJSON', xmlData);\nconsole.log('Converted JSON:', result.data);",
+      "description": "Convert XML to JSON"
+    },
+    "pathExtraction": {
+      "code": "const data = '{\"user\":{\"profile\":{\"name\":\"John\"}}}';\nconst result = jsonxml.call('extractJSONPath', data, 'user.profile.name');\nconsole.log('Extracted:', result.data);",
+      "description": "Extract nested values from JSON"
+    }
+  },
+  "fileInfo": {
+    "binarySize": "6.5 MB",
+    "compressedSize": "2.1 MB",
+    "compressionRatio": "68%",
+    "sourceLines": 775
+  },
+  "functions": [
+    {
+      "category": "JSON Processing",
+      "description": "Parse and validate JSON string into structured data",
+      "errorPattern": "Returns object with 'error' field on parse failure",
+      "example": "const result = jsonxml.call('parseJSON', '{\"name\":\"John\",\"age\":30}');\nif (result.error) {\n  console.error('Parse error:', result.error);\n} else {\n  console.log('Data:', result.data, 'Valid:', result.valid);\n}",
+      "name": "parseJSON",
+      "parameters": [
+        {
+          "description": "JSON string to parse and validate",
+          "name": "jsonString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "JSON Processing",
+      "description": "Convert JavaScript object to JSON string with optional formatting",
+      "errorPattern": "Returns object with 'error' field on stringify failure",
+      "example": "const result = jsonxml.call('stringifyJSON', {name: 'John'}, true);\nif (result.error) {\n  console.error('Stringify error:', result.error);\n} else {\n  console.log('JSON:', result.data);\n}",
+      "name": "stringifyJSON",
+      "parameters": [
+        {
+          "description": "Data to convert to JSON string",
+          "name": "data",
+          "type": "any"
+        },
+        {
+          "description": "Optional: enable pretty printing with indentation",
+          "name": "pretty",
+          "optional": true,
+          "type": "boolean"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "JSON Processing",
+      "description": "Validate JSON syntax and structure",
+      "errorPattern": "Returns validation result with errors array if invalid",
+      "example": "const result = jsonxml.call('validateJSON', '{\"name\":\"John\"}');\nif (result.valid) {\n  console.log('JSON is valid');\n} else {\n  console.log('Errors:', result.errors);\n}",
+      "name": "validateJSON",
+      "parameters": [
+        {
+          "description": "JSON string to validate",
+          "name": "jsonString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "JSON Processing",
+      "description": "Remove whitespace and minimize JSON string size",
+      "errorPattern": "Returns object with 'error' field if input is invalid JSON",
+      "example": "const result = jsonxml.call('minifyJSON', '{\\n  \"name\": \"John\"\\n}');\nif (result.error) {\n  console.error('Minify error:', result.error);\n} else {\n  console.log('Minified:', result.data, 'Size reduction:', original - result.size);\n}",
+      "name": "minifyJSON",
+      "parameters": [
+        {
+          "description": "JSON string to minify",
+          "name": "jsonString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "XML Processing",
+      "description": "Parse and validate XML string into structured data",
+      "errorPattern": "Returns object with 'error' field on parse failure",
+      "example": "const result = jsonxml.call('parseXML', '\u003croot\u003e\u003cname\u003eJohn\u003c/name\u003e\u003c/root\u003e');\nif (result.error) {\n  console.error('Parse error:', result.error);\n} else {\n  console.log('Data:', result.data, 'Root:', result.root);\n}",
+      "name": "parseXML",
+      "parameters": [
+        {
+          "description": "XML string to parse and validate",
+          "name": "xmlString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Format Conversion",
+      "description": "Convert XML string to JSON format with structured mapping",
+      "errorPattern": "Returns object with 'error' field if XML is invalid",
+      "example": "const result = jsonxml.call('xmlToJSON', '\u003croot\u003e\u003cname\u003eJohn\u003c/name\u003e\u003c/root\u003e');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('JSON:', result.data);\n}",
+      "name": "xmlToJSON",
+      "parameters": [
+        {
+          "description": "XML string to convert to JSON",
+          "name": "xmlString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Format Conversion",
+      "description": "Convert JSON string to XML format with configurable root element",
+      "errorPattern": "Returns object with 'error' field if JSON is invalid",
+      "example": "const result = jsonxml.call('jsonToXML', '{\"name\":\"John\"}', 'person');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('XML:', result.data);\n}",
+      "name": "jsonToXML",
+      "parameters": [
+        {
+          "description": "JSON string to convert to XML",
+          "name": "jsonString",
+          "type": "string"
+        },
+        {
+          "description": "Optional: XML root element name (default: 'root')",
+          "name": "rootElement",
+          "optional": true,
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "XML Processing",
+      "description": "Validate XML syntax and well-formedness",
+      "errorPattern": "Returns validation result with errors array if invalid",
+      "example": "const result = jsonxml.call('validateXML', '\u003croot\u003e\u003cname\u003eJohn\u003c/name\u003e\u003c/root\u003e');\nif (result.valid) {\n  console.log('XML is valid');\n} else {\n  console.log('Errors:', result.errors);\n}",
+      "name": "validateXML",
+      "parameters": [
+        {
+          "description": "XML string to validate",
+          "name": "xmlString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Format Conversion",
+      "description": "Convert CSV data to JSON array with header-based field mapping",
+      "errorPattern": "Returns object with 'error' field if CSV is malformed",
+      "example": "const result = jsonxml.call('csvToJSON', 'name,age\\nJohn,30\\nJane,25');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('JSON:', result.data);\n}",
+      "name": "csvToJSON",
+      "parameters": [
+        {
+          "description": "CSV string with headers in first row",
+          "name": "csvString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Format Conversion",
+      "description": "Convert JSON array to CSV format with automatic header generation",
+      "errorPattern": "Returns object with 'error' field if JSON is not a valid array",
+      "example": "const result = jsonxml.call('jsonToCSV', '[{\"name\":\"John\",\"age\":30}]');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('CSV:', result.data, 'Rows:', result.rows, 'Columns:', result.columns);\n}",
+      "name": "jsonToCSV",
+      "parameters": [
+        {
+          "description": "JSON array string to convert to CSV",
+          "name": "jsonString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Format Conversion",
+      "description": "Convert YAML string to JSON format with type preservation",
+      "errorPattern": "Returns object with 'error' field if YAML is invalid",
+      "example": "const result = jsonxml.call('yamlToJSON', 'name: John\\nage: 30');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('JSON:', result.data);\n}",
+      "name": "yamlToJSON",
+      "parameters": [
+        {
+          "description": "YAML string to convert to JSON",
+          "name": "yamlString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Format Conversion",
+      "description": "Convert JSON string to YAML format with proper indentation",
+      "errorPattern": "Returns object with 'error' field if JSON is invalid",
+      "example": "const result = jsonxml.call('jsonToYAML', '{\"name\":\"John\",\"age\":30}');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('YAML:', result.data);\n}",
+      "name": "jsonToYAML",
+      "parameters": [
+        {
+          "description": "JSON string to convert to YAML",
+          "name": "jsonString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Advanced JSON",
+      "description": "Extract specific values from JSON using dot notation path",
+      "errorPattern": "Returns object with 'error' field if JSON is invalid or path not found",
+      "example": "const result = jsonxml.call('extractJSONPath', '{\"user\":{\"name\":\"John\"}}', 'user.name');\nif (result.error) {\n  console.error('Extract error:', result.error);\n} else {\n  console.log('Extracted value:', result.data);\n}",
+      "name": "extractJSONPath",
+      "parameters": [
+        {
+          "description": "JSON string to extract from",
+          "name": "jsonString",
+          "type": "string"
+        },
+        {
+          "description": "Dot notation path (e.g., 'user.profile.name' or 'items.0.id')",
+          "name": "path",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Advanced JSON",
+      "description": "Validate JSON data against a JSON schema with basic validation rules",
+      "errorPattern": "Returns validation result with detailed error messages",
+      "example": "const result = jsonxml.call('validateJSONSchema', '{\"name\":\"John\"}', '{\"type\":\"object\",\"required\":[\"name\"]}');\nif (result.valid) {\n  console.log('Schema validation passed');\n} else {\n  console.log('Schema errors:', result.errors);\n}",
+      "name": "validateJSONSchema",
+      "parameters": [
+        {
+          "description": "JSON data to validate",
+          "name": "jsonString",
+          "type": "string"
+        },
+        {
+          "description": "JSON schema definition",
+          "name": "schemaString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Utility",
+      "description": "Get list of all available functions in the module",
+      "errorPattern": "Never fails",
+      "example": "const functions = jsonxml.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);",
+      "name": "getAvailableFunctions",
+      "parameters": [],
+      "returnType": "array"
+    },
+    {
+      "category": "Utility",
+      "description": "Enable or disable console logging for operations",
+      "errorPattern": "Never fails",
+      "example": "const currentMode = jsonxml.call('setSilentMode', true);\nconsole.log('Silent mode enabled:', currentMode);",
+      "name": "setSilentMode",
+      "parameters": [
+        {
+          "description": "Optional: true to disable logging, false to enable (default: false)",
+          "name": "silent",
+          "optional": true,
+          "type": "boolean"
+        }
+      ],
+      "returnType": "boolean"
+    }
+  ],
+  "gowmConfig": {
+    "autoDetect": true,
+    "errorPattern": "object-based",
+    "preferredFilename": "main.wasm",
+    "readySignal": "__gowm_ready",
+    "standardFunctions": [
+      "getAvailableFunctions",
+      "setSilentMode"
+    ],
+    "supportedBranches": [
+      "master",
+      "stable"
+    ]
+  },
+  "gzipSize": 2200210,
+  "license": "MIT",
+  "name": "jsonxml-wasm",
+  "performance": {
+    "limitations": [
+      "Memory usage scales with document size",
+      "Complex XML namespaces have basic support",
+      "JSON schema validation is simplified (not full JSON Schema spec)"
+    ],
+    "optimizations": [
+      "Zero-copy string processing where possible",
+      "Streaming XML parsing for large documents",
+      "Efficient memory management with Go GC",
+      "Minimal JavaScript/WASM boundary crossings"
+    ]
+  },
+  "quality": {
+    "codeQuality": "production-ready",
+    "documentation": "comprehensive",
+    "maintainability": "high",
+    "stability": "stable",
+    "testing": "extensive"
+  },
+  "security": {
+    "features": [
+      "Input validation for all data formats",
+      "Memory-safe Go implementation",
+      "Protection against XXE (XML External Entity) attacks",
+      "Safe JSON parsing with recursion limits",
+      "CSV injection prevention",
+      "YAML bomb protection",
+      "No external dependencies for core parsing",
+      "Sanitized error messages"
+    ]
+  },
+  "size": 6820932,
+  "tags": [
+    "json",
+    "xml",
+    "csv",
+    "yaml",
+    "data-processing",
+    "conversion",
+    "validation",
+    "parsing",
+    "transformation",
+    "wasm",
+    "go",
+    "gowm"
+  ],
+  "types": [
+    {
+      "description": "Result type for JSON operations",
+      "name": "JSONResult",
+      "properties": {
+        "data": "any (parsed/generated data)",
+        "error": "string (optional, present on failure)",
+        "format": "string (data format)",
+        "minified": "boolean (optional, for minification)",
+        "size": "number (data size in bytes)",
+        "valid": "boolean (validation status)"
+      }
+    },
+    {
+      "description": "Result type for XML operations",
+      "name": "XMLResult",
+      "properties": {
+        "data": "any (parsed/generated data)",
+        "encoding": "string (optional, XML encoding)",
+        "error": "string (optional, present on failure)",
+        "format": "string (data format)",
+        "root": "string (optional, root element name)",
+        "size": "number (data size in bytes)",
+        "valid": "boolean (validation status)"
+      }
+    },
+    {
+      "description": "Result type for CSV operations",
+      "name": "CSVResult",
+      "properties": {
+        "columns": "number (number of columns)",
+        "data": "any (converted data)",
+        "error": "string (optional, present on failure)",
+        "format": "string (data format)",
+        "rows": "number (number of data rows)"
+      }
+    },
+    {
+      "description": "Result type for YAML operations",
+      "name": "YAMLResult",
+      "properties": {
+        "data": "any (parsed/generated data)",
+        "error": "string (optional, present on failure)",
+        "format": "string (data format)",
+        "size": "number (data size in bytes)",
+        "valid": "boolean (validation status)"
+      }
+    },
+    {
+      "description": "Result type for validation operations",
+      "name": "ValidationResult",
+      "properties": {
+        "errors": "array (optional, error messages)",
+        "format": "string (data format being validated)",
+        "valid": "boolean (validation result)",
+        "warnings": "array (optional, warning messages)"
+      }
+    }
+  ],
+  "usage": {
+    "calling": "Use jsonxml.call('functionName', ...args) or call functions directly",
+    "errorHandling": "Check result.error field for error messages in function responses",
+    "initialization": "Load the WASM module and wait for __gowm_ready signal"
+  },
+  "usageStats": {
+    "averageCallTime": "\u003c 2ms for typical documents",
+    "complexity": "beginner-to-intermediate",
+    "concurrency": "thread-safe",
+    "memoryUsage": "scales with document size"
+  },
+  "useCases": [
+    "Data format conversion pipelines",
+    "API response transformation",
+    "Configuration file processing",
+    "Data validation and sanitization",
+    "Web-based data editors",
+    "Import/export functionality",
+    "Data migration tools",
+    "Content management systems",
+    "ETL (Extract, Transform, Load) processes",
+    "Developer tools and IDEs",
+    "Data visualization preprocessing",
+    "RESTful API data handling"
+  ],
+  "version": "0.1.0",
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "globalFunctions": true,
+    "goWasmExecRequired": true,
+    "memoryInitialPages": 256,
+    "memoryMaximumPages": 512,
+    "readySignal": "__gowm_ready"
+  }
+}
