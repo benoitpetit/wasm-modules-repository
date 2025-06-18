@@ -1,0 +1,404 @@
+{
+    "name": "pdf-wasm",
+    "description": "Complete PDF manipulation module written in Go and compiled to WebAssembly. Provides comprehensive PDF operations with GoWM integration.",
+    "version": "0.1.0",
+    "author": "Ben",
+    "license": "MIT",
+    "tags": [
+        "pdf",
+        "document",
+        "generation",
+        "manipulation",
+        "extraction",
+        "watermark",
+        "merge",
+        "split",
+        "wasm",
+        "go",
+        "gowm"
+    ],
+    "functions": [
+        {
+            "name": "createPDF",
+            "description": "Generate PDF from scratch with custom pages and metadata",
+            "parameters": [
+                {
+                    "name": "pages",
+                    "type": "string",
+                    "description": "JSON string of page configurations with content, dimensions, and margins"
+                },
+                {
+                    "name": "metadata",
+                    "type": "string",
+                    "description": "Optional JSON string of PDF metadata (title, author, subject)"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const pages = JSON.stringify([{content: 'Hello World', margin: 10}]);\nconst metadata = JSON.stringify({title: 'My Document', author: 'John Doe'});\nconst result = pdf.call('createPDF', pages, metadata);\nif (result.error) {\n  console.error('PDF creation failed:', result.error);\n} else {\n  console.log('PDF created:', result.size, 'bytes, pages:', result.pages);\n}"
+        },
+        {
+            "name": "addPage",
+            "description": "Add a new page to existing PDF document",
+            "parameters": [
+                {
+                    "name": "pdfData",
+                    "type": "string",
+                    "description": "Base64-encoded PDF data"
+                },
+                {
+                    "name": "pageContent",
+                    "type": "string",
+                    "description": "JSON string of page configuration"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const pageContent = JSON.stringify({content: 'New page content', width: 210, height: 297});\nconst result = pdf.call('addPage', existingPdfData, pageContent);"
+        },
+        {
+            "name": "extractText",
+            "description": "Extract text content from PDF document",
+            "parameters": [
+                {
+                    "name": "pdfData",
+                    "type": "string",
+                    "description": "Base64-encoded PDF data"
+                },
+                {
+                    "name": "pageRange",
+                    "type": "string",
+                    "description": "Optional comma-separated page numbers (e.g., '1,3,5-7')"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const result = pdf.call('extractText', pdfData, '1,3-5');\nif (result.error) {\n  console.error('Text extraction failed:', result.error);\n} else {\n  console.log('Extracted text:', result.text);\n}"
+        },
+        {
+            "name": "extractImages",
+            "description": "Extract images from PDF document",
+            "parameters": [
+                {
+                    "name": "pdfData",
+                    "type": "string",
+                    "description": "Base64-encoded PDF data"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const result = pdf.call('extractImages', pdfData);\nif (result.error) {\n  console.error('Image extraction failed:', result.error);\n} else {\n  console.log('Extracted', result.count, 'images');\n  result.images.forEach(img => console.log('Image:', img.format, img.width + 'x' + img.height));\n}"
+        },
+        {
+            "name": "mergePDFs",
+            "description": "Merge multiple PDF documents into one",
+            "parameters": [
+                {
+                    "name": "pdfArray",
+                    "type": "string",
+                    "description": "JSON string array of base64-encoded PDF data"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const pdfs = JSON.stringify([pdfData1, pdfData2, pdfData3]);\nconst result = pdf.call('mergePDFs', pdfs);\nif (result.error) {\n  console.error('Merge failed:', result.error);\n} else {\n  console.log('Merged PDF:', result.pages, 'pages,', result.size, 'bytes');\n}"
+        },
+        {
+            "name": "splitPDF",
+            "description": "Split PDF document into separate parts",
+            "parameters": [
+                {
+                    "name": "pdfData",
+                    "type": "string",
+                    "description": "Base64-encoded PDF data"
+                },
+                {
+                    "name": "ranges",
+                    "type": "string",
+                    "description": "JSON string array of page ranges (e.g., ['1-3', '4-6', '7'])"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const ranges = JSON.stringify(['1-2', '3-4', '5']);\nconst result = pdf.call('splitPDF', pdfData, ranges);\nif (result.error) {\n  console.error('Split failed:', result.error);\n} else {\n  console.log('Split into', result.parts, 'PDFs');\n  result.splitPDFs.forEach(part => console.log('Part', part.partIndex, ':', part.pageRange));\n}"
+        },
+        {
+            "name": "addWatermark",
+            "description": "Add watermark text to PDF document",
+            "parameters": [
+                {
+                    "name": "pdfData",
+                    "type": "string",
+                    "description": "Base64-encoded PDF data"
+                },
+                {
+                    "name": "watermarkData",
+                    "type": "string",
+                    "description": "JSON string of watermark configuration (text, opacity, rotation, etc.)"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const watermark = JSON.stringify({text: 'CONFIDENTIAL', opacity: 0.3, rotation: 45});\nconst result = pdf.call('addWatermark', pdfData, watermark);\nif (result.error) {\n  console.error('Watermark failed:', result.error);\n} else {\n  console.log('Watermarked PDF:', result.size, 'bytes');\n}"
+        },
+        {
+            "name": "generateReport",
+            "description": "Generate PDF report from data and template",
+            "parameters": [
+                {
+                    "name": "data",
+                    "type": "string",
+                    "description": "JSON string of report data"
+                },
+                {
+                    "name": "template",
+                    "type": "string",
+                    "description": "JSON string of template configuration"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const data = JSON.stringify({title: 'Sales Report', rows: [{name: 'Product A', sales: 1000}]});\nconst template = JSON.stringify({type: 'table'});\nconst result = pdf.call('generateReport', data, template);\nif (result.error) {\n  console.error('Report generation failed:', result.error);\n} else {\n  console.log('Generated report:', result.templateType, result.size, 'bytes');\n}"
+        },
+        {
+            "name": "getPDFInfo",
+            "description": "Get PDF metadata and document information",
+            "parameters": [
+                {
+                    "name": "pdfData",
+                    "type": "string",
+                    "description": "Base64-encoded PDF data"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const result = pdf.call('getPDFInfo', pdfData);\nif (result.error) {\n  console.error('Info extraction failed:', result.error);\n} else {\n  console.log('PDF info:', result.pages, 'pages,', result.size, 'bytes');\n  console.log('Title:', result.title, 'Author:', result.author);\n}"
+        },
+        {
+            "name": "compressPDF",
+            "description": "Compress PDF file with configurable compression level",
+            "parameters": [
+                {
+                    "name": "pdfData",
+                    "type": "string",
+                    "description": "Base64-encoded PDF data"
+                },
+                {
+                    "name": "compressionLevel",
+                    "type": "string",
+                    "description": "Compression level: 'low', 'medium', 'high' (optional, default: 'medium')"
+                }
+            ],
+            "returnType": "object",
+            "errorPattern": "Returns object with 'error' field on failure",
+            "example": "const result = pdf.call('compressPDF', pdfData, 'high');\nif (result.error) {\n  console.error('Compression failed:', result.error);\n} else {\n  console.log('Compressed from', result.originalSize, 'to', result.compressedSize, 'bytes');\n  console.log('Compression ratio:', result.compressionRatio + '%');\n}"
+        },
+        {
+            "name": "setSilentMode",
+            "description": "Enable or disable console logging for operations",
+            "parameters": [
+                {
+                    "name": "silent",
+                    "type": "boolean",
+                    "description": "True to enable silent mode, false to show logs"
+                }
+            ],
+            "returnType": "boolean",
+            "errorPattern": "No errors expected",
+            "example": "pdf.call('setSilentMode', true); // Disable logging\npdf.call('setSilentMode', false); // Enable logging"
+        },
+        {
+            "name": "getAvailableFunctions",
+            "description": "Get list of all available PDF functions",
+            "parameters": [],
+            "returnType": "array",
+            "errorPattern": "No errors expected",
+            "example": "const functions = pdf.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);"
+        }
+    ],
+    "errorHandling": {
+        "pattern": "object-based",
+        "description": "PDF module returns objects with 'error' field when operations fail",
+        "examples": [
+            {
+                "error": "Invalid PDF data: illegal base64 data at input byte 15",
+                "cause": "Called extractText() with malformed base64 PDF data"
+            },
+            {
+                "error": "Failed to generate PDF: insufficient page content",
+                "cause": "Called createPDF() with empty or invalid page configurations"
+            },
+            {
+                "error": "Watermark addition failed: invalid opacity value",
+                "cause": "Called addWatermark() with opacity outside 0-1 range"
+            },
+            {
+                "error": "PDF merge failed: at least 2 PDFs required",
+                "cause": "Called mergePDFs() with less than 2 PDF documents"
+            }
+        ],
+        "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
+    },
+    "gowmConfig": {
+        "supportedBranches": ["master", "stable"],
+        "preferredFilename": "main.wasm",
+        "autoDetect": true,
+        "readySignal": "__gowm_ready",
+        "standardFunctions": ["getAvailableFunctions", "setSilentMode"],
+        "errorPattern": "object-based"
+    },
+    "types": [
+        {
+            "name": "PDFResult",
+            "description": "Standard result type for PDF operations",
+            "type": "object",
+            "details": "Returns object with PDF data on success, or object with 'error' field on failure"
+        },
+        {
+            "name": "PDFCreationResult",
+            "description": "PDF creation operation result",
+            "properties": {
+                "pdfData": "string (base64-encoded PDF data)",
+                "size": "number (PDF size in bytes)",
+                "pages": "number (total number of pages)",
+                "format": "string ('application/pdf')",
+                "metadata": "object (PDF metadata)",
+                "error": "string (optional, present on failure)"
+            }
+        },
+        {
+            "name": "PDFExtractionResult",
+            "description": "Text/image extraction result",
+            "properties": {
+                "text": "string (extracted text content)",
+                "images": "array (extracted image objects)",
+                "pages": "number (number of processed pages)",
+                "count": "number (number of extracted items)",
+                "error": "string (optional, present on failure)"
+            }
+        },
+        {
+            "name": "PDFCompressionResult",
+            "description": "PDF compression operation result",
+            "properties": {
+                "pdfData": "string (base64-encoded compressed PDF)",
+                "originalSize": "number (original size in bytes)",
+                "compressedSize": "number (compressed size in bytes)",
+                "compressionRatio": "number (compression ratio percentage)",
+                "compressionLevel": "string (compression level used)",
+                "error": "string (optional, present on failure)"
+            }
+        }
+    ],
+    "security": {
+        "features": [
+            "Memory-safe Go implementation",
+            "Input validation and sanitization",
+            "Secure PDF data handling",
+            "Base64 encoding for web compatibility",
+            "No external network dependencies",
+            "Sandboxed WebAssembly execution"
+        ]
+    },
+    "compatibility": {
+        "browsers": [
+            "Chrome 69+",
+            "Firefox 79+", 
+            "Safari 15+",
+            "Edge 79+"
+        ],
+        "gowm": "1.0.0+",
+        "nodejs": "14.0.0+"
+    },
+    "performance": {
+        "features": [
+            "Compiled WebAssembly for optimal performance",
+            "Native Go PDF processing",
+            "Efficient memory usage for large documents",
+            "Silent mode for production environments",
+            "Optimized for GoWM integration",
+            "Streaming PDF processing"
+        ]
+    },
+    "examples": [
+        {
+            "title": "GoWM Integration - Basic PDF Creation",
+            "language": "javascript",
+            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load PDF module from wasm-modules-repository\nconst pdf = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'pdf-wasm',\n  filename: 'main.wasm',\n  name: 'pdf-wasm',\n  branch: 'master'\n});\n\n// Configure module\npdf.call('setSilentMode', true);\n\n// Create PDF with error handling\nconst pages = JSON.stringify([{\n  content: 'Hello PDF World!\\nThis is my first page.',\n  margin: 15\n}]);\n\nconst result = pdf.call('createPDF', pages);\nif (result.error) {\n  console.error('PDF creation error:', result.error);\n} else {\n  console.log('PDF created successfully!');\n  console.log('Size:', result.size, 'bytes');\n  console.log('Pages:', result.pages);\n  \n  // Download the PDF\n  const blob = new Blob([atob(result.pdfData)], {type: 'application/pdf'});\n  const url = URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = 'my-document.pdf';\n  a.click();\n}"
+        },
+        {
+            "title": "Advanced PDF Manipulation",
+            "language": "javascript",
+            "code": "// Complete PDF workflow with multiple operations\nasync function processPDF() {\n  // Step 1: Create initial PDF\n  const pages = JSON.stringify([{\n    content: 'Original Document\\nThis is the main content.',\n    margin: 10\n  }]);\n  \n  let result = pdf.call('createPDF', pages, JSON.stringify({\n    title: 'Business Report',\n    author: 'John Doe',\n    subject: 'Quarterly Analysis'\n  }));\n  \n  if (result.error) throw new Error(result.error);\n  let pdfData = result.pdfData;\n  \n  // Step 2: Add watermark\n  const watermark = JSON.stringify({\n    text: 'CONFIDENTIAL',\n    opacity: 0.3,\n    rotation: 45\n  });\n  \n  result = pdf.call('addWatermark', pdfData, watermark);\n  if (result.error) throw new Error(result.error);\n  pdfData = result.pdfData;\n  \n  // Step 3: Compress PDF\n  result = pdf.call('compressPDF', pdfData, 'high');\n  if (result.error) throw new Error(result.error);\n  \n  console.log('Final PDF processed:');\n  console.log('- Original size:', result.originalSize, 'bytes');\n  console.log('- Compressed size:', result.compressedSize, 'bytes');\n  console.log('- Compression ratio:', result.compressionRatio + '%');\n  \n  return result.pdfData;\n}"
+        },
+        {
+            "title": "React Hook Integration",
+            "language": "jsx",
+            "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction PDFGenerator() {\n  const { wasm: pdf, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'pdf-wasm',\n    filename: 'main.wasm',\n    name: 'pdf-wasm',\n    branch: 'master'\n  });\n  \n  const [content, setContent] = useState('Hello PDF World!');\n  const [pdfResult, setPdfResult] = useState(null);\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() => {\n    if (pdf) {\n      pdf.call('setSilentMode', true);\n      const availableFunctions = pdf.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [pdf]);\n\n  const generatePDF = () => {\n    if (!pdf) return;\n    \n    const pages = JSON.stringify([{\n      content: content,\n      margin: 15\n    }]);\n    \n    const result = pdf.call('createPDF', pages);\n    if (result.error) {\n      setPdfResult({ error: result.error });\n    } else {\n      setPdfResult(result);\n      \n      // Auto-download\n      const blob = new Blob([atob(result.pdfData)], {type: 'application/pdf'});\n      const url = URL.createObjectURL(blob);\n      const a = document.createElement('a');\n      a.href = url;\n      a.download = 'generated-document.pdf';\n      a.click();\n    }\n  };\n\n  if (loading) return React.createElement('div', null, 'Loading PDF module...');\n  if (error) return React.createElement('div', null, 'Error: ' + error.message);\n\n  return React.createElement('div', null,\n    React.createElement('h3', null, 'PDF Functions Available: ' + functions.length),\n    React.createElement('textarea', {\n      value: content,\n      onChange: (e) => setContent(e.target.value),\n      placeholder: 'PDF content',\n      rows: 5,\n      cols: 50\n    }),\n    React.createElement('br'),\n    React.createElement('button', { onClick: generatePDF }, 'Generate PDF'),\n    pdfResult && React.createElement('div', { style: { marginTop: '10px' } },\n      pdfResult.error\n        ? React.createElement('div', { style: { color: 'red' } }, 'Error: ' + pdfResult.error)\n        : React.createElement('div', { style: { color: 'green' } },\n            '✅ PDF generated successfully!',\n            React.createElement('br'),\n            '📄 Size: ' + pdfResult.size + ' bytes',\n            React.createElement('br'),\n            '📋 Pages: ' + pdfResult.pages\n          )\n    )\n  );\n}"
+        }
+    ],
+    "buildInfo": {
+        "language": "Go",
+        "target": "js/wasm",
+        "buildCommand": "./build.sh",
+        "outputFile": "main.wasm",
+        "goModule": true,
+        "buildTime": "Generated during build process",
+        "compilerFlags": [
+            "GOOS=js",
+            "GOARCH=wasm"
+        ],
+        "dependencies": [
+            "github.com/jung-kurt/gofpdf"
+        ]
+    },
+    "wasmConfig": {
+        "filename": "main.wasm",
+        "goWasmExecRequired": true,
+        "globalFunctions": true,
+        "readySignal": "__gowm_ready",
+        "memoryInitialPages": 512,
+        "memoryMaximumPages": 2048
+    },
+    "usageStats": {
+        "complexity": "intermediate",
+        "averageCallTime": "5-50ms",
+        "memoryUsage": "moderate",
+        "concurrency": "thread-safe"
+    },
+    "quality": {
+        "stability": "stable",
+        "documentation": "complete",
+        "testing": "comprehensive",
+        "maintainability": "high"
+    },
+    "ecosystem": {
+        "category": "documents",
+        "subcategory": "pdf",
+        "relatedModules": ["image-wasm", "compress-wasm"],
+        "useCase": ["document-generation", "report-automation", "form-processing", "archiving"],
+        "industry": ["business", "legal", "healthcare", "education", "finance"]
+    },
+    "fileInfo": {
+        "sourceLines": 723,
+        "binarySize": "4.4MB",
+        "compressedSize": "1.3MB",
+        "compressionRatio": "72%"
+    },
+    "changelog": {
+        "version": "0.1.0",
+        "releaseDate": "2024-06-18",
+        "changes": [
+            "Initial PDF module implementation",
+            "PDF creation from scratch with custom pages",
+            "Page manipulation (add pages to existing PDFs)",
+            "Text and image extraction capabilities",
+            "PDF merging and splitting functionality",
+            "Watermarking with configurable styling",
+            "Template-based report generation",
+            "PDF compression with multiple levels",
+            "Metadata extraction and modification",
+            "Full GoWM integration and compatibility"
+        ]
+    }
+} 
