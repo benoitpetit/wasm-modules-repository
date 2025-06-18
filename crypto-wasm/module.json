@@ -1,515 +1,536 @@
 {
-    "name": "crypto-wasm",
-    "description": "Secure cryptographic operations module written in Go and compiled to WebAssembly. Provides comprehensive cryptographic functions with GoWM integration.",
-    "version": "0.2.1",
-    "author": "Ben",
-    "license": "MIT",
-    "tags": [
-        "cryptography",
-        "security",
-        "encryption",
-        "hashing",
-        "jwt",
-        "password",
-        "aes",
-        "rsa",
-        "bcrypt",
-        "wasm",
-        "go",
-        "gowm"
-    ],
-    "functions": [
+  "name": "crypto-wasm",
+  "description": "Secure cryptographic operations module written in Go and compiled to WebAssembly. Provides comprehensive cryptographic functions with GoWM integration.",
+  "version": "0.2.1",
+  "author": "Ben",
+  "license": "MIT",
+  "tags": [
+    "cryptography",
+    "security",
+    "encryption",
+    "hashing",
+    "jwt",
+    "password",
+    "aes",
+    "rsa",
+    "bcrypt",
+    "wasm",
+    "go",
+    "gowm"
+  ],
+  "functions": [
+    {
+      "name": "hashSHA256",
+      "description": "Generate SHA256 hash of input data",
+      "parameters": [
         {
-            "name": "hashSHA256",
-            "description": "Generate SHA256 hash of input data",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to hash"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = crypto.call('hashSHA256', 'Hello World');\nif (result.error) {\n  console.error('Hash error:', result.error);\n} else {\n  console.log('Hash:', result.hash, 'Algorithm:', result.algorithm);\n}"
-        },
-        {
-            "name": "hashSHA512",
-            "description": "Generate SHA512 hash of input data",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to hash"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = crypto.call('hashSHA512', 'Hello World');\n// Returns: { hash: '...', algorithm: 'SHA512' }"
-        },
-        {
-            "name": "hashMD5",
-            "description": "Generate MD5 hash (legacy support only - not secure)",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to hash"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = crypto.call('hashMD5', 'Hello World');\n// Includes security warning in response"
-        },
-        {
-            "name": "generateAESKey",
-            "description": "Generate a random AES encryption key",
-            "parameters": [
-                {
-                    "name": "keySize",
-                    "type": "number",
-                    "description": "Key size in bytes (16=128bit, 24=192bit, 32=256bit)"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const keyResult = crypto.call('generateAESKey', 32);\nif (keyResult.error) {\n  console.error('Key generation failed:', keyResult.error);\n} else {\n  console.log('Generated key:', keyResult.key, 'Size:', keyResult.keySize);\n}"
-        },
-        {
-            "name": "encryptAES",
-            "description": "Encrypt data using AES-GCM (authenticated encryption)",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to encrypt"
-                },
-                {
-                    "name": "key",
-                    "type": "string",
-                    "description": "Base64-encoded AES key"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure (e.g., invalid key format)",
-            "example": "const encryptResult = crypto.call('encryptAES', 'secret data', validKey);\nif (encryptResult.error) {\n  console.error('Encryption failed:', encryptResult.error);\n} else {\n  console.log('Encrypted:', encryptResult.encryptedData, 'Algorithm:', encryptResult.algorithm);\n}"
-        },
-        {
-            "name": "decryptAES",
-            "description": "Decrypt data using AES-GCM",
-            "parameters": [
-                {
-                    "name": "encryptedData",
-                    "type": "string",
-                    "description": "Base64-encoded encrypted data"
-                },
-                {
-                    "name": "key",
-                    "type": "string",
-                    "description": "Base64-encoded AES key"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const decryptResult = crypto.call('decryptAES', encryptedData, key);\nif (decryptResult.error) {\n  console.error('Decryption failed:', decryptResult.error);\n} else {\n  console.log('Decrypted:', decryptResult.decryptedData);\n}"
-        },
-        {
-            "name": "generateRSAKeyPair",
-            "description": "Generate RSA public/private key pair",
-            "parameters": [
-                {
-                    "name": "keySize",
-                    "type": "number",
-                    "description": "Key size in bits (1024-4096)"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const keyPair = crypto.call('generateRSAKeyPair', 2048);\nif (keyPair.error) {\n  console.error('Key generation failed:', keyPair.error);\n} else {\n  console.log('Public key:', keyPair.publicKey);\n  console.log('Private key:', keyPair.privateKey);\n}"
-        },
-        {
-            "name": "encryptRSA",
-            "description": "Encrypt data using RSA public key",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to encrypt (limited by key size)"
-                },
-                {
-                    "name": "publicKey",
-                    "type": "string",
-                    "description": "PEM-formatted RSA public key"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const encrypted = crypto.call('encryptRSA', 'secret', keyPair.publicKey);"
-        },
-        {
-            "name": "decryptRSA",
-            "description": "Decrypt data using RSA private key",
-            "parameters": [
-                {
-                    "name": "encryptedData",
-                    "type": "string",
-                    "description": "Base64-encoded encrypted data"
-                },
-                {
-                    "name": "privateKey",
-                    "type": "string",
-                    "description": "PEM-formatted RSA private key"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const decrypted = crypto.call('decryptRSA', encrypted.encryptedData, keyPair.privateKey);"
-        },
-        {
-            "name": "generateJWT",
-            "description": "Generate a JWT token with HMAC-SHA256 signature",
-            "parameters": [
-                {
-                    "name": "payload",
-                    "type": "string",
-                    "description": "JSON string of claims to include"
-                },
-                {
-                    "name": "secret",
-                    "type": "string",
-                    "description": "Secret key for signing"
-                },
-                {
-                    "name": "expirationHours",
-                    "type": "number",
-                    "description": "Token expiration in hours"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const jwt = crypto.call('generateJWT', '{\"userId\":123}', 'strong-secret', 24);"
-        },
-        {
-            "name": "verifyJWT",
-            "description": "Verify and decode a JWT token",
-            "parameters": [
-                {
-                    "name": "token",
-                    "type": "string",
-                    "description": "JWT token to verify"
-                },
-                {
-                    "name": "secret",
-                    "type": "string",
-                    "description": "Secret key used for signing"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const verification = crypto.call('verifyJWT', jwt.token, 'strong-secret');"
-        },
-        {
-            "name": "bcryptHash",
-            "description": "Hash password using bcrypt with salt",
-            "parameters": [
-                {
-                    "name": "password",
-                    "type": "string",
-                    "description": "Password to hash"
-                },
-                {
-                    "name": "cost",
-                    "type": "number",
-                    "description": "Bcrypt cost factor (10-14 recommended)"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const hashed = crypto.call('bcryptHash', 'password123', 12);"
-        },
-        {
-            "name": "bcryptVerify",
-            "description": "Verify password against bcrypt hash",
-            "parameters": [
-                {
-                    "name": "password",
-                    "type": "string",
-                    "description": "Password to verify"
-                },
-                {
-                    "name": "hash",
-                    "type": "string",
-                    "description": "Bcrypt hash to verify against"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const verified = crypto.call('bcryptVerify', 'password123', hashed.hash);"
-        },
-        {
-            "name": "generateUUID",
-            "description": "Generate a random UUID v4",
-            "parameters": [],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const uuid = crypto.call('generateUUID');\nconsole.log('UUID:', uuid.uuid);"
-        },
-        {
-            "name": "generateRandomBytes",
-            "description": "Generate cryptographically secure random bytes",
-            "parameters": [
-                {
-                    "name": "length",
-                    "type": "number",
-                    "description": "Number of random bytes to generate"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const randomBytes = crypto.call('generateRandomBytes', 32);"
-        },
-        {
-            "name": "base64Encode",
-            "description": "Encode data to base64",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to encode"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const encoded = crypto.call('base64Encode', 'hello world');"
-        },
-        {
-            "name": "base64Decode",
-            "description": "Decode base64 data",
-            "parameters": [
-                {
-                    "name": "encodedData",
-                    "type": "string",
-                    "description": "Base64 encoded data"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const decoded = crypto.call('base64Decode', 'aGVsbG8gd29ybGQ=');"
-        },
-        {
-            "name": "validatePasswordStrength",
-            "description": "Validate password strength and provide feedback",
-            "parameters": [
-                {
-                    "name": "password",
-                    "type": "string",
-                    "description": "Password to validate"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const validation = crypto.call('validatePasswordStrength', 'MyP@ssw0rd123');"
-        },
-        {
-            "name": "setSilentMode",
-            "description": "Enable/disable silent mode for console logs",
-            "parameters": [
-                {
-                    "name": "silent",
-                    "type": "boolean",
-                    "description": "true to enable silent mode, false to disable it"
-                }
-            ],
-            "returnType": "boolean",
-            "example": "crypto.call('setSilentMode', true); // returns true and enables silent mode"
-        },
-        {
-            "name": "getAvailableFunctions",
-            "description": "Get list of all available functions in the module",
-            "parameters": [],
-            "returnType": "Array<string>",
-            "example": "const functions = crypto.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);"
+          "name": "data",
+          "type": "string",
+          "description": "Data to hash"
         }
-    ],
-    "errorHandling": {
-        "pattern": "object-based",
-        "description": "Crypto module returns objects with 'error' field when operations fail",
-        "examples": [
-            {
-                "error": "Invalid key format: illegal base64 data at input byte 7",
-                "cause": "Called encryptAES() with malformed base64 key"
-            },
-            {
-                "error": "Failed to generate key: insufficient entropy",
-                "cause": "Called generateAESKey() when random number generator is unavailable"
-            },
-            {
-                "error": "JWT verification failed: signature is invalid",
-                "cause": "Called verifyJWT() with invalid signature or wrong secret"
-            },
-            {
-                "error": "RSA key generation failed: key size too small",
-                "cause": "Called generateRSAKeyPair() with key size < 1024"
-            }
-        ],
-        "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = crypto.call('hashSHA256', 'Hello World');\nif (result.error) {\n  console.error('Hash error:', result.error);\n} else {\n  console.log('Hash:', result.hash, 'Algorithm:', result.algorithm);\n}"
     },
-    "gowmConfig": {
-        "supportedBranches": ["master", "stable"],
-        "preferredFilename": "main.wasm",
-        "autoDetect": true,
-        "readySignal": "__gowm_ready",
-        "standardFunctions": ["getAvailableFunctions", "setSilentMode"],
-        "errorPattern": "object-based"
-    },
-    "types": [
+    {
+      "name": "hashSHA512",
+      "description": "Generate SHA512 hash of input data",
+      "parameters": [
         {
-            "name": "CryptoResult",
-            "description": "Standard result type for crypto operations",
-            "type": "object",
-            "details": "Returns object with data on success, or object with 'error' field on failure"
-        },
-        {
-            "name": "HashResult",
-            "description": "Hash operation result",
-            "properties": {
-                "hash": "string (hex-encoded hash)",
-                "algorithm": "string (hash algorithm used)",
-                "error": "string (optional, present on failure)"
-            }
-        },
-        {
-            "name": "EncryptionResult",
-            "description": "Encryption operation result",
-            "properties": {
-                "encryptedData": "string (base64-encoded encrypted data)",
-                "algorithm": "string (encryption algorithm)",
-                "keySize": "number (key size in bits)",
-                "error": "string (optional, present on failure)"
-            }
-        },
-        {
-            "name": "KeyPairResult",
-            "description": "RSA key pair generation result",
-            "properties": {
-                "publicKey": "string (PEM-formatted public key)",
-                "privateKey": "string (PEM-formatted private key)",
-                "keySize": "number (key size in bits)",
-                "error": "string (optional, present on failure)"
-            }
+          "name": "data",
+          "type": "string",
+          "description": "Data to hash"
         }
-    ],
-    "security": {
-        "features": [
-            "Cryptographically secure random number generation",
-            "Memory-safe Go implementation",
-            "Industry-standard encryption algorithms",
-            "Proper key derivation and management",
-            "Protection against timing attacks",
-            "Input validation and sanitization",
-            "Secure memory handling"
-        ]
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = crypto.call('hashSHA512', 'Hello World');\n// Returns: { hash: '...', algorithm: 'SHA512' }"
     },
-    "compatibility": {
-        "browsers": [
-            "Chrome 57+",
-            "Firefox 52+",
-            "Safari 11+",
-            "Edge 16+"
-        ],
-        "gowm": "1.0.0+",
-        "nodejs": "14.0.0+"
-    },
-    "performance": {
-        "features": [
-            "Compiled WebAssembly for optimal performance",
-            "Native Go crypto implementations",
-            "Efficient memory usage",
-            "Silent mode for production environments",
-            "Optimized for GoWM integration"
-        ]
-    },
-    "examples": [
+    {
+      "name": "hashMD5",
+      "description": "Generate MD5 hash (legacy support only - not secure)",
+      "parameters": [
         {
-            "title": "GoWM Integration - Basic Hashing",
-            "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load crypto module from wasm-modules-repository\nconst crypto = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'crypto-wasm',\n  filename: 'main.wasm',\n  name: 'crypto-wasm',\n  branch: 'master'\n});\n\n// Configure module\ncrypto.call('setSilentMode', true);\n\n// Hash operations with error handling\nconst hashResult = crypto.call('hashSHA256', 'Hello World');\nif (hashResult.error) {\n  console.error('Hash error:', hashResult.error);\n} else {\n  console.log('Hash:', hashResult.hash);\n  console.log('Algorithm:', hashResult.algorithm);\n}"
-        },
-        {
-            "title": "AES Encryption/Decryption",
-            "language": "javascript",
-            "code": "// Generate AES key\nconst keyResult = crypto.call('generateAESKey', 32); // 256-bit\nif (keyResult.error) {\n  console.error('Key generation failed:', keyResult.error);\n  return;\n}\n\n// Encrypt data\nconst encryptResult = crypto.call('encryptAES', 'Secret message', keyResult.key);\nif (encryptResult.error) {\n  console.error('Encryption failed:', encryptResult.error);\n  return;\n}\n\nconsole.log('Encrypted:', encryptResult.encryptedData);\n\n// Decrypt data\nconst decryptResult = crypto.call('decryptAES', encryptResult.encryptedData, keyResult.key);\nif (decryptResult.error) {\n  console.error('Decryption failed:', decryptResult.error);\n} else {\n  console.log('Decrypted:', decryptResult.decryptedData);\n}"
-        },
-        {
-            "title": "React Hook Integration",
-            "language": "jsx",
-            "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction CryptoToolkit() {\n  const { wasm: crypto, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'crypto-wasm',\n    filename: 'main.wasm',\n    name: 'crypto-wasm',\n    branch: 'master'\n  });\n  \n  const [message, setMessage] = useState('Hello World');\n  const [hashResult, setHashResult] = useState(null);\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() => {\n    if (crypto) {\n      crypto.call('setSilentMode', true);\n      const availableFunctions = crypto.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [crypto]);\n\n  const hashMessage = () => {\n    if (!crypto) return;\n    \n    const result = crypto.call('hashSHA256', message);\n    if (result.error) {\n      setHashResult({ error: result.error });\n    } else {\n      setHashResult(result);\n    }\n  };\n\n  if (loading) return <div>Loading crypto module...</div>;\n  if (error) return <div>Error: {error.message}</div>;\n\n  return (\n    <div>\n      <h3>Crypto Functions: {functions.length}</h3>\n      <input \n        value={message} \n        onChange={(e) => setMessage(e.target.value)} \n        placeholder=\"Message to hash\" \n      />\n      <button onClick={hashMessage}>Hash SHA256</button>\n      {hashResult && (\n        <div>\n          {hashResult.error ? (\n            <div style={{color: 'red'}}>Error: {hashResult.error}</div>\n          ) : (\n            <div>\n              <strong>Hash:</strong> {hashResult.hash}<br/>\n              <strong>Algorithm:</strong> {hashResult.algorithm}\n            </div>\n          )}\n        </div>\n      )}\n    </div>\n  );\n}"
-        },
-        {
-            "title": "Error Handling Patterns",
-            "language": "javascript",
-            "code": "// Helper function for consistent crypto error handling\nfunction handleCryptoResult(result, successCallback, errorCallback) {\n  if (result.error) {\n    errorCallback(result.error);\n  } else {\n    successCallback(result);\n  }\n}\n\n// Usage examples with different crypto operations\nconst operations = [\n  () => crypto.call('hashSHA256', 'test data'),\n  () => crypto.call('generateAESKey', 32),\n  () => crypto.call('encryptAES', 'data', 'invalid-key'), // Will fail\n  () => crypto.call('generateUUID')\n];\n\noperations.forEach((operation, index) => {\n  const result = operation();\n  handleCryptoResult(\n    result,\n    (data) => console.log(`Operation ${index + 1} success:`, data),\n    (error) => console.error(`Operation ${index + 1} failed:`, error)\n  );\n});"
+          "name": "data",
+          "type": "string",
+          "description": "Data to hash"
         }
-    ],
-    "buildInfo": {
-        "language": "Go",
-        "target": "js/wasm",
-        "buildCommand": "./build.sh",
-        "outputFile": "main.wasm",
-        "goModule": true,
-        "buildTime": "Generated during build process",
-        "compilerFlags": [
-            "GOOS=js",
-            "GOARCH=wasm"
-        ],
-        "dependencies": [
-            "golang.org/x/crypto/bcrypt",
-            "github.com/golang-jwt/jwt/v5"
-        ]
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = crypto.call('hashMD5', 'Hello World');\n// Includes security warning in response"
     },
-    "wasmConfig": {
-        "filename": "main.wasm",
-        "goWasmExecRequired": true,
-        "globalFunctions": true,
-        "readySignal": "__gowm_ready",
-        "memoryInitialPages": 512,
-        "memoryMaximumPages": 1024
+    {
+      "name": "generateAESKey",
+      "description": "Generate a random AES encryption key",
+      "parameters": [
+        {
+          "name": "keySize",
+          "type": "number",
+          "description": "Key size in bytes (16=128bit, 24=192bit, 32=256bit)"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const keyResult = crypto.call('generateAESKey', 32);\nif (keyResult.error) {\n  console.error('Key generation failed:', keyResult.error);\n} else {\n  console.log('Generated key:', keyResult.key, 'Size:', keyResult.keySize);\n}"
     },
-    "usageStats": {
-        "complexity": "intermediate",
-        "averageCallTime": "2-10ms",
-        "memoryUsage": "moderate",
-        "concurrency": "thread-safe"
+    {
+      "name": "encryptAES",
+      "description": "Encrypt data using AES-GCM (authenticated encryption)",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "string",
+          "description": "Data to encrypt"
+        },
+        {
+          "name": "key",
+          "type": "string",
+          "description": "Base64-encoded AES key"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure (e.g., invalid key format)",
+      "example": "const encryptResult = crypto.call('encryptAES', 'secret data', validKey);\nif (encryptResult.error) {\n  console.error('Encryption failed:', encryptResult.error);\n} else {\n  console.log('Encrypted:', encryptResult.encryptedData, 'Algorithm:', encryptResult.algorithm);\n}"
     },
-    "quality": {
-        "stability": "stable",
-        "documentation": "complete",
-        "testing": "comprehensive",
-        "maintainability": "high"
+    {
+      "name": "decryptAES",
+      "description": "Decrypt data using AES-GCM",
+      "parameters": [
+        {
+          "name": "encryptedData",
+          "type": "string",
+          "description": "Base64-encoded encrypted data"
+        },
+        {
+          "name": "key",
+          "type": "string",
+          "description": "Base64-encoded AES key"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const decryptResult = crypto.call('decryptAES', encryptedData, key);\nif (decryptResult.error) {\n  console.error('Decryption failed:', decryptResult.error);\n} else {\n  console.log('Decrypted:', decryptResult.decryptedData);\n}"
     },
-    "ecosystem": {
-        "category": "security",
-        "subcategory": "cryptography",
-        "relatedModules": ["math-wasm"],
-        "useCase": ["authentication", "data-encryption", "password-hashing", "secure-storage"],
-        "industry": ["fintech", "healthcare", "legal", "enterprise"]
+    {
+      "name": "generateRSAKeyPair",
+      "description": "Generate RSA public/private key pair",
+      "parameters": [
+        {
+          "name": "keySize",
+          "type": "number",
+          "description": "Key size in bits (1024-4096)"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const keyPair = crypto.call('generateRSAKeyPair', 2048);\nif (keyPair.error) {\n  console.error('Key generation failed:', keyPair.error);\n} else {\n  console.log('Public key:', keyPair.publicKey);\n  console.log('Private key:', keyPair.privateKey);\n}"
     },
-    "fileInfo": {
-        "sourceLines": 860,
-        "binarySize": "5.5MB",
-        "compressedSize": "1.6MB",
-        "compressionRatio": "71%"
+    {
+      "name": "encryptRSA",
+      "description": "Encrypt data using RSA public key",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "string",
+          "description": "Data to encrypt (limited by key size)"
+        },
+        {
+          "name": "publicKey",
+          "type": "string",
+          "description": "PEM-formatted RSA public key"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const encrypted = crypto.call('encryptRSA', 'secret', keyPair.publicKey);"
     },
-    "changelog": {
-        "version": "0.2.1",
-        "releaseDate": "2025-06-17",
-        "changes": [
-            "Complete cryptographic suite implementation",
-            "Added JWT support with HMAC-SHA256",
-            "Integrated bcrypt for password hashing",
-            "Added AES-GCM authenticated encryption",
-            "RSA key generation and operations",
-            "UUID v4 generation support"
-        ]
+    {
+      "name": "decryptRSA",
+      "description": "Decrypt data using RSA private key",
+      "parameters": [
+        {
+          "name": "encryptedData",
+          "type": "string",
+          "description": "Base64-encoded encrypted data"
+        },
+        {
+          "name": "privateKey",
+          "type": "string",
+          "description": "PEM-formatted RSA private key"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const decrypted = crypto.call('decryptRSA', encrypted.encryptedData, keyPair.privateKey);"
+    },
+    {
+      "name": "generateJWT",
+      "description": "Generate a JWT token with HMAC-SHA256 signature",
+      "parameters": [
+        {
+          "name": "payload",
+          "type": "string",
+          "description": "JSON string of claims to include"
+        },
+        {
+          "name": "secret",
+          "type": "string",
+          "description": "Secret key for signing"
+        },
+        {
+          "name": "expirationHours",
+          "type": "number",
+          "description": "Token expiration in hours"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const jwt = crypto.call('generateJWT', '{\"userId\":123}', 'strong-secret', 24);"
+    },
+    {
+      "name": "verifyJWT",
+      "description": "Verify and decode a JWT token",
+      "parameters": [
+        {
+          "name": "token",
+          "type": "string",
+          "description": "JWT token to verify"
+        },
+        {
+          "name": "secret",
+          "type": "string",
+          "description": "Secret key used for signing"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const verification = crypto.call('verifyJWT', jwt.token, 'strong-secret');"
+    },
+    {
+      "name": "bcryptHash",
+      "description": "Hash password using bcrypt with salt",
+      "parameters": [
+        {
+          "name": "password",
+          "type": "string",
+          "description": "Password to hash"
+        },
+        {
+          "name": "cost",
+          "type": "number",
+          "description": "Bcrypt cost factor (10-14 recommended)"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const hashed = crypto.call('bcryptHash', 'password123', 12);"
+    },
+    {
+      "name": "bcryptVerify",
+      "description": "Verify password against bcrypt hash",
+      "parameters": [
+        {
+          "name": "password",
+          "type": "string",
+          "description": "Password to verify"
+        },
+        {
+          "name": "hash",
+          "type": "string",
+          "description": "Bcrypt hash to verify against"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const verified = crypto.call('bcryptVerify', 'password123', hashed.hash);"
+    },
+    {
+      "name": "generateUUID",
+      "description": "Generate a random UUID v4",
+      "parameters": [],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const uuid = crypto.call('generateUUID');\nconsole.log('UUID:', uuid.uuid);"
+    },
+    {
+      "name": "generateRandomBytes",
+      "description": "Generate cryptographically secure random bytes",
+      "parameters": [
+        {
+          "name": "length",
+          "type": "number",
+          "description": "Number of random bytes to generate"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const randomBytes = crypto.call('generateRandomBytes', 32);"
+    },
+    {
+      "name": "base64Encode",
+      "description": "Encode data to base64",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "string",
+          "description": "Data to encode"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const encoded = crypto.call('base64Encode', 'hello world');"
+    },
+    {
+      "name": "base64Decode",
+      "description": "Decode base64 data",
+      "parameters": [
+        {
+          "name": "encodedData",
+          "type": "string",
+          "description": "Base64 encoded data"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const decoded = crypto.call('base64Decode', 'aGVsbG8gd29ybGQ=');"
+    },
+    {
+      "name": "validatePasswordStrength",
+      "description": "Validate password strength and provide feedback",
+      "parameters": [
+        {
+          "name": "password",
+          "type": "string",
+          "description": "Password to validate"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const validation = crypto.call('validatePasswordStrength', 'MyP@ssw0rd123');"
+    },
+    {
+      "name": "setSilentMode",
+      "description": "Enable/disable silent mode for console logs",
+      "parameters": [
+        {
+          "name": "silent",
+          "type": "boolean",
+          "description": "true to enable silent mode, false to disable it"
+        }
+      ],
+      "returnType": "boolean",
+      "example": "crypto.call('setSilentMode', true); // returns true and enables silent mode"
+    },
+    {
+      "name": "getAvailableFunctions",
+      "description": "Get list of all available functions in the module",
+      "parameters": [],
+      "returnType": "Array<string>",
+      "example": "const functions = crypto.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);"
     }
+  ],
+  "errorHandling": {
+    "pattern": "object-based",
+    "description": "Crypto module returns objects with 'error' field when operations fail",
+    "examples": [
+      {
+        "error": "Invalid key format: illegal base64 data at input byte 7",
+        "cause": "Called encryptAES() with malformed base64 key"
+      },
+      {
+        "error": "Failed to generate key: insufficient entropy",
+        "cause": "Called generateAESKey() when random number generator is unavailable"
+      },
+      {
+        "error": "JWT verification failed: signature is invalid",
+        "cause": "Called verifyJWT() with invalid signature or wrong secret"
+      },
+      {
+        "error": "RSA key generation failed: key size too small",
+        "cause": "Called generateRSAKeyPair() with key size < 1024"
+      }
+    ],
+    "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
+  },
+  "gowmConfig": {
+    "supportedBranches": [
+      "master",
+      "stable"
+    ],
+    "preferredFilename": "main.wasm",
+    "autoDetect": true,
+    "readySignal": "__gowm_ready",
+    "standardFunctions": [
+      "getAvailableFunctions",
+      "setSilentMode"
+    ],
+    "errorPattern": "object-based"
+  },
+  "types": [
+    {
+      "name": "CryptoResult",
+      "description": "Standard result type for crypto operations",
+      "type": "object",
+      "details": "Returns object with data on success, or object with 'error' field on failure"
+    },
+    {
+      "name": "HashResult",
+      "description": "Hash operation result",
+      "properties": {
+        "hash": "string (hex-encoded hash)",
+        "algorithm": "string (hash algorithm used)",
+        "error": "string (optional, present on failure)"
+      }
+    },
+    {
+      "name": "EncryptionResult",
+      "description": "Encryption operation result",
+      "properties": {
+        "encryptedData": "string (base64-encoded encrypted data)",
+        "algorithm": "string (encryption algorithm)",
+        "keySize": "number (key size in bits)",
+        "error": "string (optional, present on failure)"
+      }
+    },
+    {
+      "name": "KeyPairResult",
+      "description": "RSA key pair generation result",
+      "properties": {
+        "publicKey": "string (PEM-formatted public key)",
+        "privateKey": "string (PEM-formatted private key)",
+        "keySize": "number (key size in bits)",
+        "error": "string (optional, present on failure)"
+      }
+    }
+  ],
+  "security": {
+    "features": [
+      "Cryptographically secure random number generation",
+      "Memory-safe Go implementation",
+      "Industry-standard encryption algorithms",
+      "Proper key derivation and management",
+      "Protection against timing attacks",
+      "Input validation and sanitization",
+      "Secure memory handling"
+    ]
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "14.0.0+"
+  },
+  "performance": {
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Native Go crypto implementations",
+      "Efficient memory usage",
+      "Silent mode for production environments",
+      "Optimized for GoWM integration"
+    ]
+  },
+  "examples": [
+    {
+      "title": "GoWM Integration - Basic Hashing",
+      "language": "javascript",
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load crypto module from wasm-modules-repository\nconst crypto = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'crypto-wasm',\n  filename: 'main.wasm',\n  name: 'crypto-wasm',\n  branch: 'master'\n});\n\n// Configure module\ncrypto.call('setSilentMode', true);\n\n// Hash operations with error handling\nconst hashResult = crypto.call('hashSHA256', 'Hello World');\nif (hashResult.error) {\n  console.error('Hash error:', hashResult.error);\n} else {\n  console.log('Hash:', hashResult.hash);\n  console.log('Algorithm:', hashResult.algorithm);\n}"
+    },
+    {
+      "title": "AES Encryption/Decryption",
+      "language": "javascript",
+      "code": "// Generate AES key\nconst keyResult = crypto.call('generateAESKey', 32); // 256-bit\nif (keyResult.error) {\n  console.error('Key generation failed:', keyResult.error);\n  return;\n}\n\n// Encrypt data\nconst encryptResult = crypto.call('encryptAES', 'Secret message', keyResult.key);\nif (encryptResult.error) {\n  console.error('Encryption failed:', encryptResult.error);\n  return;\n}\n\nconsole.log('Encrypted:', encryptResult.encryptedData);\n\n// Decrypt data\nconst decryptResult = crypto.call('decryptAES', encryptResult.encryptedData, keyResult.key);\nif (decryptResult.error) {\n  console.error('Decryption failed:', decryptResult.error);\n} else {\n  console.log('Decrypted:', decryptResult.decryptedData);\n}"
+    },
+    {
+      "title": "React Hook Integration",
+      "language": "jsx",
+      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction CryptoToolkit() {\n  const { wasm: crypto, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'crypto-wasm',\n    filename: 'main.wasm',\n    name: 'crypto-wasm',\n    branch: 'master'\n  });\n  \n  const [message, setMessage] = useState('Hello World');\n  const [hashResult, setHashResult] = useState(null);\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() => {\n    if (crypto) {\n      crypto.call('setSilentMode', true);\n      const availableFunctions = crypto.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [crypto]);\n\n  const hashMessage = () => {\n    if (!crypto) return;\n    \n    const result = crypto.call('hashSHA256', message);\n    if (result.error) {\n      setHashResult({ error: result.error });\n    } else {\n      setHashResult(result);\n    }\n  };\n\n  if (loading) return <div>Loading crypto module...</div>;\n  if (error) return <div>Error: {error.message}</div>;\n\n  return (\n    <div>\n      <h3>Crypto Functions: {functions.length}</h3>\n      <input \n        value={message} \n        onChange={(e) => setMessage(e.target.value)} \n        placeholder=\"Message to hash\" \n      />\n      <button onClick={hashMessage}>Hash SHA256</button>\n      {hashResult && (\n        <div>\n          {hashResult.error ? (\n            <div style={{color: 'red'}}>Error: {hashResult.error}</div>\n          ) : (\n            <div>\n              <strong>Hash:</strong> {hashResult.hash}<br/>\n              <strong>Algorithm:</strong> {hashResult.algorithm}\n            </div>\n          )}\n        </div>\n      )}\n    </div>\n  );\n}"
+    },
+    {
+      "title": "Error Handling Patterns",
+      "language": "javascript",
+      "code": "// Helper function for consistent crypto error handling\nfunction handleCryptoResult(result, successCallback, errorCallback) {\n  if (result.error) {\n    errorCallback(result.error);\n  } else {\n    successCallback(result);\n  }\n}\n\n// Usage examples with different crypto operations\nconst operations = [\n  () => crypto.call('hashSHA256', 'test data'),\n  () => crypto.call('generateAESKey', 32),\n  () => crypto.call('encryptAES', 'data', 'invalid-key'), // Will fail\n  () => crypto.call('generateUUID')\n];\n\noperations.forEach((operation, index) => {\n  const result = operation();\n  handleCryptoResult(\n    result,\n    (data) => console.log(`Operation ${index + 1} success:`, data),\n    (error) => console.error(`Operation ${index + 1} failed:`, error)\n  );\n});"
+    }
+  ],
+  "buildInfo": {
+    "language": "Go",
+    "target": "js/wasm",
+    "buildCommand": "./build.sh",
+    "outputFile": "main.wasm",
+    "goModule": true,
+    "buildTime": "Generated during build process",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm"
+    ],
+    "dependencies": [
+      "golang.org/x/crypto/bcrypt",
+      "github.com/golang-jwt/jwt/v5"
+    ]
+  },
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "goWasmExecRequired": true,
+    "globalFunctions": true,
+    "readySignal": "__gowm_ready",
+    "memoryInitialPages": 512,
+    "memoryMaximumPages": 1024
+  },
+  "usageStats": {
+    "complexity": "intermediate",
+    "averageCallTime": "2-10ms",
+    "memoryUsage": "moderate",
+    "concurrency": "thread-safe"
+  },
+  "quality": {
+    "stability": "stable",
+    "documentation": "complete",
+    "testing": "comprehensive",
+    "maintainability": "high"
+  },
+  "ecosystem": {
+    "category": "security",
+    "subcategory": "cryptography",
+    "relatedModules": [
+      "math-wasm"
+    ],
+    "useCase": [
+      "authentication",
+      "data-encryption",
+      "password-hashing",
+      "secure-storage"
+    ],
+    "industry": [
+      "fintech",
+      "healthcare",
+      "legal",
+      "enterprise"
+    ]
+  },
+  "fileInfo": {
+    "sourceLines": 860,
+    "binarySize": "5.5MB",
+    "compressedSize": "1.6MB",
+    "compressionRatio": "71%"
+  },
+  "changelog": {
+    "version": "0.2.1",
+    "releaseDate": "2025-06-17",
+    "changes": [
+      "Complete cryptographic suite implementation",
+      "Added JWT support with HMAC-SHA256",
+      "Integrated bcrypt for password hashing",
+      "Added AES-GCM authenticated encryption",
+      "RSA key generation and operations",
+      "UUID v4 generation support"
+    ]
+  },
+  "size": 5764161,
+  "gzipSize": 1718009,
+  "buildTime": 1750269370.588163
 }

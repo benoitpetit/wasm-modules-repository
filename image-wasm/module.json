@@ -1,271 +1,300 @@
 {
-    "name": "image-wasm",
-    "description": "WebAssembly module for image processing, compression, and format conversion",
-    "version": "0.2.1",
-    "author": "Ben",
-    "license": "MIT",
-    "tags": ["image", "compression", "webp", "jpeg", "png", "processing", "gowm"],
-    "functions": [
+  "name": "image-wasm",
+  "description": "WebAssembly module for image processing, compression, and format conversion",
+  "version": "0.2.1",
+  "author": "Ben",
+  "license": "MIT",
+  "tags": [
+    "image",
+    "compression",
+    "webp",
+    "jpeg",
+    "png",
+    "processing",
+    "gowm"
+  ],
+  "functions": [
+    {
+      "name": "compressJPEG",
+      "description": "Compress JPEG image with specified quality",
+      "parameters": [
         {
-            "name": "compressJPEG",
-            "description": "Compress JPEG image with specified quality",
-            "parameters": [
-                {
-                    "name": "imageData",
-                    "type": "string",
-                    "description": "Base64 encoded image data"
-                },
-                {
-                    "name": "quality",
-                    "type": "number",
-                    "description": "Quality level (1-100)"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = image.call('compressJPEG', base64Data, 80);"
+          "name": "imageData",
+          "type": "string",
+          "description": "Base64 encoded image data"
         },
         {
-            "name": "convertToWebP",
-            "description": "Convert image to WebP format",
-            "parameters": [
-                {
-                    "name": "imageData",
-                    "type": "string",
-                    "description": "Base64 encoded image data"
-                },
-                {
-                    "name": "quality",
-                    "type": "number",
-                    "description": "Quality level (1-100)"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = image.call('convertToWebP', base64Data, 85);"
-        },
-        {
-            "name": "resizeImage",
-            "description": "Resize image to specified dimensions",
-            "parameters": [
-                {
-                    "name": "imageData",
-                    "type": "string",
-                    "description": "Base64 encoded image data"
-                },
-                {
-                    "name": "width",
-                    "type": "number",
-                    "description": "Target width in pixels"
-                },
-                {
-                    "name": "height",
-                    "type": "number",
-                    "description": "Target height in pixels"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = image.call('resizeImage', base64Data, 800, 600);"
-        },
-        {
-            "name": "getImageInfo",
-            "description": "Get image metadata and information",
-            "parameters": [
-                {
-                    "name": "imageData",
-                    "type": "string",
-                    "description": "Base64 encoded image data"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const info = image.call('getImageInfo', base64Data);"
-        },
-        {
-            "name": "setSilentMode",
-            "description": "Enable/disable silent mode for console logs",
-            "parameters": [
-                {
-                    "name": "silent",
-                    "type": "boolean",
-                    "description": "true to enable silent mode, false to disable it"
-                }
-            ],
-            "returnType": "boolean",
-            "example": "image.call('setSilentMode', true);"
-        },
-        {
-            "name": "getAvailableFunctions",
-            "description": "Get list of all available functions in the module",
-            "parameters": [],
-            "returnType": "Array<string>",
-            "example": "const functions = image.call('getAvailableFunctions');"
+          "name": "quality",
+          "type": "number",
+          "description": "Quality level (1-100)"
         }
-    ],
-    "errorHandling": {
-        "pattern": "object-based",
-        "description": "Image module returns objects with 'error' field when operations fail",
-        "examples": [
-            {
-                "error": "Invalid image format",
-                "cause": "Called processing function with unsupported image format"
-            },
-            {
-                "error": "Image dimensions too large",
-                "cause": "Called resizeImage() with dimensions exceeding limits"
-            },
-            {
-                "error": "Quality parameter out of range (1-100)",
-                "cause": "Called compression function with invalid quality value"
-            }
-        ],
-        "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = image.call('compressJPEG', base64Data, 80);"
     },
-    "gowmConfig": {
-        "supportedBranches": ["master", "stable"],
-        "preferredFilename": "main.wasm",
-        "autoDetect": true,
-        "readySignal": "__gowm_ready",
-        "standardFunctions": ["getAvailableFunctions", "setSilentMode"],
-        "errorPattern": "object-based"
-    },
-    "types": [
+    {
+      "name": "convertToWebP",
+      "description": "Convert image to WebP format",
+      "parameters": [
         {
-            "name": "ImageResult",
-            "description": "Standard result type for image operations",
-            "type": "object",
-            "details": "Returns object with processed image data on success, or object with 'error' field on failure"
+          "name": "imageData",
+          "type": "string",
+          "description": "Base64 encoded image data"
         },
         {
-            "name": "ImageInfo",
-            "description": "Image metadata and information",
-            "properties": {
-                "width": "number (image width in pixels)",
-                "height": "number (image height in pixels)",
-                "format": "string (image format: jpeg, png, webp, etc.)",
-                "size": "number (image file size in bytes)",
-                "error": "string (optional, present on failure)"
-            }
-        },
-        {
-            "name": "ProcessingResult",
-            "description": "Image processing operation result",
-            "properties": {
-                "processedImage": "string (base64-encoded processed image)",
-                "originalSize": "number (original size in bytes)",
-                "newSize": "number (processed size in bytes)",
-                "width": "number (image width)",
-                "height": "number (image height)",
-                "format": "string (output format)",
-                "compressionRatio": "number (compression ratio)",
-                "error": "string (optional, present on failure)"
-            }
+          "name": "quality",
+          "type": "number",
+          "description": "Quality level (1-100)"
         }
-    ],
-    "security": {
-        "features": [
-            "Input validation for image data",
-            "Memory-safe image processing",
-            "Bounds checking for resize operations",
-            "Safe format conversion",
-            "Buffer overflow protection",
-            "Malformed image detection",
-            "Resource limit enforcement"
-        ]
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = image.call('convertToWebP', base64Data, 85);"
     },
-    "compatibility": {
-        "browsers": [
-            "Chrome 57+",
-            "Firefox 52+",
-            "Safari 11+",
-            "Edge 16+"
-        ],
-        "gowm": "1.0.0+",
-        "nodejs": "14.0.0+"
-    },
-    "performance": {
-        "features": [
-            "Compiled WebAssembly for optimal performance",
-            "Native Go image processing libraries",
-            "Efficient memory usage",
-            "Silent mode for production environments",
-            "Optimized for GoWM integration",
-            "Hardware-accelerated operations where available"
-        ]
-    },
-    "examples": [
+    {
+      "name": "resizeImage",
+      "description": "Resize image to specified dimensions",
+      "parameters": [
         {
-            "title": "GoWM Integration - Basic Image Compression",
-            "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load image module from wasm-modules-repository\nconst image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'image-wasm',\n  filename: 'main.wasm',\n  name: 'image-wasm',\n  branch: 'master'\n});\n\n// Configure module\nimage.call('setSilentMode', true);\n\n// Convert file to base64\nconst fileInput = document.getElementById('imageFile');\nconst file = fileInput.files[0];\nconst base64 = await fileToBase64(file);\n\n// Compress JPEG with error handling\nconst result = image.call('compressJPEG', base64, 80);\nif (result.error) {\n  console.error('Compression failed:', result.error);\n} else {\n  console.log('Original size:', result.originalSize, 'bytes');\n  console.log('Compressed size:', result.newSize, 'bytes');\n  console.log('Compression ratio:', result.compressionRatio);\n}\n\n// Helper function\nfunction fileToBase64(file) {\n  return new Promise((resolve, reject) => {\n    const reader = new FileReader();\n    reader.readAsDataURL(file);\n    reader.onload = () => resolve(reader.result.split(',')[1]);\n    reader.onerror = error => reject(error);\n  });\n}"
+          "name": "imageData",
+          "type": "string",
+          "description": "Base64 encoded image data"
         },
         {
-            "title": "Image Processing Pipeline",
-            "language": "javascript",
-            "code": "// Complete image processing workflow\nasync function processImage(base64ImageData) {\n  // Get original image info\n  const info = image.call('getImageInfo', base64ImageData);\n  if (info.error) {\n    throw new Error('Failed to get image info: ' + info.error);\n  }\n  \n  console.log('Original: ' + info.width + 'x' + info.height + ', ' + info.format + ', ' + info.size + ' bytes');\n  \n  // Resize if too large\n  let processedImage = base64ImageData;\n  if (info.width > 1920 || info.height > 1080) {\n    const resizeResult = image.call('resizeImage', processedImage, 1920, 1080);\n    if (resizeResult.error) {\n      throw new Error('Resize failed: ' + resizeResult.error);\n    }\n    processedImage = resizeResult.processedImage;\n    console.log('Resized to: ' + resizeResult.width + 'x' + resizeResult.height);\n  }\n  \n  // Convert to WebP for better compression\n  const webpResult = image.call('convertToWebP', processedImage, 85);\n  if (webpResult.error) {\n    throw new Error('WebP conversion failed: ' + webpResult.error);\n  }\n  \n  console.log('Final WebP: ' + webpResult.newSize + ' bytes (' + webpResult.compressionRatio + '% of original)');\n  return webpResult.processedImage;\n}"
+          "name": "width",
+          "type": "number",
+          "description": "Target width in pixels"
         },
         {
-            "title": "Error Handling Patterns",
-            "language": "javascript",
-            "code": "// Helper function for consistent image processing error handling\nfunction handleImageResult(result, successCallback, errorCallback) {\n  if (result.error) {\n    errorCallback(result.error);\n  } else {\n    successCallback(result);\n  }\n}\n\n// Batch image processing with error handling\nconst images = [base64Image1, base64Image2, base64Image3];\nconst operations = [\n  { func: 'compressJPEG', args: [80] },\n  { func: 'convertToWebP', args: [85] },\n  { func: 'resizeImage', args: [800, 600] }\n];\n\nimages.forEach((imageData, imageIndex) => {\n  operations.forEach(({ func, args }, opIndex) => {\n    const result = image.call(func, imageData, ...args);\n    handleImageResult(\n      result,\n      (data) => {\n        console.log('Image ' + (imageIndex + 1) + ', ' + func + ': Success');\n        console.log('  Original: ' + data.originalSize + ' bytes, New: ' + data.newSize + ' bytes');\n        console.log('  Compression: ' + data.compressionRatio + '%');\n      },\n      (error) => {\n        console.error('Image ' + (imageIndex + 1) + ', ' + func + ' failed: ' + error);\n      }\n    );\n  });\n});"
+          "name": "height",
+          "type": "number",
+          "description": "Target height in pixels"
         }
-    ],
-    "buildInfo": {
-        "language": "Go",
-        "target": "js/wasm",
-        "buildCommand": "./build.sh",
-        "outputFile": "main.wasm",
-        "goModule": true,
-        "buildTime": "Generated during build process",
-        "compilerFlags": [
-            "GOOS=js",
-            "GOARCH=wasm"
-        ]
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = image.call('resizeImage', base64Data, 800, 600);"
     },
-    "wasmConfig": {
-        "filename": "main.wasm",
-        "goWasmExecRequired": true,
-        "globalFunctions": true,
-        "readySignal": "__gowm_ready",
-        "memoryInitialPages": 512,
-        "memoryMaximumPages": 2048
+    {
+      "name": "getImageInfo",
+      "description": "Get image metadata and information",
+      "parameters": [
+        {
+          "name": "imageData",
+          "type": "string",
+          "description": "Base64 encoded image data"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const info = image.call('getImageInfo', base64Data);"
     },
-    "usageStats": {
-        "complexity": "intermediate",
-        "averageCallTime": "10-100ms",
-        "memoryUsage": "high",
-        "concurrency": "limited"
+    {
+      "name": "setSilentMode",
+      "description": "Enable/disable silent mode for console logs",
+      "parameters": [
+        {
+          "name": "silent",
+          "type": "boolean",
+          "description": "true to enable silent mode, false to disable it"
+        }
+      ],
+      "returnType": "boolean",
+      "example": "image.call('setSilentMode', true);"
     },
-    "quality": {
-        "stability": "stable",
-        "documentation": "complete",
-        "testing": "comprehensive",
-        "maintainability": "high"
-    },
-    "ecosystem": {
-        "category": "media",
-        "subcategory": "image-processing",
-        "relatedModules": ["crypto-wasm"],
-        "useCase": ["image-optimization", "format-conversion", "thumbnail-generation", "photo-editing"],
-        "industry": ["e-commerce", "media", "photography", "web-development"]
-    },
-    "fileInfo": {
-        "sourceLines": 328,
-        "binarySize": "2.8MB",
-        "compressedSize": "845KB",
-        "compressionRatio": "70%"
-    },
-    "changelog": {
-        "version": "0.2.1",
-        "releaseDate": "2025-06-17",
-        "changes": [
-            "Multi-format image processing support",
-            "JPEG/PNG compression with quality control",
-            "WebP conversion for modern browsers",
-            "Image resizing with aspect ratio preservation",
-            "Added rotation and cropping capabilities",
-            "Base64 input/output for web compatibility"
-        ]
+    {
+      "name": "getAvailableFunctions",
+      "description": "Get list of all available functions in the module",
+      "parameters": [],
+      "returnType": "Array<string>",
+      "example": "const functions = image.call('getAvailableFunctions');"
     }
-} 
+  ],
+  "errorHandling": {
+    "pattern": "object-based",
+    "description": "Image module returns objects with 'error' field when operations fail",
+    "examples": [
+      {
+        "error": "Invalid image format",
+        "cause": "Called processing function with unsupported image format"
+      },
+      {
+        "error": "Image dimensions too large",
+        "cause": "Called resizeImage() with dimensions exceeding limits"
+      },
+      {
+        "error": "Quality parameter out of range (1-100)",
+        "cause": "Called compression function with invalid quality value"
+      }
+    ],
+    "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
+  },
+  "gowmConfig": {
+    "supportedBranches": [
+      "master",
+      "stable"
+    ],
+    "preferredFilename": "main.wasm",
+    "autoDetect": true,
+    "readySignal": "__gowm_ready",
+    "standardFunctions": [
+      "getAvailableFunctions",
+      "setSilentMode"
+    ],
+    "errorPattern": "object-based"
+  },
+  "types": [
+    {
+      "name": "ImageResult",
+      "description": "Standard result type for image operations",
+      "type": "object",
+      "details": "Returns object with processed image data on success, or object with 'error' field on failure"
+    },
+    {
+      "name": "ImageInfo",
+      "description": "Image metadata and information",
+      "properties": {
+        "width": "number (image width in pixels)",
+        "height": "number (image height in pixels)",
+        "format": "string (image format: jpeg, png, webp, etc.)",
+        "size": "number (image file size in bytes)",
+        "error": "string (optional, present on failure)"
+      }
+    },
+    {
+      "name": "ProcessingResult",
+      "description": "Image processing operation result",
+      "properties": {
+        "processedImage": "string (base64-encoded processed image)",
+        "originalSize": "number (original size in bytes)",
+        "newSize": "number (processed size in bytes)",
+        "width": "number (image width)",
+        "height": "number (image height)",
+        "format": "string (output format)",
+        "compressionRatio": "number (compression ratio)",
+        "error": "string (optional, present on failure)"
+      }
+    }
+  ],
+  "security": {
+    "features": [
+      "Input validation for image data",
+      "Memory-safe image processing",
+      "Bounds checking for resize operations",
+      "Safe format conversion",
+      "Buffer overflow protection",
+      "Malformed image detection",
+      "Resource limit enforcement"
+    ]
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "14.0.0+"
+  },
+  "performance": {
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Native Go image processing libraries",
+      "Efficient memory usage",
+      "Silent mode for production environments",
+      "Optimized for GoWM integration",
+      "Hardware-accelerated operations where available"
+    ]
+  },
+  "examples": [
+    {
+      "title": "GoWM Integration - Basic Image Compression",
+      "language": "javascript",
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load image module from wasm-modules-repository\nconst image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'image-wasm',\n  filename: 'main.wasm',\n  name: 'image-wasm',\n  branch: 'master'\n});\n\n// Configure module\nimage.call('setSilentMode', true);\n\n// Convert file to base64\nconst fileInput = document.getElementById('imageFile');\nconst file = fileInput.files[0];\nconst base64 = await fileToBase64(file);\n\n// Compress JPEG with error handling\nconst result = image.call('compressJPEG', base64, 80);\nif (result.error) {\n  console.error('Compression failed:', result.error);\n} else {\n  console.log('Original size:', result.originalSize, 'bytes');\n  console.log('Compressed size:', result.newSize, 'bytes');\n  console.log('Compression ratio:', result.compressionRatio);\n}\n\n// Helper function\nfunction fileToBase64(file) {\n  return new Promise((resolve, reject) => {\n    const reader = new FileReader();\n    reader.readAsDataURL(file);\n    reader.onload = () => resolve(reader.result.split(',')[1]);\n    reader.onerror = error => reject(error);\n  });\n}"
+    },
+    {
+      "title": "Image Processing Pipeline",
+      "language": "javascript",
+      "code": "// Complete image processing workflow\nasync function processImage(base64ImageData) {\n  // Get original image info\n  const info = image.call('getImageInfo', base64ImageData);\n  if (info.error) {\n    throw new Error('Failed to get image info: ' + info.error);\n  }\n  \n  console.log('Original: ' + info.width + 'x' + info.height + ', ' + info.format + ', ' + info.size + ' bytes');\n  \n  // Resize if too large\n  let processedImage = base64ImageData;\n  if (info.width > 1920 || info.height > 1080) {\n    const resizeResult = image.call('resizeImage', processedImage, 1920, 1080);\n    if (resizeResult.error) {\n      throw new Error('Resize failed: ' + resizeResult.error);\n    }\n    processedImage = resizeResult.processedImage;\n    console.log('Resized to: ' + resizeResult.width + 'x' + resizeResult.height);\n  }\n  \n  // Convert to WebP for better compression\n  const webpResult = image.call('convertToWebP', processedImage, 85);\n  if (webpResult.error) {\n    throw new Error('WebP conversion failed: ' + webpResult.error);\n  }\n  \n  console.log('Final WebP: ' + webpResult.newSize + ' bytes (' + webpResult.compressionRatio + '% of original)');\n  return webpResult.processedImage;\n}"
+    },
+    {
+      "title": "Error Handling Patterns",
+      "language": "javascript",
+      "code": "// Helper function for consistent image processing error handling\nfunction handleImageResult(result, successCallback, errorCallback) {\n  if (result.error) {\n    errorCallback(result.error);\n  } else {\n    successCallback(result);\n  }\n}\n\n// Batch image processing with error handling\nconst images = [base64Image1, base64Image2, base64Image3];\nconst operations = [\n  { func: 'compressJPEG', args: [80] },\n  { func: 'convertToWebP', args: [85] },\n  { func: 'resizeImage', args: [800, 600] }\n];\n\nimages.forEach((imageData, imageIndex) => {\n  operations.forEach(({ func, args }, opIndex) => {\n    const result = image.call(func, imageData, ...args);\n    handleImageResult(\n      result,\n      (data) => {\n        console.log('Image ' + (imageIndex + 1) + ', ' + func + ': Success');\n        console.log('  Original: ' + data.originalSize + ' bytes, New: ' + data.newSize + ' bytes');\n        console.log('  Compression: ' + data.compressionRatio + '%');\n      },\n      (error) => {\n        console.error('Image ' + (imageIndex + 1) + ', ' + func + ' failed: ' + error);\n      }\n    );\n  });\n});"
+    }
+  ],
+  "buildInfo": {
+    "language": "Go",
+    "target": "js/wasm",
+    "buildCommand": "./build.sh",
+    "outputFile": "main.wasm",
+    "goModule": true,
+    "buildTime": "Generated during build process",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm"
+    ]
+  },
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "goWasmExecRequired": true,
+    "globalFunctions": true,
+    "readySignal": "__gowm_ready",
+    "memoryInitialPages": 512,
+    "memoryMaximumPages": 2048
+  },
+  "usageStats": {
+    "complexity": "intermediate",
+    "averageCallTime": "10-100ms",
+    "memoryUsage": "high",
+    "concurrency": "limited"
+  },
+  "quality": {
+    "stability": "stable",
+    "documentation": "complete",
+    "testing": "comprehensive",
+    "maintainability": "high"
+  },
+  "ecosystem": {
+    "category": "media",
+    "subcategory": "image-processing",
+    "relatedModules": [
+      "crypto-wasm"
+    ],
+    "useCase": [
+      "image-optimization",
+      "format-conversion",
+      "thumbnail-generation",
+      "photo-editing"
+    ],
+    "industry": [
+      "e-commerce",
+      "media",
+      "photography",
+      "web-development"
+    ]
+  },
+  "fileInfo": {
+    "sourceLines": 328,
+    "binarySize": "2.8MB",
+    "compressedSize": "845KB",
+    "compressionRatio": "70%"
+  },
+  "changelog": {
+    "version": "0.2.1",
+    "releaseDate": "2025-06-17",
+    "changes": [
+      "Multi-format image processing support",
+      "JPEG/PNG compression with quality control",
+      "WebP conversion for modern browsers",
+      "Image resizing with aspect ratio preservation",
+      "Added rotation and cropping capabilities",
+      "Base64 input/output for web compatibility"
+    ]
+  },
+  "size": 2907258,
+  "gzipSize": 901916,
+  "buildTime": 1750269452.290316
+}

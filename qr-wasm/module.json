@@ -1,465 +1,475 @@
 {
-    "name": "qr-wasm",
-    "description": "High-performance QR code and barcode generation module written in Go and compiled to WebAssembly. Provides comprehensive code generation and decoding functions with GoWM integration.",
-    "version": "0.1.0",
-    "author": "Ben",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/benoitpetit/wasm-modules-repository.git",
-        "directory": "qr-wasm"
-    },
-    "tags": [
-        "qrcode",
-        "barcode",
-        "code-generation",
-        "image-processing",
-        "vcard",
-        "wifi",
-        "mobile",
-        "scanning",
-        "wasm",
-        "go",
-        "gowm"
-    ],
-    "functions": [
+  "name": "qr-wasm",
+  "description": "High-performance QR code and barcode generation module written in Go and compiled to WebAssembly. Provides comprehensive code generation and decoding functions with GoWM integration.",
+  "version": "0.1.0",
+  "author": "Ben",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benoitpetit/wasm-modules-repository.git",
+    "directory": "qr-wasm"
+  },
+  "tags": [
+    "qrcode",
+    "barcode",
+    "code-generation",
+    "image-processing",
+    "vcard",
+    "wifi",
+    "mobile",
+    "scanning",
+    "wasm",
+    "go",
+    "gowm"
+  ],
+  "functions": [
+    {
+      "name": "generateQRCode",
+      "description": "Generate QR code from text data with customizable size and error correction level",
+      "parameters": [
         {
-            "name": "generateQRCode",
-            "description": "Generate QR code from text data with customizable size and error correction level",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to encode in QR code"
-                },
-                {
-                    "name": "size",
-                    "type": "number",
-                    "description": "QR code size in pixels (default: 256)",
-                    "optional": true
-                },
-                {
-                    "name": "errorLevel",
-                    "type": "string",
-                    "description": "Error correction level: LOW, MEDIUM, HIGH, HIGHEST (default: MEDIUM)",
-                    "optional": true
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = qr.call('generateQRCode', 'Hello World', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  document.getElementById('qr').src = 'data:image/png;base64,' + result.base64Image;\n}"
+          "name": "data",
+          "type": "string",
+          "description": "Data to encode in QR code"
         },
         {
-            "name": "generateBarcode",
-            "description": "Generate barcode from data with specified type and dimensions",
-            "parameters": [
-                {
-                    "name": "data",
-                    "type": "string",
-                    "description": "Data to encode in barcode"
-                },
-                {
-                    "name": "type",
-                    "type": "string",
-                    "description": "Barcode type: code128, code39, ean13, ean8 (default: code128)",
-                    "optional": true
-                },
-                {
-                    "name": "width",
-                    "type": "number",
-                    "description": "Barcode width in pixels (default: 200)",
-                    "optional": true
-                },
-                {
-                    "name": "height",
-                    "type": "number",
-                    "description": "Barcode height in pixels (default: 100)",
-                    "optional": true
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = qr.call('generateBarcode', '1234567890128', 'ean13', 300, 150);\n// Returns: { base64Image: '...', type: 'ean13', width: 300, height: 150 }"
+          "name": "size",
+          "type": "number",
+          "description": "QR code size in pixels (default: 256)",
+          "optional": true
         },
         {
-            "name": "generateVCard",
-            "description": "Generate QR code containing vCard contact information",
-            "parameters": [
-                {
-                    "name": "vCardData",
-                    "type": "object",
-                    "description": "Contact information object with name, organization, phone, email, url, address fields"
-                },
-                {
-                    "name": "size",
-                    "type": "number",
-                    "description": "QR code size in pixels (default: 256)",
-                    "optional": true
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const contact = {\n  name: 'John Doe',\n  organization: 'Tech Corp',\n  phone: '+1234567890',\n  email: 'john@example.com',\n  url: 'https://johndoe.com'\n};\nconst result = qr.call('generateVCard', contact, 300);\n// Returns QR code containing vCard data"
-        },
-        {
-            "name": "generateWiFiQR",
-            "description": "Generate QR code for WiFi network connection",
-            "parameters": [
-                {
-                    "name": "wifiData",
-                    "type": "object",
-                    "description": "WiFi network information with ssid, password, security, hidden fields"
-                },
-                {
-                    "name": "size",
-                    "type": "number",
-                    "description": "QR code size in pixels (default: 256)",
-                    "optional": true
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const wifi = {\n  ssid: 'MyNetwork',\n  password: 'mypassword',\n  security: 'WPA',\n  hidden: false\n};\nconst result = qr.call('generateWiFiQR', wifi, 256);\n// Returns QR code for WiFi connection"
-        },
-        {
-            "name": "decodeQRCode",
-            "description": "Decode QR code from base64 image data (BASIC IMPLEMENTATION - includes validation and mock data for testing)",
-            "parameters": [
-                {
-                    "name": "base64Image",
-                    "type": "string",
-                    "description": "Base64 encoded image data"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = qr.call('decodeQRCode', base64ImageData);\n// Note: Decoding functionality is limited in current version"
-        },
-        {
-            "name": "decodeBarcode",
-            "description": "Decode barcode from base64 image data (BASIC IMPLEMENTATION - includes validation and mock data for testing)",
-            "parameters": [
-                {
-                    "name": "base64Image",
-                    "type": "string",
-                    "description": "Base64 encoded image data"
-                }
-            ],
-            "returnType": "object",
-            "errorPattern": "Returns object with 'error' field on failure",
-            "example": "const result = qr.call('decodeBarcode', base64ImageData);\n// Note: Decoding functionality is limited in current version"
-        },
-        {
-            "name": "getAvailableFunctions",
-            "description": "Return list of all available functions in the module",
-            "parameters": [],
-            "returnType": "array",
-            "errorPattern": "Never fails",
-            "example": "const functions = qr.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);\n// Returns: ['generateQRCode', 'generateBarcode', 'generateVCard', ...]"
-        },
-        {
-            "name": "setSilentMode",
-            "description": "Enable or disable console logging for operations",
-            "parameters": [
-                {
-                    "name": "silent",
-                    "type": "boolean",
-                    "description": "True to disable logging, false to enable"
-                }
-            ],
-            "returnType": "boolean",
-            "errorPattern": "Never fails",
-            "example": "qr.call('setSilentMode', true); // Disable logging\nqr.call('setSilentMode', false); // Enable logging"
+          "name": "errorLevel",
+          "type": "string",
+          "description": "Error correction level: LOW, MEDIUM, HIGH, HIGHEST (default: MEDIUM)",
+          "optional": true
         }
-    ],
-    "gowmConfig": {
-        "supportedBranches": ["master", "main", "stable"],
-        "preferredFilename": "main.wasm",
-        "autoDetect": true,
-        "readySignal": "__gowm_ready",
-        "standardFunctions": ["getAvailableFunctions", "setSilentMode"],
-        "errorPattern": "object-based",
-        "integrityFile": "main.wasm.integrity",
-        "compressedFile": "main.wasm.gz"
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = qr.call('generateQRCode', 'Hello World', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  document.getElementById('qr').src = 'data:image/png;base64,' + result.base64Image;\n}"
     },
-    "types": [
+    {
+      "name": "generateBarcode",
+      "description": "Generate barcode from data with specified type and dimensions",
+      "parameters": [
         {
-            "name": "QRResult",
-            "description": "Result type for QR code operations",
-            "properties": {
-                "data": "string (encoded data)",
-                "size": "number (image size in pixels)",
-                "base64Image": "string (base64-encoded PNG image)",
-                "errorLevel": "string (error correction level)",
-                "contentType": "string (MIME type)",
-                "originalData": "string (original input data)",
-                "width": "number (image width)",
-                "height": "number (image height)",
-                "error": "string (optional, present on failure)"
-            }
+          "name": "data",
+          "type": "string",
+          "description": "Data to encode in barcode"
         },
         {
-            "name": "BarcodeResult",
-            "description": "Result type for barcode operations", 
-            "properties": {
-                "data": "string (encoded data)",
-                "type": "string (barcode type)",
-                "base64Image": "string (base64-encoded image)",
-                "width": "number (image width)",
-                "height": "number (image height)", 
-                "contentType": "string (MIME type)",
-                "originalData": "string (original input data)",
-                "error": "string (optional, present on failure)"
-            }
+          "name": "type",
+          "type": "string",
+          "description": "Barcode type: code128, code39, ean13, ean8 (default: code128)",
+          "optional": true
         },
         {
-            "name": "VCardData",
-            "description": "Input data structure for vCard QR codes",
-            "properties": {
-                "name": "string (contact name)",
-                "organization": "string (optional, organization name)",
-                "phone": "string (optional, phone number)",
-                "email": "string (optional, email address)",
-                "url": "string (optional, website URL)",
-                "address": "string (optional, physical address)"
-            }
+          "name": "width",
+          "type": "number",
+          "description": "Barcode width in pixels (default: 200)",
+          "optional": true
         },
         {
-            "name": "WiFiData", 
-            "description": "Input data structure for WiFi QR codes",
-            "properties": {
-                "ssid": "string (network name)",
-                "password": "string (optional, network password)",
-                "security": "string (optional, security type: WPA/WEP/nopass)",
-                "hidden": "boolean (optional, whether network is hidden)"
-            }
-        },
-        {
-            "name": "DecodeResult",
-            "description": "Result type for decode operations",
-            "properties": {
-                "success": "boolean (decode success status)",
-                "data": "string (optional, decoded data)",
-                "type": "string (detected code type)",
-                "confidence": "number (optional, confidence level)",
-                "error": "string (optional, present on failure)"
-            }
+          "name": "height",
+          "type": "number",
+          "description": "Barcode height in pixels (default: 100)",
+          "optional": true
         }
-    ],
-    "errorHandling": {
-        "pattern": "object-based",
-        "description": "QR module returns objects with 'error' field when operations fail",
-        "examples": [
-            {
-                "error": "Error: invalid QR code size (must be between 1-4096)",
-                "cause": "Called generateQRCode() with invalid size parameter"
-            },
-            {
-                "error": "Error: unsupported barcode type",
-                "cause": "Called generateBarcode() with unsupported type parameter"
-            },
-            {
-                "error": "Error: invalid vCard data structure",
-                "cause": "Called generateVCard() with malformed contact data"
-            },
-            {
-                "error": "Error: invalid WiFi configuration",
-                "cause": "Called generateWiFiQR() with incomplete network data"
-            }
-        ],
-        "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = qr.call('generateBarcode', '1234567890128', 'ean13', 300, 150);\n// Returns: { base64Image: '...', type: 'ean13', width: 300, height: 150 }"
     },
-    "security": {
-        "features": [
-            "Memory-safe Go implementation",
-            "Input validation and sanitization",
-            "Secure memory handling",
-            "Protection against malicious QR codes",
-            "No file system access",
-            "No network access",
-            "Sandboxed execution environment"
-        ],
-        "integrity": {
-            "enabled": true,
-            "algorithm": "SHA256",
-            "hashFile": "main.wasm.integrity"
-        }
-    },
-    "performance": {
-        "features": [
-            "Compiled WebAssembly for optimal performance",
-            "Native Go QR/barcode implementations",
-            "Efficient memory usage",
-            "Optimized image processing",
-            "Silent mode for production environments",
-            "Optimized for GoWM integration"
-        ],
-        "metrics": {
-            "loadTime": "< 500ms",
-            "memoryUsage": "< 8MB",
-            "generationSpeed": "< 100ms per QR code"
-        }
-    },
-    "compatibility": {
-        "browsers": [
-            "Chrome 57+",
-            "Firefox 52+",
-            "Safari 11+",
-            "Edge 16+"
-        ],
-        "environments": [
-            "Browser (ES6+)",
-            "Node.js 14.0.0+",
-            "Webpack 5+",
-            "Vite 2+",
-            "Rollup 2+"
-        ],
-        "gowm": "1.0.0+",
-        "nodejs": "14.0.0+"
-    },
-    "examples": [
+    {
+      "name": "generateVCard",
+      "description": "Generate QR code containing vCard contact information",
+      "parameters": [
         {
-            "title": "GoWM Integration - Basic QR Code",
-            "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load QR module from wasm-modules-repository\nconst qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'qr-wasm',\n  filename: 'main.wasm',\n  name: 'qr-wasm',\n  branch: 'master'\n});\n\n// Configure module\nqr.call('setSilentMode', true);\n\n// Generate QR code with error handling\nconst result = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
+          "name": "vCardData",
+          "type": "object",
+          "description": "Contact information object with name, organization, phone, email, url, address fields"
         },
         {
-            "title": "vCard Contact QR Generation",
-            "language": "javascript",
-            "code": "const contact = {\n  name: 'Alice Smith',\n  organization: 'TechCorp Inc.',\n  phone: '+1-555-0123',\n  email: 'alice@techcorp.com',\n  url: 'https://alice.techcorp.com'\n};\n\nconst result = qr.call('generateVCard', contact, 300);\nif (!result.error) {\n  console.log('vCard QR generated:', result.base64Image);\n}"
-        },
-        {
-            "title": "WiFi Connection QR Code",
-            "language": "javascript",
-            "code": "const wifi = {\n  ssid: 'MyOfficeWiFi',\n  password: 'SecurePassword123',\n  security: 'WPA',\n  hidden: false\n};\n\nconst result = qr.call('generateWiFiQR', wifi, 256);\nif (!result.error) {\n  console.log('WiFi QR generated for network:', wifi.ssid);\n  // Users can scan this QR to auto-connect to WiFi\n}"
-        },
-        {
-            "title": "Barcode Generation",
-            "language": "javascript",
-            "code": "const result = qr.call('generateBarcode', '1234567890128', 'ean13', 400, 200);\nif (!result.error) {\n  console.log('Barcode type:', result.type);\n  console.log('Dimensions:', result.width + 'x' + result.height);\n  console.log('Base64 image:', result.base64Image);\n}"
+          "name": "size",
+          "type": "number",
+          "description": "QR code size in pixels (default: 256)",
+          "optional": true
         }
-    ],
-    "buildInfo": {
-        "language": "Go",
-        "goVersion": "1.21+",
-        "target": "js/wasm",
-        "buildCommand": "./build.sh",
-        "outputFile": "main.wasm",
-        "goModule": true,
-        "buildTime": "Generated during build process",
-        "compilerFlags": [
-            "GOOS=js",
-            "GOARCH=wasm",
-            "-ldflags=-s -w"
-        ],
-        "dependencies": [
-            "github.com/skip2/go-qrcode",
-            "github.com/boombuler/barcode"
-        ]
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const contact = {\n  name: 'John Doe',\n  organization: 'Tech Corp',\n  phone: '+1234567890',\n  email: 'john@example.com',\n  url: 'https://johndoe.com'\n};\nconst result = qr.call('generateVCard', contact, 300);\n// Returns QR code containing vCard data"
     },
-    "wasmConfig": {
-        "filename": "main.wasm",
-        "goWasmExecRequired": true,
-        "globalFunctions": true,
-        "readySignal": "__gowm_ready",
-        "memoryInitialPages": 512,
-        "memoryMaximumPages": 2048,
-        "stackSize": "64KB",
-        "heapSize": "8MB"
+    {
+      "name": "generateWiFiQR",
+      "description": "Generate QR code for WiFi network connection",
+      "parameters": [
+        {
+          "name": "wifiData",
+          "type": "object",
+          "description": "WiFi network information with ssid, password, security, hidden fields"
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "description": "QR code size in pixels (default: 256)",
+          "optional": true
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const wifi = {\n  ssid: 'MyNetwork',\n  password: 'mypassword',\n  security: 'WPA',\n  hidden: false\n};\nconst result = qr.call('generateWiFiQR', wifi, 256);\n// Returns QR code for WiFi connection"
     },
-    "usageStats": {
-        "complexity": "intermediate",
-        "averageCallTime": "10-100ms",
-        "memoryUsage": "moderate",
-        "concurrency": "thread-safe"
+    {
+      "name": "decodeQRCode",
+      "description": "Decode QR code from base64 image data (BASIC IMPLEMENTATION - includes validation and mock data for testing)",
+      "parameters": [
+        {
+          "name": "base64Image",
+          "type": "string",
+          "description": "Base64 encoded image data"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = qr.call('decodeQRCode', base64ImageData);\n// Note: Decoding functionality is limited in current version"
     },
-    "quality": {
-        "stability": "stable",
-        "documentation": "complete",
-        "testing": "comprehensive",
-        "maintainability": "high"
+    {
+      "name": "decodeBarcode",
+      "description": "Decode barcode from base64 image data (BASIC IMPLEMENTATION - includes validation and mock data for testing)",
+      "parameters": [
+        {
+          "name": "base64Image",
+          "type": "string",
+          "description": "Base64 encoded image data"
+        }
+      ],
+      "returnType": "object",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = qr.call('decodeBarcode', base64ImageData);\n// Note: Decoding functionality is limited in current version"
     },
-    "useCases": [
-        "Mobile app QR code generation",
-        "Contact sharing via vCard QR codes",
-        "WiFi credential sharing",
-        "Product labeling with barcodes",
-        "Event tickets and passes",
-        "Restaurant menu QR codes",
-        "Marketing campaigns with QR codes",
-        "Inventory management barcodes",
-        "Payment QR codes",
-        "Social media profile sharing"
-    ],
-    "documentation": {
-        "apiReference": "Complete function documentation with examples",
-        "tutorialLinks": [
-            "Basic QR generation",
-            "vCard integration",
-            "WiFi QR setup",
-            "Barcode formats guide"
-        ],
-        "troubleshooting": "Common issues and solutions",
-        "performanceTips": "Optimization guidelines for production",
-        "integration": "GoWM integration best practices"
+    {
+      "name": "getAvailableFunctions",
+      "description": "Return list of all available functions in the module",
+      "parameters": [],
+      "returnType": "array",
+      "errorPattern": "Never fails",
+      "example": "const functions = qr.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);\n// Returns: ['generateQRCode', 'generateBarcode', 'generateVCard', ...]"
     },
-    "ecosystem": {
-        "category": "image-processing",
-        "subcategory": "qr-barcode",
-        "relatedModules": [
-            "image-wasm",
-            "crypto-wasm"
-        ],
-        "useCase": [
-            "mobile-apps",
-            "contact-sharing",
-            "wifi-setup",
-            "inventory",
-            "marketing",
-            "payments",
-            "events"
-        ],
-        "industry": [
-            "retail",
-            "hospitality",
-            "events",
-            "mobile-development",
-            "logistics",
-            "healthcare"
-        ]
-    },
-    "fileInfo": {
-        "sourceLines": 671,
-        "binarySize": "3.3MB",
-        "compressedSize": "920KB",
-        "compressionRatio": "72%",
-        "integrityHash": "d9112da42e52480e7ec72d11186b0536cfe09e9da12bb6b8a815cdeccf51012f"
-    },
-    "changelog": {
-        "version": "0.1.0",
-        "releaseDate": "2025-12-28",
-        "changes": [
-            "Initial stable release with QR code generation",
-            "Support for multiple barcode formats (Code128, Code39, EAN13, EAN8)",
-            "vCard contact QR code generation",
-            "WiFi network QR code support",
-            "Enhanced error handling and validation",
-            "Optimized for GoWM integration",
-            "Added integrity verification",
-            "Improved performance and memory usage",
-            "Complete TypeScript definitions"
-        ]
-    },
-    "validation": {
-        "tested": true,
-        "testCoverage": "85%",
-        "lastValidated": "2024-12-28",
-        "platforms": [
-            "Chrome 120+",
-            "Firefox 121+",
-            "Safari 17+",
-            "Node.js 18+",
-            "Node.js 20+"
-        ]
+    {
+      "name": "setSilentMode",
+      "description": "Enable or disable console logging for operations",
+      "parameters": [
+        {
+          "name": "silent",
+          "type": "boolean",
+          "description": "True to disable logging, false to enable"
+        }
+      ],
+      "returnType": "boolean",
+      "errorPattern": "Never fails",
+      "example": "qr.call('setSilentMode', true); // Disable logging\nqr.call('setSilentMode', false); // Enable logging"
     }
+  ],
+  "gowmConfig": {
+    "supportedBranches": [
+      "master",
+      "main",
+      "stable"
+    ],
+    "preferredFilename": "main.wasm",
+    "autoDetect": true,
+    "readySignal": "__gowm_ready",
+    "standardFunctions": [
+      "getAvailableFunctions",
+      "setSilentMode"
+    ],
+    "errorPattern": "object-based",
+    "integrityFile": "main.wasm.integrity",
+    "compressedFile": "main.wasm.gz"
+  },
+  "types": [
+    {
+      "name": "QRResult",
+      "description": "Result type for QR code operations",
+      "properties": {
+        "data": "string (encoded data)",
+        "size": "number (image size in pixels)",
+        "base64Image": "string (base64-encoded PNG image)",
+        "errorLevel": "string (error correction level)",
+        "contentType": "string (MIME type)",
+        "originalData": "string (original input data)",
+        "width": "number (image width)",
+        "height": "number (image height)",
+        "error": "string (optional, present on failure)"
+      }
+    },
+    {
+      "name": "BarcodeResult",
+      "description": "Result type for barcode operations",
+      "properties": {
+        "data": "string (encoded data)",
+        "type": "string (barcode type)",
+        "base64Image": "string (base64-encoded image)",
+        "width": "number (image width)",
+        "height": "number (image height)",
+        "contentType": "string (MIME type)",
+        "originalData": "string (original input data)",
+        "error": "string (optional, present on failure)"
+      }
+    },
+    {
+      "name": "VCardData",
+      "description": "Input data structure for vCard QR codes",
+      "properties": {
+        "name": "string (contact name)",
+        "organization": "string (optional, organization name)",
+        "phone": "string (optional, phone number)",
+        "email": "string (optional, email address)",
+        "url": "string (optional, website URL)",
+        "address": "string (optional, physical address)"
+      }
+    },
+    {
+      "name": "WiFiData",
+      "description": "Input data structure for WiFi QR codes",
+      "properties": {
+        "ssid": "string (network name)",
+        "password": "string (optional, network password)",
+        "security": "string (optional, security type: WPA/WEP/nopass)",
+        "hidden": "boolean (optional, whether network is hidden)"
+      }
+    },
+    {
+      "name": "DecodeResult",
+      "description": "Result type for decode operations",
+      "properties": {
+        "success": "boolean (decode success status)",
+        "data": "string (optional, decoded data)",
+        "type": "string (detected code type)",
+        "confidence": "number (optional, confidence level)",
+        "error": "string (optional, present on failure)"
+      }
+    }
+  ],
+  "errorHandling": {
+    "pattern": "object-based",
+    "description": "QR module returns objects with 'error' field when operations fail",
+    "examples": [
+      {
+        "error": "Error: invalid QR code size (must be between 1-4096)",
+        "cause": "Called generateQRCode() with invalid size parameter"
+      },
+      {
+        "error": "Error: unsupported barcode type",
+        "cause": "Called generateBarcode() with unsupported type parameter"
+      },
+      {
+        "error": "Error: invalid vCard data structure",
+        "cause": "Called generateVCard() with malformed contact data"
+      },
+      {
+        "error": "Error: invalid WiFi configuration",
+        "cause": "Called generateWiFiQR() with incomplete network data"
+      }
+    ],
+    "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }"
+  },
+  "security": {
+    "features": [
+      "Memory-safe Go implementation",
+      "Input validation and sanitization",
+      "Secure memory handling",
+      "Protection against malicious QR codes",
+      "No file system access",
+      "No network access",
+      "Sandboxed execution environment"
+    ],
+    "integrity": {
+      "enabled": true,
+      "algorithm": "SHA256",
+      "hashFile": "main.wasm.integrity"
+    }
+  },
+  "performance": {
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Native Go QR/barcode implementations",
+      "Efficient memory usage",
+      "Optimized image processing",
+      "Silent mode for production environments",
+      "Optimized for GoWM integration"
+    ],
+    "metrics": {
+      "loadTime": "< 500ms",
+      "memoryUsage": "< 8MB",
+      "generationSpeed": "< 100ms per QR code"
+    }
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "environments": [
+      "Browser (ES6+)",
+      "Node.js 14.0.0+",
+      "Webpack 5+",
+      "Vite 2+",
+      "Rollup 2+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "14.0.0+"
+  },
+  "examples": [
+    {
+      "title": "GoWM Integration - Basic QR Code",
+      "language": "javascript",
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load QR module from wasm-modules-repository\nconst qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'qr-wasm',\n  filename: 'main.wasm',\n  name: 'qr-wasm',\n  branch: 'master'\n});\n\n// Configure module\nqr.call('setSilentMode', true);\n\n// Generate QR code with error handling\nconst result = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
+    },
+    {
+      "title": "vCard Contact QR Generation",
+      "language": "javascript",
+      "code": "const contact = {\n  name: 'Alice Smith',\n  organization: 'TechCorp Inc.',\n  phone: '+1-555-0123',\n  email: 'alice@techcorp.com',\n  url: 'https://alice.techcorp.com'\n};\n\nconst result = qr.call('generateVCard', contact, 300);\nif (!result.error) {\n  console.log('vCard QR generated:', result.base64Image);\n}"
+    },
+    {
+      "title": "WiFi Connection QR Code",
+      "language": "javascript",
+      "code": "const wifi = {\n  ssid: 'MyOfficeWiFi',\n  password: 'SecurePassword123',\n  security: 'WPA',\n  hidden: false\n};\n\nconst result = qr.call('generateWiFiQR', wifi, 256);\nif (!result.error) {\n  console.log('WiFi QR generated for network:', wifi.ssid);\n  // Users can scan this QR to auto-connect to WiFi\n}"
+    },
+    {
+      "title": "Barcode Generation",
+      "language": "javascript",
+      "code": "const result = qr.call('generateBarcode', '1234567890128', 'ean13', 400, 200);\nif (!result.error) {\n  console.log('Barcode type:', result.type);\n  console.log('Dimensions:', result.width + 'x' + result.height);\n  console.log('Base64 image:', result.base64Image);\n}"
+    }
+  ],
+  "buildInfo": {
+    "language": "Go",
+    "goVersion": "1.21+",
+    "target": "js/wasm",
+    "buildCommand": "./build.sh",
+    "outputFile": "main.wasm",
+    "goModule": true,
+    "buildTime": "Generated during build process",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm",
+      "-ldflags=-s -w"
+    ],
+    "dependencies": [
+      "github.com/skip2/go-qrcode",
+      "github.com/boombuler/barcode"
+    ]
+  },
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "goWasmExecRequired": true,
+    "globalFunctions": true,
+    "readySignal": "__gowm_ready",
+    "memoryInitialPages": 512,
+    "memoryMaximumPages": 2048,
+    "stackSize": "64KB",
+    "heapSize": "8MB"
+  },
+  "usageStats": {
+    "complexity": "intermediate",
+    "averageCallTime": "10-100ms",
+    "memoryUsage": "moderate",
+    "concurrency": "thread-safe"
+  },
+  "quality": {
+    "stability": "stable",
+    "documentation": "complete",
+    "testing": "comprehensive",
+    "maintainability": "high"
+  },
+  "useCases": [
+    "Mobile app QR code generation",
+    "Contact sharing via vCard QR codes",
+    "WiFi credential sharing",
+    "Product labeling with barcodes",
+    "Event tickets and passes",
+    "Restaurant menu QR codes",
+    "Marketing campaigns with QR codes",
+    "Inventory management barcodes",
+    "Payment QR codes",
+    "Social media profile sharing"
+  ],
+  "documentation": {
+    "apiReference": "Complete function documentation with examples",
+    "tutorialLinks": [
+      "Basic QR generation",
+      "vCard integration",
+      "WiFi QR setup",
+      "Barcode formats guide"
+    ],
+    "troubleshooting": "Common issues and solutions",
+    "performanceTips": "Optimization guidelines for production",
+    "integration": "GoWM integration best practices"
+  },
+  "ecosystem": {
+    "category": "image-processing",
+    "subcategory": "qr-barcode",
+    "relatedModules": [
+      "image-wasm",
+      "crypto-wasm"
+    ],
+    "useCase": [
+      "mobile-apps",
+      "contact-sharing",
+      "wifi-setup",
+      "inventory",
+      "marketing",
+      "payments",
+      "events"
+    ],
+    "industry": [
+      "retail",
+      "hospitality",
+      "events",
+      "mobile-development",
+      "logistics",
+      "healthcare"
+    ]
+  },
+  "fileInfo": {
+    "sourceLines": 671,
+    "binarySize": "3.3MB",
+    "compressedSize": "920KB",
+    "compressionRatio": "72%",
+    "integrityHash": "d9112da42e52480e7ec72d11186b0536cfe09e9da12bb6b8a815cdeccf51012f"
+  },
+  "changelog": {
+    "version": "0.1.0",
+    "releaseDate": "2025-12-28",
+    "changes": [
+      "Initial stable release with QR code generation",
+      "Support for multiple barcode formats (Code128, Code39, EAN13, EAN8)",
+      "vCard contact QR code generation",
+      "WiFi network QR code support",
+      "Enhanced error handling and validation",
+      "Optimized for GoWM integration",
+      "Added integrity verification",
+      "Improved performance and memory usage",
+      "Complete TypeScript definitions"
+    ]
+  },
+  "validation": {
+    "tested": true,
+    "testCoverage": "85%",
+    "lastValidated": "2024-12-28",
+    "platforms": [
+      "Chrome 120+",
+      "Firefox 121+",
+      "Safari 17+",
+      "Node.js 18+",
+      "Node.js 20+"
+    ]
+  },
+  "size": 3137422,
+  "gzipSize": 960247,
+  "buildTime": 1750269532.054757
 }
