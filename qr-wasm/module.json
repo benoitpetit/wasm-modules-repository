@@ -6,7 +6,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/benoitpetit/wasm-projects.git",
+        "url": "https://github.com/benoitpetit/wasm-modules-repository.git",
         "directory": "qr-wasm"
     },
     "tags": [
@@ -321,7 +321,7 @@
         {
             "title": "GoWM Integration - Basic QR Code",
             "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load QR module\nconst qr = await loadFromGitHub('benoitpetit/wasm-projects', {\n  path: 'qr-wasm',\n  filename: 'main.wasm',\n  name: 'qr'\n});\n\n// Configure module\nqr.call('setSilentMode', true);\n\n// Generate QR code with error handling\nconst result = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
+            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load QR module from wasm-modules-repository\nconst qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'qr-wasm',\n  filename: 'main.wasm',\n  name: 'qr-wasm',\n  branch: 'master'\n});\n\n// Configure module\nqr.call('setSilentMode', true);\n\n// Generate QR code with error handling\nconst result = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');\nif (result.error) {\n  console.error('QR generation error:', result.error);\n} else {\n  console.log('QR Base64:', result.base64Image);\n  const img = document.createElement('img');\n  img.src = 'data:image/png;base64,' + result.base64Image;\n  document.body.appendChild(img);\n}"
         },
         {
             "title": "vCard Contact QR Generation",
@@ -366,6 +366,18 @@
         "memoryMaximumPages": 2048,
         "stackSize": "64KB",
         "heapSize": "8MB"
+    },
+    "usageStats": {
+        "complexity": "intermediate",
+        "averageCallTime": "10-100ms",
+        "memoryUsage": "moderate",
+        "concurrency": "thread-safe"
+    },
+    "quality": {
+        "stability": "stable",
+        "documentation": "complete",
+        "testing": "comprehensive",
+        "maintainability": "high"
     },
     "useCases": [
         "Mobile app QR code generation",
