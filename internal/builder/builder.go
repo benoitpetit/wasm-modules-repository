@@ -148,6 +148,9 @@ func (b *Builder) buildModule(module string) *BuildResult {
 		return result
 	}
 
+	// Move WASM from subdirectory to root if Go created a subdirectory
+	b.moveWasmFromSubdir(modulePath)
+
 	// Get file size
 	if stat, err := os.Stat(wasmPath); err == nil {
 		result.OriginalSize = stat.Size()
@@ -195,9 +198,6 @@ func (b *Builder) buildModule(module string) *BuildResult {
 		}
 	}
 
-	// Clean up any subdirectories created by Go build
-	b.cleanSubdirectories(modulePath)
-
 	result.Success = true
 	result.BuildTime = time.Since(startTime)
 
@@ -244,13 +244,13 @@ func (b *Builder) optimizeWasm(wasmPath string) error {
 		return fmt.Errorf("wasm-opt not found: %w", err)
 	}
 
-	// Create backup
-	backupPath := wasmPath + ".backup"
-	if err := copyFile(wasmPath, backupPath); err != nil {
-		return fmt.Errorf("failed to create backup: %w", err)
+	// Verify input file exists
+	if !fileExists(wasmPath) {
+		return fmt.Errorf("input WASM file does not exist: %s", wasmPath)
 	}
 
 	// Single-pass conservative optimization to avoid failures
+	outputPath := wasmPath + ".opt"
 	args := []string{
 		"-Oz",
 		"--enable-bulk-memory",
@@ -258,7 +258,7 @@ func (b *Builder) optimizeWasm(wasmPath string) error {
 		"--enable-mutable-globals",
 		"--enable-nontrapping-float-to-int",
 		wasmPath,
-		"-o", wasmPath + ".opt",
+		"-o", outputPath,
 	}
 
 	cmd := exec.Command("wasm-opt", args...)
@@ -267,8 +267,15 @@ func (b *Builder) optimizeWasm(wasmPath string) error {
 		return fmt.Errorf("optimization failed: %w", err)
 	}
 
+	// Verify optimized file was created
+	if !fileExists(outputPath) {
+		return fmt.Errorf("optimization did not produce output file: %s", outputPath)
+	}
+
 	// Move optimized result to original location
-	if err := os.Rename(wasmPath+".opt", wasmPath); err != nil {
+	if err := os.Rename(outputPath, wasmPath); err != nil {
+		// Cleanup on failure
+		os.Remove(outputPath)
 		return fmt.Errorf("failed to move optimized file: %w", err)
 	}
 
@@ -322,15 +329,14 @@ func (b *Builder) generateIntegrity(wasmPath string) (string, error) {
 	return integrity, nil
 }
 
-// cleanModule removes build artifacts from a module
+// cleanModule removes only temporary build artifacts from a module
 func (b *Builder) cleanModule(module string) error {
 	modulePath := filepath.Join(".", module)
 	patterns := []string{
-		"*.wasm",
-		"*.wasm.gz",
-		"*.wasm.br",
-		"*.wasm.integrity",
 		"*.backup",
+		"*.wasm.opt",
+		"*.wasm.pass*",
+		"*.wasm.br", // Only brotli, keep gzip
 	}
 
 	for _, pattern := range patterns {
@@ -344,26 +350,39 @@ func (b *Builder) cleanModule(module string) error {
 		}
 	}
 
-	return nil
-}
-
-// cleanSubdirectories removes subdirectories and backup files created by Go build
-func (b *Builder) cleanSubdirectories(modulePath string) {
-	// Get the module name from the path
+	// Move WASM files from subdirectory to root and clean up subdirectory
 	moduleName := filepath.Base(modulePath)
 	subdirPath := filepath.Join(modulePath, moduleName)
-
-	// Remove subdirectory if it exists
 	if dirExists(subdirPath) {
+		// Move main.wasm from subdirectory to root if it exists
+		srcWasm := filepath.Join(subdirPath, "main.wasm")
+		dstWasm := filepath.Join(modulePath, "main.wasm")
+		if fileExists(srcWasm) {
+			os.Rename(srcWasm, dstWasm)
+		}
+
+		// Remove the now-empty subdirectory
 		os.RemoveAll(subdirPath)
 	}
 
-	// Remove backup files
-	backupPattern := filepath.Join(modulePath, "*.backup")
-	if matches, err := filepath.Glob(backupPattern); err == nil {
-		for _, match := range matches {
-			os.Remove(match)
+	return nil
+}
+
+// moveWasmFromSubdir moves WASM files from subdirectory to module root
+func (b *Builder) moveWasmFromSubdir(modulePath string) {
+	moduleName := filepath.Base(modulePath)
+	subdirPath := filepath.Join(modulePath, moduleName)
+
+	if dirExists(subdirPath) {
+		// Move main.wasm from subdirectory to root if it exists
+		srcWasm := filepath.Join(subdirPath, "main.wasm")
+		dstWasm := filepath.Join(modulePath, "main.wasm")
+		if fileExists(srcWasm) {
+			os.Rename(srcWasm, dstWasm)
 		}
+
+		// Remove the now-empty subdirectory
+		os.RemoveAll(subdirPath)
 	}
 }
 
