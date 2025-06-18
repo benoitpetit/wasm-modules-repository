@@ -13,6 +13,7 @@ Built with a **Go-based build system** featuring parallel processing, advanced o
 | **image-wasm** | Image processing | compressJPEG, compressPNG, convertToWebP, resizeImage | 3.0M → 852K → 298K |
 | **crypto-wasm** | Cryptographic operations | hashSHA256, encryptAES, generateRSA, JWT, bcrypt, UUID | 6.1M → 1.7M → 487K |
 | **qr-wasm** | QR Codes & Barcodes | generateQRCode, generateBarcode, generateVCard, generateWiFiQR | 3.1M → 800K → 267K |
+| **text-wasm** | Advanced text processing | textSimilarity, levenshteinDistance, soundex, slugify, camelCase, extractEmails | 3.7M → 3.5M → 1.0M |
 
 ## Quick Start
 
@@ -198,6 +199,48 @@ if (keyResult.error) {
     }
   }
 }
+```
+
+#### Text Processing Module
+
+```javascript
+// Load text processing module
+const text = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
+  branch: 'master',
+  name: 'text-wasm'
+});
+
+// Configure module
+text.call('setSilentMode', true);
+
+// Text similarity analysis
+const similarity = text.call('textSimilarity', 'hello world', 'hello earth');
+console.log('Similarity:', similarity); // ~0.75
+
+// String case conversions
+console.log('camelCase:', text.call('camelCase', 'hello world test')); // helloWorldTest
+console.log('kebab-case:', text.call('kebabCase', 'HelloWorldTest')); // hello-world-test
+console.log('snake_case:', text.call('snakeCase', 'HelloWorldTest')); // hello_world_test
+
+// Extract information from text
+const sampleText = 'Contact us at support@example.com or visit https://example.com';
+const emails = text.call('extractEmails', sampleText);
+const urls = text.call('extractURLs', sampleText);
+
+console.log('Emails found:', emails); // ['support@example.com']
+console.log('URLs found:', urls); // ['https://example.com']
+
+// Text analysis
+const wordCount = text.call('wordCount', sampleText);
+const readingTime = text.call('readingTime', sampleText, 200);
+console.log('Words:', wordCount, 'Reading time:', readingTime.minutes, 'minutes');
+
+// Advanced text processing
+const withAccents = 'Café naïve résumé';
+const withoutAccents = text.call('removeDiacritics', withAccents);
+const slug = text.call('slugify', withAccents);
+console.log('Without accents:', withoutAccents); // Cafe naive resume
+console.log('Slug:', slug); // cafe-naive-resume
 ```
 
 #### QR Module

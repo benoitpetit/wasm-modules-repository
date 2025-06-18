@@ -1,0 +1,608 @@
+{
+  "author": "Ben",
+  "buildInfo": {
+    "buildCommand": "wasm-manager build",
+    "buildTime": "2025-06-18T23:28:01+02:00",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm",
+      "CGO_ENABLED=0",
+      "-ldflags=-s -w -buildid=",
+      "-trimpath",
+      "-buildmode=default",
+      "-tags=netgo,osusergo",
+      "-a",
+      "-gcflags=-l=4 -B",
+      "wasm-opt=-Oz --enable-bulk-memory"
+    ],
+    "dependencies": [],
+    "goModule": true,
+    "goVersion": "1.24.3",
+    "language": "Go",
+    "lastModified": "2025-06-18T23:27:59+02:00",
+    "optimizations": [
+      "Strip debugging symbols (-ldflags=\"-s -w\")",
+      "Trim path information (-trimpath)",
+      "Disable CGO for security",
+      "wasm-opt optimization when available"
+    ],
+    "outputFile": "main.wasm",
+    "target": "js/wasm",
+    "wasmOptUsed": true
+  },
+  "buildTime": 1750282081,
+  "changelog": {
+    "changes": [
+      "Complete text processing suite implementation",
+      "Advanced string similarity algorithms (Jaro-Winkler distance)",
+      "Comprehensive string case conversion utilities",
+      "Email, URL, and phone number extraction with validation",
+      "Reading time estimation with customizable WPM",
+      "Diacritics removal and transliteration support",
+      "Secure password generation with customizable options",
+      "Soundex phonetic matching algorithm",
+      "Word and character counting with detailed metrics",
+      "URL-friendly slug generation",
+      "Levenshtein distance calculation for string comparison"
+    ],
+    "releaseDate": "2025-01-20",
+    "version": "1.0.0"
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "14.0.0+"
+  },
+  "dependencies": [],
+  "description": "Advanced text processing and string manipulation module written in Go and compiled to WebAssembly. Features comprehensive string utilities, text analysis, pattern extraction, case conversion, similarity algorithms, and text validation. Optimized for GoWM integration.",
+  "ecosystem": {
+    "category": "text-processing",
+    "industry": [
+      "content-management",
+      "data-processing",
+      "web-development",
+      "natural-language-processing",
+      "search-engines",
+      "form-validation",
+      "content-analysis"
+    ],
+    "relatedModules": [
+      "crypto-wasm",
+      "math-wasm"
+    ],
+    "subcategory": "string-manipulation",
+    "useCase": [
+      "text-analysis",
+      "string-validation",
+      "content-processing",
+      "search-algorithms",
+      "data-extraction",
+      "text-normalization",
+      "url-generation",
+      "password-generation",
+      "form-validation",
+      "content-similarity"
+    ]
+  },
+  "errorHandling": {
+    "description": "Text module returns error strings when operations fail, otherwise returns the processed result or analysis object",
+    "detection": "if (typeof result === 'string' \u0026\u0026 result.startsWith('Error:')) { /* handle error */ } else { /* use result */ }",
+    "examples": [
+      {
+        "cause": "Called textSimilarity() with insufficient arguments",
+        "error": "Error: two arguments required for textSimilarity"
+      },
+      {
+        "cause": "Called levenshteinDistance() with insufficient arguments",
+        "error": "Error: two arguments required for levenshteinDistance"
+      },
+      {
+        "cause": "Called readingTime() with invalid arguments",
+        "error": "Error: one or two arguments required for readingTime"
+      },
+      {
+        "cause": "Called any single-argument function without providing argument",
+        "error": "Error: one argument required for [functionName]"
+      }
+    ],
+    "pattern": "string-based for errors, mixed return types for success"
+  },
+  "examples": [
+    {
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load text processing module\nconst text = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'text-wasm',\n  filename: 'main.wasm',\n  name: 'text-wasm',\n  branch: 'master'\n});\n\n// Configure for production use\ntext.call('setSilentMode', true);\n\n// Text similarity analysis\nconst similarity = text.call('textSimilarity', 'hello world', 'hello earth');\nconsole.log('Similarity:', similarity); // ~0.75\n\n// String case conversions\nconsole.log('camelCase:', text.call('camelCase', 'hello world test')); // helloWorldTest\nconsole.log('kebab-case:', text.call('kebabCase', 'HelloWorldTest')); // hello-world-test\nconsole.log('snake_case:', text.call('snakeCase', 'HelloWorldTest')); // hello_world_test\n\n// URL-friendly slug\nconst slug = text.call('slugify', 'Héllo Wörld! Test \u0026 More');\nconsole.log('Slug:', slug); // hello-world-test-more",
+      "language": "javascript",
+      "title": "Basic Text Processing"
+    },
+    {
+      "code": "// Extract information from text\nconst sampleText = `\n  Contact us at support@example.com or admin@test.org\n  Visit our website: https://example.com or https://test.org/page\n  Call us: +1-555-123-4567 or (555) 987-6543\n`;\n\n// Extract emails\nconst emails = text.call('extractEmails', sampleText);\nconsole.log('Emails found:', emails); // ['support@example.com', 'admin@test.org']\n\n// Extract URLs\nconst urls = text.call('extractURLs', sampleText);\nconsole.log('URLs found:', urls); // ['https://example.com', 'https://test.org/page']\n\n// Extract phone numbers\nconst phones = text.call('extractPhoneNumbers', sampleText);\nconsole.log('Phones found:', phones); // ['+1-555-123-4567', '(555) 987-6543']\n\n// Validate email\nconst emailValidation = text.call('validateEmail', 'user@example.com');\nif (emailValidation.valid) {\n  console.log('Valid email:', emailValidation.email);\n} else {\n  console.error('Invalid email:', emailValidation.error);\n}",
+      "language": "javascript",
+      "title": "Pattern Extraction and Validation"
+    },
+    {
+      "code": "// Text analysis and metrics\nconst article = `\n  Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n  Ut enim ad minim veniam, quis nostrud exercitation ullamco.\n`;\n\n// Word and character counting\nconst wordCount = text.call('wordCount', article);\nconst charCount = text.call('characterCount', article);\nconsole.log('Words:', wordCount); // 26\nconsole.log('Characters:', charCount.characters); // Total characters\nconsole.log('Characters (no spaces):', charCount.charactersNoSpaces);\nconsole.log('Bytes:', charCount.bytes);\n\n// Reading time estimation\nconst readingStats = text.call('readingTime', article, 250); // 250 WPM\nconsole.log('Reading time:', readingStats.minutes, 'minutes');\nconsole.log('Word count:', readingStats.words);\nconsole.log('Reading speed:', readingStats.wpm, 'WPM');\n\n// String distance calculation\nconst distance = text.call('levenshteinDistance', 'kitten', 'sitting');\nconsole.log('Edit distance:', distance); // 3",
+      "language": "javascript",
+      "title": "Text Analysis and Metrics"
+    },
+    {
+      "code": "// Advanced text processing\nconst accentedText = 'Café, naïve, résumé, piñata';\n\n// Remove diacritics\nconst withoutAccents = text.call('removeDiacritics', accentedText);\nconsole.log('Without accents:', withoutAccents); // Cafe, naive, resume, pinata\n\n// Full transliteration\nconst transliterated = text.call('transliterate', 'Müller \u0026 Weiß');\nconsole.log('Transliterated:', transliterated); // Muller \u0026 Weiss\n\n// Phonetic matching with Soundex\nconst soundex1 = text.call('soundex', 'Smith');\nconst soundex2 = text.call('soundex', 'Smyth');\nconsole.log('Soundex codes:', soundex1, soundex2); // Same code = S530\n\n// Secure password generation\nconst password = text.call('generatePassword', 16, true);\nconsole.log('Generated password:', password.password);\nconsole.log('Length:', password.length);\nconsole.log('Includes symbols:', password.includeSymbols);",
+      "language": "javascript",
+      "title": "Advanced String Processing"
+    },
+    {
+      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction TextAnalyzer() {\n  const { wasm: text, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'text-wasm',\n    filename: 'main.wasm',\n    name: 'text-wasm'\n  });\n  \n  const [inputText, setInputText] = useState('Hello World! This is a sample text.');\n  const [analysis, setAnalysis] = useState(null);\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() =\u003e {\n    if (text) {\n      text.call('setSilentMode', true);\n      const availableFunctions = text.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n      analyzeText();\n    }\n  }, [text, inputText]);\n\n  const analyzeText = () =\u003e {\n    if (!text || !inputText) return;\n    \n    const wordCount = text.call('wordCount', inputText);\n    const charCount = text.call('characterCount', inputText);\n    const readingTime = text.call('readingTime', inputText);\n    const emails = text.call('extractEmails', inputText);\n    const urls = text.call('extractURLs', inputText);\n    const phones = text.call('extractPhoneNumbers', inputText);\n    \n    setAnalysis({\n      wordCount,\n      charCount,\n      readingTime,\n      emails,\n      urls,\n      phones,\n      slug: text.call('slugify', inputText),\n      camelCase: text.call('camelCase', inputText),\n      withoutAccents: text.call('removeDiacritics', inputText)\n    });\n  };\n\n  if (loading) return \u003cdiv\u003eLoading text module...\u003c/div\u003e;\n  if (error) return \u003cdiv\u003eError: {error.message}\u003c/div\u003e;\n\n  return (\n    \u003cdiv\u003e\n      \u003ch3\u003eText Analysis Tool ({functions.length} functions available)\u003c/h3\u003e\n      \u003ctextarea \n        value={inputText} \n        onChange={(e) =\u003e setInputText(e.target.value)}\n        rows={4}\n        cols={50}\n        placeholder=\"Enter text to analyze...\"\n      /\u003e\n      \n      {analysis \u0026\u0026 (\n        \u003cdiv\u003e\n          \u003ch4\u003eAnalysis Results:\u003c/h4\u003e\n          \u003cp\u003e\u003cstrong\u003eWords:\u003c/strong\u003e {analysis.wordCount}\u003c/p\u003e\n          \u003cp\u003e\u003cstrong\u003eCharacters:\u003c/strong\u003e {analysis.charCount.characters} (no spaces: {analysis.charCount.charactersNoSpaces})\u003c/p\u003e\n          \u003cp\u003e\u003cstrong\u003eReading time:\u003c/strong\u003e {analysis.readingTime.minutes} minutes\u003c/p\u003e\n          \u003cp\u003e\u003cstrong\u003eSlug:\u003c/strong\u003e {analysis.slug}\u003c/p\u003e\n          \u003cp\u003e\u003cstrong\u003ecamelCase:\u003c/strong\u003e {analysis.camelCase}\u003c/p\u003e\n          \u003cp\u003e\u003cstrong\u003eWithout accents:\u003c/strong\u003e {analysis.withoutAccents}\u003c/p\u003e\n          \n          {analysis.emails.length \u003e 0 \u0026\u0026 (\n            \u003cp\u003e\u003cstrong\u003eEmails found:\u003c/strong\u003e {analysis.emails.join(', ')}\u003c/p\u003e\n          )}\n          {analysis.urls.length \u003e 0 \u0026\u0026 (\n            \u003cp\u003e\u003cstrong\u003eURLs found:\u003c/strong\u003e {analysis.urls.join(', ')}\u003c/p\u003e\n          )}\n          {analysis.phones.length \u003e 0 \u0026\u0026 (\n            \u003cp\u003e\u003cstrong\u003ePhones found:\u003c/strong\u003e {analysis.phones.join(', ')}\u003c/p\u003e\n          )}\n        \u003c/div\u003e\n      )}\n    \u003c/div\u003e\n  );\n}",
+      "language": "jsx",
+      "title": "React Text Analysis Component"
+    }
+  ],
+  "fileInfo": {
+    "binarySize": "3.5 MB",
+    "compressedSize": "1.0 MB",
+    "compressionRatio": "71%",
+    "sourceLines": 535
+  },
+  "functionCategories": {
+    "Case Conversion": [
+      "camelCase",
+      "kebabCase",
+      "snakeCase",
+      "slugify"
+    ],
+    "Pattern Extraction": [
+      "extractEmails",
+      "extractURLs",
+      "extractPhoneNumbers"
+    ],
+    "Security": [
+      "generatePassword",
+      "validateEmail"
+    ],
+    "Similarity Analysis": [
+      "textSimilarity",
+      "levenshteinDistance",
+      "soundex"
+    ],
+    "System": [
+      "setSilentMode",
+      "getAvailableFunctions"
+    ],
+    "Text Analysis": [
+      "wordCount",
+      "characterCount",
+      "readingTime"
+    ],
+    "Text Normalization": [
+      "removeDiacritics",
+      "transliterate"
+    ]
+  },
+  "functions": [
+    {
+      "category": "System",
+      "description": "Enable or disable console logging for operations",
+      "errorPattern": "Never fails",
+      "example": "text.call('setSilentMode', true); // Disable logging",
+      "name": "setSilentMode",
+      "parameters": [
+        {
+          "description": "Whether to enable silent mode",
+          "name": "silent",
+          "type": "boolean"
+        }
+      ],
+      "returnType": "boolean"
+    },
+    {
+      "category": "Similarity Analysis",
+      "description": "Calculate similarity between two texts using Jaro-Winkler distance algorithm",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const similarity = text.call('textSimilarity', 'hello world', 'hello earth'); // ~0.75",
+      "name": "textSimilarity",
+      "parameters": [
+        {
+          "description": "First string to compare",
+          "name": "string1",
+          "type": "string"
+        },
+        {
+          "description": "Second string to compare",
+          "name": "string2",
+          "type": "string"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Similarity Analysis",
+      "description": "Calculate Levenshtein edit distance between two strings",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const distance = text.call('levenshteinDistance', 'kitten', 'sitting'); // 3",
+      "name": "levenshteinDistance",
+      "parameters": [
+        {
+          "description": "First string to compare",
+          "name": "string1",
+          "type": "string"
+        },
+        {
+          "description": "Second string to compare",
+          "name": "string2",
+          "type": "string"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Similarity Analysis",
+      "description": "Generate Soundex phonetic code for string matching",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const code = text.call('soundex', 'Smith'); // S530",
+      "name": "soundex",
+      "parameters": [
+        {
+          "description": "String to generate Soundex code for",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Case Conversion",
+      "description": "Convert string to URL-friendly slug format",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const slug = text.call('slugify', 'Hello World!'); // hello-world",
+      "name": "slugify",
+      "parameters": [
+        {
+          "description": "String to convert to slug",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Case Conversion",
+      "description": "Convert string to camelCase format",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const camel = text.call('camelCase', 'hello world test'); // helloWorldTest",
+      "name": "camelCase",
+      "parameters": [
+        {
+          "description": "String to convert to camelCase",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Case Conversion",
+      "description": "Convert string to kebab-case format",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const kebab = text.call('kebabCase', 'HelloWorldTest'); // hello-world-test",
+      "name": "kebabCase",
+      "parameters": [
+        {
+          "description": "String to convert to kebab-case",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Case Conversion",
+      "description": "Convert string to snake_case format",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const snake = text.call('snakeCase', 'HelloWorldTest'); // hello_world_test",
+      "name": "snakeCase",
+      "parameters": [
+        {
+          "description": "String to convert to snake_case",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Pattern Extraction",
+      "description": "Extract all valid email addresses from text",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const emails = text.call('extractEmails', 'Contact us at support@example.com'); // ['support@example.com']",
+      "name": "extractEmails",
+      "parameters": [
+        {
+          "description": "Text to extract emails from",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "array"
+    },
+    {
+      "category": "Pattern Extraction",
+      "description": "Extract all URLs from text",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const urls = text.call('extractURLs', 'Visit https://example.com'); // ['https://example.com']",
+      "name": "extractURLs",
+      "parameters": [
+        {
+          "description": "Text to extract URLs from",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "array"
+    },
+    {
+      "category": "Pattern Extraction",
+      "description": "Extract all phone numbers from text",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const phones = text.call('extractPhoneNumbers', 'Call (555) 123-4567'); // ['(555) 123-4567']",
+      "name": "extractPhoneNumbers",
+      "parameters": [
+        {
+          "description": "Text to extract phone numbers from",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "array"
+    },
+    {
+      "category": "Text Analysis",
+      "description": "Count words in text",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const count = text.call('wordCount', 'Hello world test'); // 3",
+      "name": "wordCount",
+      "parameters": [
+        {
+          "description": "Text to count words in",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Text Analysis",
+      "description": "Count characters in text with detailed metrics",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const count = text.call('characterCount', 'Hello world'); // {characters: 11, charactersNoSpaces: 10, bytes: 11}",
+      "name": "characterCount",
+      "parameters": [
+        {
+          "description": "Text to count characters in",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Text Analysis",
+      "description": "Estimate reading time for text based on words per minute",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const time = text.call('readingTime', 'Long text...', 250); // {minutes: 3, words: 650, wpm: 250}",
+      "name": "readingTime",
+      "parameters": [
+        {
+          "description": "Text to estimate reading time for",
+          "name": "text",
+          "type": "string"
+        },
+        {
+          "description": "Reading speed in words per minute (default: 200)",
+          "name": "wpm",
+          "optional": true,
+          "type": "number"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Text Normalization",
+      "description": "Remove diacritics and accents from text",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const clean = text.call('removeDiacritics', 'café'); // cafe",
+      "name": "removeDiacritics",
+      "parameters": [
+        {
+          "description": "Text to remove diacritics from",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Text Normalization",
+      "description": "Transliterate text to ASCII equivalent",
+      "errorPattern": "Returns error string if wrong number of arguments",
+      "example": "const ascii = text.call('transliterate', 'Müller œuvre'); // Muller oeuvre",
+      "name": "transliterate",
+      "parameters": [
+        {
+          "description": "Text to transliterate",
+          "name": "text",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Security",
+      "description": "Generate secure random password",
+      "errorPattern": "Never fails, validates and constrains input parameters",
+      "example": "const pwd = text.call('generatePassword', 16, true); // {password: 'aB3#...', length: 16, includeSymbols: true}",
+      "name": "generatePassword",
+      "parameters": [
+        {
+          "description": "Password length (4-128, default: 12)",
+          "name": "length",
+          "optional": true,
+          "type": "number"
+        },
+        {
+          "description": "Include symbols (default: true)",
+          "name": "includeSymbols",
+          "optional": true,
+          "type": "boolean"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Security",
+      "description": "Validate email address format",
+      "errorPattern": "Returns object with valid:false and error message on invalid email",
+      "example": "const result = text.call('validateEmail', 'user@example.com'); // {valid: true, email: 'user@example.com', name: ''}",
+      "name": "validateEmail",
+      "parameters": [
+        {
+          "description": "Email address to validate",
+          "name": "email",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "System",
+      "description": "Get list of all available functions in the module",
+      "errorPattern": "Never fails",
+      "example": "const functions = text.call('getAvailableFunctions'); // ['setSilentMode', 'textSimilarity', ...]",
+      "name": "getAvailableFunctions",
+      "parameters": [],
+      "returnType": "array"
+    }
+  ],
+  "gowmConfig": {
+    "autoDetect": true,
+    "errorPattern": "string-based",
+    "preferredFilename": "main.wasm",
+    "readySignal": "__gowm_ready",
+    "standardFunctions": [
+      "getAvailableFunctions",
+      "setSilentMode"
+    ],
+    "supportedBranches": [
+      "master",
+      "stable"
+    ]
+  },
+  "gzipSize": 1065515,
+  "license": "MIT",
+  "name": "text-wasm",
+  "performance": {
+    "benchmarks": {
+      "caseConversion": "\u003c 0.5ms per operation",
+      "diacriticsRemoval": "\u003c 1ms for typical strings",
+      "stringComparison": "\u003c 1ms for typical text lengths",
+      "textExtraction": "\u003c 2ms for moderate text size"
+    },
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Unicode-aware string processing",
+      "Minimal JavaScript overhead",
+      "Silent mode for production environments",
+      "Advanced similarity algorithms",
+      "Efficient pattern extraction with regex",
+      "Memory-safe Go implementation"
+    ]
+  },
+  "quality": {
+    "codeQuality": "production-ready",
+    "documentation": "comprehensive",
+    "maintainability": "high",
+    "stability": "stable",
+    "testing": "extensive"
+  },
+  "security": {
+    "features": [
+      "Input validation for all string parameters",
+      "Safe regex pattern matching",
+      "Memory-safe Go implementation",
+      "Secure password generation with crypto/rand",
+      "Email validation with proper parsing",
+      "Protection against malformed input",
+      "Unicode-safe string operations",
+      "No external dependencies for core functions"
+    ]
+  },
+  "size": 3637262,
+  "tags": [
+    "text-processing",
+    "string-manipulation",
+    "similarity-analysis",
+    "pattern-extraction",
+    "case-conversion",
+    "email-validation",
+    "password-generation",
+    "unicode",
+    "wasm",
+    "go",
+    "gowm"
+  ],
+  "types": [
+    {
+      "description": "Result type for character counting operations",
+      "name": "CharacterCountResult",
+      "properties": {
+        "bytes": "number (byte length of string)",
+        "characters": "number (total characters including spaces)",
+        "charactersNoSpaces": "number (characters excluding spaces)"
+      }
+    },
+    {
+      "description": "Result type for reading time estimation",
+      "name": "ReadingTimeResult",
+      "properties": {
+        "minutes": "number (estimated reading time in minutes)",
+        "words": "number (total word count)",
+        "wpm": "number (words per minute used for calculation)"
+      }
+    },
+    {
+      "description": "Result type for password generation",
+      "name": "PasswordResult",
+      "properties": {
+        "includeSymbols": "boolean (whether symbols are included)",
+        "length": "number (password length)",
+        "password": "string (generated password)"
+      }
+    },
+    {
+      "description": "Result type for email validation",
+      "name": "EmailValidationResult",
+      "properties": {
+        "email": "string (normalized email address)",
+        "error": "string (error message if validation fails)",
+        "name": "string (display name if present)",
+        "valid": "boolean (true if email is valid)"
+      }
+    }
+  ],
+  "usageStats": {
+    "averageCallTime": "\u003c 2ms",
+    "complexity": "beginner-to-advanced",
+    "concurrency": "thread-safe",
+    "memoryUsage": "lightweight"
+  },
+  "version": "1.0.0",
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "globalFunctions": true,
+    "goWasmExecRequired": true,
+    "memoryInitialPages": 256,
+    "memoryMaximumPages": 512,
+    "readySignal": "__gowm_ready"
+  }
+}

@@ -2,7 +2,7 @@
   "author": "Ben",
   "buildInfo": {
     "buildCommand": "wasm-manager build",
-    "buildTime": "2025-06-18T22:12:38+02:00",
+    "buildTime": "2025-06-18T23:27:48+02:00",
     "compilerFlags": [
       "GOOS=js",
       "GOARCH=wasm",
@@ -22,12 +22,12 @@
     "goModule": true,
     "goVersion": "1.24.3",
     "language": "Go",
-    "lastModified": "2025-06-18T22:12:37+02:00",
+    "lastModified": "2025-06-18T23:27:47+02:00",
     "outputFile": "main.wasm",
     "target": "js/wasm",
     "wasmOptUsed": true
   },
-  "buildTime": 1750277558,
+  "buildTime": 1750282068,
   "changelog": {
     "changes": [
       "Initial stable release with QR code generation",
