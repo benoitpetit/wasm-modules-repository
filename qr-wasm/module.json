@@ -436,8 +436,8 @@
         "integrityHash": "d9112da42e52480e7ec72d11186b0536cfe09e9da12bb6b8a815cdeccf51012f"
     },
     "changelog": {
-        "version": "1.0.0",
-        "releaseDate": "2024-12-28",
+        "version": "0.1.0",
+        "releaseDate": "2025-12-28",
         "changes": [
             "Initial stable release with QR code generation",
             "Support for multiple barcode formats (Code128, Code39, EAN13, EAN8)",

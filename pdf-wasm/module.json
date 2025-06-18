@@ -387,7 +387,7 @@
     },
     "changelog": {
         "version": "0.1.0",
-        "releaseDate": "2024-06-18",
+        "releaseDate": "2025-06-18",
         "changes": [
             "Initial PDF module implementation",
             "PDF creation from scratch with custom pages",
