@@ -88,18 +88,17 @@
   ],
   "changelog": {
     "changes": [
-      "Initial release with comprehensive data format support",
-      "JSON parsing, validation, and manipulation",
-      "XML parsing and JSON/XML bidirectional conversion",
-      "CSV to JSON conversion with type detection",
-      "YAML to JSON bidirectional conversion",
-      "JSON path extraction with dot notation",
-      "Basic JSON schema validation",
-      "Error handling for all operations",
-      "Silent mode for production environments",
+      "Complete data format processing suite implementation",
+      "JSON parsing, validation, and manipulation with error handling",
+      "XML parsing and bidirectional JSON/XML conversion",
+      "CSV to JSON conversion with automatic type detection",
+      "YAML to JSON bidirectional conversion with type preservation",
+      "JSON path extraction using dot notation",
+      "Basic JSON schema validation support",
+      "Enhanced error handling for all operations",
       "GoWM integration with standard functions"
     ],
-    "releaseDate": "2025-01-20",
+    "releaseDate": "2025-06-18",
     "version": "0.1.0"
   },
   "compatibility": {
@@ -110,7 +109,7 @@
       "Edge 79+"
     ],
     "gowm": "1.0.0+",
-    "nodejs": "16+"
+    "nodejs": "16.0.0+"
   },
   "description": "Comprehensive data format conversion and processing module written in Go and compiled to WebAssembly. Features JSON, XML, CSV, and YAML parsing, validation, and transformation capabilities. Optimized for GoWM integration.",
   "documentation": {
@@ -134,11 +133,11 @@
     ],
     "relatedModules": [
       "crypto-wasm",
-      "pdf-wasm"
+      "pdf-wasm",
+      "math-wasm"
     ],
     "subcategory": "format-conversion",
     "useCase": [
-      "web-development",
       "data-transformation",
       "api-processing",
       "configuration-management",
@@ -149,14 +148,15 @@
     ]
   },
   "errorHandling": {
+    "description": "Data processing module returns objects with 'error' field when operations fail",
     "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }",
-    "patterns": [
+    "examples": [
       {
         "cause": "Called parseJSON() with malformed JSON string",
         "error": "Invalid JSON: unexpected character 'a' at position 5"
       },
       {
-        "cause": "Called parseXML() or validateXML() with malformed XML",
+        "cause": "Called parseXML() with malformed XML structure",
         "error": "Invalid XML: element is not closed"
       },
       {
@@ -175,31 +175,74 @@
         "cause": "Called validateJSONSchema() with data that doesn't match schema",
         "error": "Schema validation failed: required property missing"
       }
-    ]
+    ],
+    "pattern": "object-based"
   },
-  "examples": {
-    "basicJSON": {
-      "code": "const result = jsonxml.call('parseJSON', '{\"name\":\"John\",\"age\":30}');\nif (result.valid) {\n  console.log('Parsed data:', result.data);\n}",
-      "description": "Parse and validate JSON data"
+  "examples": [
+    {
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load data processing module from wasm-modules-repository\nconst jsonxml = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'jsonxml-wasm',\n  filename: 'main.wasm',\n  name: 'jsonxml-wasm',\n  branch: 'master'\n});\n\n// Configure module\njsonxml.call('setSilentMode', true);\n\n// JSON parsing with error handling\nconst jsonData = '{\"user\":{\"name\":\"John\",\"age\":30,\"active\":true}}';\nconst parseResult = jsonxml.call('parseJSON', jsonData);\nif (parseResult.error) {\n  console.error('Parse error:', parseResult.error);\n} else {\n  console.log('Parsed data:', parseResult.data);\n  console.log('Valid JSON:', parseResult.valid);\n}",
+      "language": "javascript",
+      "title": "GoWM Integration - Basic JSON Processing"
     },
-    "csvProcessing": {
-      "code": "const csvData = 'name,age,active\\nJohn,30,true\\nJane,25,false';\nconst result = jsonxml.call('csvToJSON', csvData);\nconsole.log('JSON array:', result.data);",
-      "description": "Convert CSV to JSON with automatic type detection"
+    {
+      "code": "// XML to JSON conversion\nconst xmlData = `\n<users>\n  <user id=\"1\">\n    <name>John Doe</name>\n    <age>30</age>\n    <email>john@example.com</email>\n  </user>\n  <user id=\"2\">\n    <name>Jane Smith</name>\n    <age>25</age>\n    <email>jane@example.com</email>\n  </user>\n</users>`;\n\nconst conversionResult = jsonxml.call('xmlToJSON', xmlData);\nif (conversionResult.error) {\n  console.error('Conversion failed:', conversionResult.error);\n} else {\n  console.log('Converted JSON:', conversionResult.data);\n}\n\n// JSON to XML conversion\nconst jsonUsers = JSON.stringify({\n  users: {\n    user: [\n      { id: 1, name: 'John Doe', age: 30 },\n      { id: 2, name: 'Jane Smith', age: 25 }\n    ]\n  }\n});\n\nconst xmlResult = jsonxml.call('jsonToXML', jsonUsers, 'root');\nif (xmlResult.error) {\n  console.error('XML conversion failed:', xmlResult.error);\n} else {\n  console.log('Generated XML:', xmlResult.data);\n}",
+      "language": "javascript",
+      "title": "XML/JSON Bidirectional Conversion"
     },
-    "formatConversion": {
-      "code": "const xmlData = '\u003cperson\u003e\u003cname\u003eJohn\u003c/name\u003e\u003cage\u003e30\u003c/age\u003e\u003c/person\u003e';\nconst result = jsonxml.call('xmlToJSON', xmlData);\nconsole.log('Converted JSON:', result.data);",
-      "description": "Convert XML to JSON"
+    {
+      "code": "// CSV to JSON conversion with type detection\nconst csvData = `name,age,active,salary,joinDate\nJohn Doe,30,true,75000.50,2023-01-15\nJane Smith,25,false,65000.00,2023-03-20\nBob Johnson,35,true,85000.75,2022-11-10`;\n\nconst csvResult = jsonxml.call('csvToJSON', csvData);\nif (csvResult.error) {\n  console.error('CSV conversion failed:', csvResult.error);\n} else {\n  console.log('Converted data:', csvResult.data);\n  console.log('Rows:', csvResult.rows, 'Columns:', csvResult.columns);\n}\n\n// JSON array to CSV conversion\nconst jsonArray = JSON.stringify([\n  { product: 'Laptop', price: 999.99, inStock: true },\n  { product: 'Mouse', price: 29.99, inStock: false },\n  { product: 'Keyboard', price: 79.99, inStock: true }\n]);\n\nconst csvGenResult = jsonxml.call('jsonToCSV', jsonArray);\nif (csvGenResult.error) {\n  console.error('CSV generation failed:', csvGenResult.error);\n} else {\n  console.log('Generated CSV:');\n  console.log(csvGenResult.data);\n}",
+      "language": "javascript",
+      "title": "CSV Processing and Conversion"
     },
-    "pathExtraction": {
-      "code": "const data = '{\"user\":{\"profile\":{\"name\":\"John\"}}}';\nconst result = jsonxml.call('extractJSONPath', data, 'user.profile.name');\nconsole.log('Extracted:', result.data);",
-      "description": "Extract nested values from JSON"
+    {
+      "code": "// YAML processing examples\nconst yamlConfig = `\ndatabase:\n  host: localhost\n  port: 5432\n  name: myapp\n  credentials:\n    username: admin\n    password: secret\nfeatures:\n  - authentication\n  - logging\n  - caching\nsettings:\n  debug: true\n  maxConnections: 100`;\n\n// Convert YAML to JSON\nconst yamlResult = jsonxml.call('yamlToJSON', yamlConfig);\nif (yamlResult.error) {\n  console.error('YAML parsing failed:', yamlResult.error);\n} else {\n  console.log('Parsed config:', yamlResult.data);\n  \n  // Extract specific configuration values\n  const dbConfig = jsonxml.call('extractJSONPath', JSON.stringify(yamlResult.data), 'database.credentials.username');\n  console.log('Database username:', dbConfig.data);\n}\n\n// Convert JSON back to YAML\nconst configJson = JSON.stringify(yamlResult.data);\nconst yamlGenResult = jsonxml.call('jsonToYAML', configJson);\nif (yamlGenResult.error) {\n  console.error('YAML generation failed:', yamlGenResult.error);\n} else {\n  console.log('Generated YAML:');\n  console.log(yamlGenResult.data);\n}",
+      "language": "javascript",
+      "title": "YAML Configuration Processing"
+    },
+    {
+      "code": "// Helper function for consistent data processing error handling\nfunction handleDataResult(result, successCallback, errorCallback) {\n  if (result.error) {\n    errorCallback(result.error);\n  } else {\n    successCallback(result);\n  }\n}\n\n// Data validation pipeline\nconst dataOperations = [\n  { type: 'JSON', data: '{\"name\":\"John\",\"age\":30}', operation: 'parseJSON' },\n  { type: 'XML', data: '<user><name>Jane</name></user>', operation: 'parseXML' },\n  { type: 'CSV', data: 'name,age\\nBob,25', operation: 'csvToJSON' },\n  { type: 'YAML', data: 'name: Alice\\nage: 28', operation: 'yamlToJSON' }\n];\n\ndataOperations.forEach(({ type, data, operation }, index) => {\n  const result = jsonxml.call(operation, data);\n  handleDataResult(\n    result,\n    (processedData) => {\n      console.log(`${type} processing (${index + 1}/${dataOperations.length}): Success`);\n      console.log('  Processed data:', processedData.data);\n      console.log('  Valid:', processedData.valid);\n    },\n    (error) => {\n      console.error(`${type} processing (${index + 1}/${dataOperations.length}) failed: ${error}`);\n    }\n  );\n});",
+      "language": "javascript",
+      "title": "Error Handling Patterns and Data Validation"
+    },
+    {
+      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction DataConverter() {\n  const { wasm: jsonxml, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'jsonxml-wasm',\n    filename: 'main.wasm',\n    name: 'jsonxml-wasm'\n  });\n  \n  const [inputData, setInputData] = useState('');\n  const [outputData, setOutputData] = useState('');\n  const [inputFormat, setInputFormat] = useState('json');\n  const [outputFormat, setOutputFormat] = useState('xml');\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() => {\n    if (jsonxml) {\n      jsonxml.call('setSilentMode', true);\n      const availableFunctions = jsonxml.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [jsonxml]);\n\n  const convertData = () => {\n    if (!jsonxml || !inputData) return;\n    \n    let conversionFunction = '';\n    if (inputFormat === 'json' && outputFormat === 'xml') {\n      conversionFunction = 'jsonToXML';\n    } else if (inputFormat === 'xml' && outputFormat === 'json') {\n      conversionFunction = 'xmlToJSON';\n    } else if (inputFormat === 'csv' && outputFormat === 'json') {\n      conversionFunction = 'csvToJSON';\n    } else if (inputFormat === 'yaml' && outputFormat === 'json') {\n      conversionFunction = 'yamlToJSON';\n    }\n    \n    if (conversionFunction) {\n      const result = jsonxml.call(conversionFunction, inputData);\n      if (result.error) {\n        setOutputData(`Error: ${result.error}`);\n      } else {\n        setOutputData(typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2));\n      }\n    }\n  };\n\n  if (loading) return <div>Loading data converter...</div>;\n  if (error) return <div>Error: {error.message}</div>;\n\n  return (\n    <div className=\"data-converter\">\n      <div className=\"format-selectors\">\n        <select value={inputFormat} onChange={(e) => setInputFormat(e.target.value)}>\n          <option value=\"json\">JSON</option>\n          <option value=\"xml\">XML</option>\n          <option value=\"csv\">CSV</option>\n          <option value=\"yaml\">YAML</option>\n        </select>\n        <span> → </span>\n        <select value={outputFormat} onChange={(e) => setOutputFormat(e.target.value)}>\n          <option value=\"json\">JSON</option>\n          <option value=\"xml\">XML</option>\n          <option value=\"csv\">CSV</option>\n          <option value=\"yaml\">YAML</option>\n        </select>\n      </div>\n      \n      <div className=\"conversion-area\">\n        <textarea\n          value={inputData}\n          onChange={(e) => setInputData(e.target.value)}\n          placeholder={`Enter ${inputFormat.toUpperCase()} data...`}\n          rows={10}\n          cols={50}\n        />\n        <button onClick={convertData}>Convert</button>\n        <textarea\n          value={outputData}\n          readOnly\n          placeholder={`${outputFormat.toUpperCase()} output will appear here...`}\n          rows={10}\n          cols={50}\n        />\n      </div>\n      \n      <div className=\"module-info\">\n        <p>Available functions: {functions.length}</p>\n      </div>\n    </div>\n  );\n}",
+      "language": "jsx",
+      "title": "React Data Converter Component"
     }
-  },
+  ],
   "fileInfo": {
     "binarySize": "6.5 MB",
     "compressedSize": "2.1 MB",
     "compressionRatio": "68%",
     "sourceLines": 775
+  },
+  "functionCategories": {
+    "JSON Processing": [
+      "parseJSON",
+      "stringifyJSON",
+      "validateJSON",
+      "minifyJSON"
+    ],
+    "XML Processing": [
+      "parseXML",
+      "validateXML"
+    ],
+    "Format Conversion": [
+      "xmlToJSON",
+      "jsonToXML",
+      "csvToJSON",
+      "jsonToCSV",
+      "yamlToJSON",
+      "jsonToYAML"
+    ],
+    "Advanced JSON": [
+      "extractJSONPath",
+      "validateJSONSchema"
+    ],
+    "System": [
+      "getAvailableFunctions",
+      "setSilentMode"
+    ]
   },
   "functions": [
     {
@@ -272,7 +315,7 @@
       "category": "XML Processing",
       "description": "Parse and validate XML string into structured data",
       "errorPattern": "Returns object with 'error' field on parse failure",
-      "example": "const result = jsonxml.call('parseXML', '\u003croot\u003e\u003cname\u003eJohn\u003c/name\u003e\u003c/root\u003e');\nif (result.error) {\n  console.error('Parse error:', result.error);\n} else {\n  console.log('Data:', result.data, 'Root:', result.root);\n}",
+      "example": "const result = jsonxml.call('parseXML', '<root><name>John</name></root>');\nif (result.error) {\n  console.error('Parse error:', result.error);\n} else {\n  console.log('Data:', result.data, 'Root:', result.root);\n}",
       "name": "parseXML",
       "parameters": [
         {
@@ -284,10 +327,25 @@
       "returnType": "object"
     },
     {
+      "category": "XML Processing",
+      "description": "Validate XML syntax and well-formedness",
+      "errorPattern": "Returns validation result with errors array if invalid",
+      "example": "const result = jsonxml.call('validateXML', '<root><name>John</name></root>');\nif (result.valid) {\n  console.log('XML is valid');\n} else {\n  console.log('Errors:', result.errors);\n}",
+      "name": "validateXML",
+      "parameters": [
+        {
+          "description": "XML string to validate",
+          "name": "xmlString",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
       "category": "Format Conversion",
       "description": "Convert XML string to JSON format with structured mapping",
       "errorPattern": "Returns object with 'error' field if XML is invalid",
-      "example": "const result = jsonxml.call('xmlToJSON', '\u003croot\u003e\u003cname\u003eJohn\u003c/name\u003e\u003c/root\u003e');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('JSON:', result.data);\n}",
+      "example": "const result = jsonxml.call('xmlToJSON', '<root><name>John</name></root>');\nif (result.error) {\n  console.error('Conversion error:', result.error);\n} else {\n  console.log('JSON:', result.data);\n}",
       "name": "xmlToJSON",
       "parameters": [
         {
@@ -314,21 +372,6 @@
           "description": "Optional: XML root element name (default: 'root')",
           "name": "rootElement",
           "optional": true,
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "category": "XML Processing",
-      "description": "Validate XML syntax and well-formedness",
-      "errorPattern": "Returns validation result with errors array if invalid",
-      "example": "const result = jsonxml.call('validateXML', '\u003croot\u003e\u003cname\u003eJohn\u003c/name\u003e\u003c/root\u003e');\nif (result.valid) {\n  console.log('XML is valid');\n} else {\n  console.log('Errors:', result.errors);\n}",
-      "name": "validateXML",
-      "parameters": [
-        {
-          "description": "XML string to validate",
-          "name": "xmlString",
           "type": "string"
         }
       ],
@@ -435,7 +478,7 @@
       "returnType": "object"
     },
     {
-      "category": "Utility",
+      "category": "System",
       "description": "Get list of all available functions in the module",
       "errorPattern": "Never fails",
       "example": "const functions = jsonxml.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);",
@@ -444,7 +487,7 @@
       "returnType": "array"
     },
     {
-      "category": "Utility",
+      "category": "System",
       "description": "Enable or disable console logging for operations",
       "errorPattern": "Never fails",
       "example": "const currentMode = jsonxml.call('setSilentMode', true);\nconsole.log('Silent mode enabled:', currentMode);",
