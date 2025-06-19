@@ -2,7 +2,7 @@
   "author": "Ben",
   "buildInfo": {
     "buildCommand": "wasm-manager build",
-    "buildTime": "2025-06-18T23:28:03+02:00",
+    "buildTime": "2025-06-19T16:00:56+02:00",
     "compilerFlags": [
       "GOOS=js",
       "GOARCH=wasm",
@@ -21,27 +21,30 @@
     "goModule": true,
     "goVersion": "1.24.3",
     "language": "Go",
-    "lastModified": "2025-06-18T23:28:02+02:00",
+    "lastModified": "2025-06-19T16:00:55+02:00",
     "outputFile": "main.wasm",
     "target": "js/wasm",
     "wasmOptUsed": true
   },
-  "buildTime": 1750282083,
+  "buildTime": 1750341656,
   "changelog": {
     "changes": [
-      "Initial PDF module implementation",
-      "PDF creation from scratch with custom pages",
-      "Page manipulation (add pages to existing PDFs)",
-      "Text and image extraction capabilities",
-      "PDF merging and splitting functionality",
-      "Watermarking with configurable styling",
-      "Template-based report generation",
-      "PDF compression with multiple levels",
-      "Metadata extraction and modification",
-      "Full GoWM integration and compatibility"
+      "🚀 Major v2.0.0 release with comprehensive PDF capabilities",
+      "✅ Professional invoice generation with full customization",
+      "🎓 Certificate and contract generation templates",
+      "📊 Advanced table and chart generation support",
+      "🔄 HTML and Markdown to PDF conversion",
+      "📈 Comprehensive PDF analysis and optimization",
+      "🎨 Enhanced watermarking and digital signature capabilities",
+      "🛠️ Intelligent PDF optimization with multiple levels",
+      "📋 25+ total functions covering all PDF operations",
+      "🖼️ PDF to images conversion with customizable options",
+      "📝 Form filling and annotation support",
+      "⚡ Improved performance and error handling",
+      "🔧 Full GoWM integration and compatibility"
     ],
-    "releaseDate": "2025-06-18",
-    "version": "0.1.0"
+    "releaseDate": "2025-06-19",
+    "version": "2.0.0"
   },
   "compatibility": {
     "browsers": [
@@ -53,7 +56,7 @@
     "gowm": "1.0.0+",
     "nodejs": "14.0.0+"
   },
-  "description": "Complete PDF manipulation module written in Go and compiled to WebAssembly. Provides comprehensive PDF operations with GoWM integration.",
+  "description": "Advanced PDF manipulation module v2.0 with comprehensive business document generation, analysis, and optimization capabilities written in Go and compiled to WebAssembly.",
   "ecosystem": {
     "category": "documents",
     "industry": [
@@ -61,67 +64,239 @@
       "legal",
       "healthcare",
       "education",
-      "finance"
+      "finance",
+      "e-commerce",
+      "consulting"
     ],
     "relatedModules": [
       "image-wasm",
-      "compress-wasm"
+      "qr-wasm",
+      "text-wasm",
+      "crypto-wasm"
     ],
     "subcategory": "pdf",
     "useCase": [
-      "document-generation",
-      "report-automation",
-      "form-processing",
-      "archiving"
+      "invoice-generation",
+      "certificate-creation",
+      "contract-automation",
+      "report-generation",
+      "document-conversion",
+      "pdf-analysis",
+      "content-optimization",
+      "business-automation"
     ]
   },
   "errorHandling": {
-    "description": "PDF module returns objects with 'error' field when operations fail",
-    "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }",
+    "description": "PDF module v2.0 returns objects with 'error' field when operations fail, with detailed error messages and operation context",
+    "detection": "if (result.error) { console.error('PDF error:', result.error); } else { /* use result data */ }",
     "examples": [
       {
-        "cause": "Called extractText() with malformed base64 PDF data",
-        "error": "Invalid PDF data: illegal base64 data at input byte 15"
+        "cause": "Called generateInvoice() with malformed invoice data structure",
+        "error": "Invalid invoice data format: missing required field 'number'"
       },
       {
-        "cause": "Called createPDF() with empty or invalid page configurations",
-        "error": "Failed to generate PDF: insufficient page content"
+        "cause": "Called generateCertificate() with empty recipient name",
+        "error": "Certificate generation failed: recipient name cannot be empty"
       },
       {
-        "cause": "Called addWatermark() with opacity outside 0-1 range",
-        "error": "Watermark addition failed: invalid opacity value"
+        "cause": "Called addTable() with mismatched header and row column counts",
+        "error": "Table generation failed: row 2 has 4 columns but header has 3"
       },
       {
-        "cause": "Called mergePDFs() with less than 2 PDF documents",
-        "error": "PDF merge failed: at least 2 PDFs required"
+        "cause": "Called addChart() with invalid chart type or empty data",
+        "error": "Chart generation failed: chart type 'pie' not supported"
+      },
+      {
+        "cause": "Called htmlToPDF() with complex unsupported HTML elements",
+        "error": "HTML conversion failed: unsupported element 'canvas'"
+      },
+      {
+        "cause": "Called markdownToPDF() with malformed markdown syntax",
+        "error": "Markdown conversion failed: unclosed code block at line 15"
+      },
+      {
+        "cause": "Called optimizePDF() with corrupted PDF data",
+        "error": "PDF optimization failed: corrupted file structure detected"
+      },
+      {
+        "cause": "Called analyzePDF() with non-PDF base64 data",
+        "error": "PDF analysis failed: invalid PDF header signature"
+      },
+      {
+        "cause": "Called addSignature() with missing signature data",
+        "error": "Digital signature failed: signer name is required"
+      },
+      {
+        "cause": "Called fillForm() on PDF without form fields",
+        "error": "Form filling failed: no form fields found in document"
       }
     ],
     "pattern": "object-based"
   },
   "examples": [
     {
-      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load PDF module from wasm-modules-repository\nconst pdf = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'pdf-wasm',\n  filename: 'main.wasm',\n  name: 'pdf-wasm',\n  branch: 'master'\n});\n\n// Configure module\npdf.call('setSilentMode', true);\n\n// Create PDF with error handling\nconst pages = JSON.stringify([{\n  content: 'Hello PDF World!\\nThis is my first page.',\n  margin: 15\n}]);\n\nconst result = pdf.call('createPDF', pages);\nif (result.error) {\n  console.error('PDF creation error:', result.error);\n} else {\n  console.log('PDF created successfully!');\n  console.log('Size:', result.size, 'bytes');\n  console.log('Pages:', result.pages);\n  \n  // Download the PDF\n  const blob = new Blob([atob(result.pdfData)], {type: 'application/pdf'});\n  const url = URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = 'my-document.pdf';\n  a.click();\n}",
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load advanced PDF module v2.0\nconst pdf = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'pdf-wasm',\n  filename: 'main.wasm',\n  name: 'pdf-wasm',\n  branch: 'master'\n});\n\n// Configure module\npdf.call('setSilentMode', true);\n\n// Get module information\nconst moduleInfo = pdf.call('getModuleInfo');\nconsole.log('PDF Module:', moduleInfo.name, 'v' + moduleInfo.version);\nconsole.log('Available functions:', moduleInfo.functions);\n\n// Professional invoice generation\nconst invoiceData = {\n  number: 'INV-2025-001',\n  date: '2025-06-19',\n  dueDate: '2025-07-19',\n  company: {\n    name: 'TechCorp Solutions',\n    address: '123 Business St, Paris 75001',\n    phone: '+33 1 23 45 67 89',\n    email: 'contact@techcorp.fr',\n    vat: 'FR123456789'\n  },\n  client: {\n    name: 'Client Enterprise',\n    address: '456 Client Ave, Lyon 69000'\n  },\n  items: [\n    { description: 'Consulting Services', quantity: 10, price: 150, total: 1500 },\n    { description: 'Development Hours', quantity: 20, price: 120, total: 2400 }\n  ],\n  tax: 20,\n  currency: '€',\n  notes: 'Paiement à 30 jours. Merci pour votre confiance.'\n};\n\nconst invoiceResult = pdf.call('generateInvoice', JSON.stringify(invoiceData));\nif (invoiceResult.error) {\n  console.error('Invoice generation failed:', invoiceResult.error);\n} else {\n  console.log('✅ Invoice generated successfully!');\n  console.log('Invoice number:', invoiceResult.invoiceNumber);\n  console.log('Total amount:', invoiceResult.total, invoiceResult.currency);\n  \n  // Download the invoice\n  const blob = new Blob([atob(invoiceResult.pdfData)], {type: 'application/pdf'});\n  const url = URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = `invoice-${invoiceData.number}.pdf`;\n  a.click();\n}",
       "language": "javascript",
-      "title": "GoWM Integration - Basic PDF Creation"
+      "title": "Professional Invoice Generation"
     },
     {
-      "code": "// Complete PDF workflow with multiple operations\nasync function processPDF() {\n  // Step 1: Create initial PDF\n  const pages = JSON.stringify([{\n    content: 'Original Document\\nThis is the main content.',\n    margin: 10\n  }]);\n  \n  let result = pdf.call('createPDF', pages, JSON.stringify({\n    title: 'Business Report',\n    author: 'John Doe',\n    subject: 'Quarterly Analysis'\n  }));\n  \n  if (result.error) throw new Error(result.error);\n  let pdfData = result.pdfData;\n  \n  // Step 2: Add watermark\n  const watermark = JSON.stringify({\n    text: 'CONFIDENTIAL',\n    opacity: 0.3,\n    rotation: 45\n  });\n  \n  result = pdf.call('addWatermark', pdfData, watermark);\n  if (result.error) throw new Error(result.error);\n  pdfData = result.pdfData;\n  \n  // Step 3: Compress PDF\n  result = pdf.call('compressPDF', pdfData, 'high');\n  if (result.error) throw new Error(result.error);\n  \n  console.log('Final PDF processed:');\n  console.log('- Original size:', result.originalSize, 'bytes');\n  console.log('- Compressed size:', result.compressedSize, 'bytes');\n  console.log('- Compression ratio:', result.compressionRatio + '%');\n  \n  return result.pdfData;\n}",
+      "code": "// Advanced document workflow with multiple operations\nasync function createBusinessDocument() {\n  const pdf = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'pdf-wasm',\n    name: 'pdf-wasm'\n  });\n  \n  pdf.call('setSilentMode', true);\n  \n  // Step 1: Convert Markdown content to PDF\n  const markdownContent = `\n# Rapport d'Activité Q2 2025\n\n## Résumé Exécutif\nNous avons atteint nos objectifs trimestriels avec une croissance de **25%**.\n\n### Métriques Clés\n- Chiffre d'affaires: 2.4M€\n- Nouveaux clients: 150\n- Satisfaction client: 95%\n\n## Performances par Département\n\n### Ventes\n- Objectif dépassé de 15%\n- 3 nouveaux marchés conquis\n\n### Développement\n- 5 nouvelles fonctionnalités livrées\n- Réduction des bugs de 40%\n  `;\n  \n  let result = pdf.call('markdownToPDF', markdownContent);\n  if (result.error) throw new Error(result.error);\n  let pdfData = result.pdfData;\n  \n  // Step 2: Add performance chart\n  const chartData = {\n    type: 'bar',\n    title: 'Performance Trimestrielle',\n    data: [\n      { label: 'Q1', value: 1.8 },\n      { label: 'Q2', value: 2.4 },\n      { label: 'Q3 (prév)', value: 2.8 },\n      { label: 'Q4 (prév)', value: 3.2 }\n    ]\n  };\n  \n  result = pdf.call('addChart', pdfData, JSON.stringify(chartData));\n  if (result.error) throw new Error(result.error);\n  pdfData = result.pdfData;\n  \n  // Step 3: Add data table\n  const tableData = {\n    headers: ['Département', 'Budget', 'Réalisé', 'Écart'],\n    rows: [\n      ['Ventes', '1.5M€', '1.8M€', '+20%'],\n      ['Marketing', '300K€', '280K€', '-7%'],\n      ['R\u0026D', '600K€', '620K€', '+3%'],\n      ['Support', '200K€', '190K€', '-5%']\n    ]\n  };\n  \n  result = pdf.call('addTable', pdfData, JSON.stringify(tableData));\n  if (result.error) throw new Error(result.error);\n  pdfData = result.pdfData;\n  \n  // Step 4: Add confidential watermark\n  const watermark = {\n    text: 'CONFIDENTIEL',\n    opacity: 0.2,\n    rotation: 45\n  };\n  \n  result = pdf.call('addWatermark', pdfData, JSON.stringify(watermark));\n  if (result.error) throw new Error(result.error);\n  pdfData = result.pdfData;\n  \n  // Step 5: Optimize the final document\n  result = pdf.call('optimizePDF', pdfData, 'balanced');\n  if (result.error) throw new Error(result.error);\n  \n  console.log('📊 Business report generated successfully!');\n  console.log('- Original size:', result.originalSize, 'bytes');\n  console.log('- Optimized size:', result.optimizedSize, 'bytes');\n  console.log('- Savings:', result.savingsPercent + '%');\n  console.log('- Optimizations applied:', result.optimizations);\n  \n  return result.pdfData;\n}",
       "language": "javascript",
-      "title": "Advanced PDF Manipulation"
+      "title": "Advanced Business Document Workflow"
     },
     {
-      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction PDFGenerator() {\n  const { wasm: pdf, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'pdf-wasm',\n    filename: 'main.wasm',\n    name: 'pdf-wasm',\n    branch: 'master'\n  });\n  \n  const [content, setContent] = useState('Hello PDF World!');\n  const [pdfResult, setPdfResult] = useState(null);\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() =\u003e {\n    if (pdf) {\n      pdf.call('setSilentMode', true);\n      const availableFunctions = pdf.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [pdf]);\n\n  const generatePDF = () =\u003e {\n    if (!pdf) return;\n    \n    const pages = JSON.stringify([{\n      content: content,\n      margin: 15\n    }]);\n    \n    const result = pdf.call('createPDF', pages);\n    if (result.error) {\n      setPdfResult({ error: result.error });\n    } else {\n      setPdfResult(result);\n      \n      // Auto-download\n      const blob = new Blob([atob(result.pdfData)], {type: 'application/pdf'});\n      const url = URL.createObjectURL(blob);\n      const a = document.createElement('a');\n      a.href = url;\n      a.download = 'generated-document.pdf';\n      a.click();\n    }\n  };\n\n  if (loading) return React.createElement('div', null, 'Loading PDF module...');\n  if (error) return React.createElement('div', null, 'Error: ' + error.message);\n\n  return React.createElement('div', null,\n    React.createElement('h3', null, 'PDF Functions Available: ' + functions.length),\n    React.createElement('textarea', {\n      value: content,\n      onChange: (e) =\u003e setContent(e.target.value),\n      placeholder: 'PDF content',\n      rows: 5,\n      cols: 50\n    }),\n    React.createElement('br'),\n    React.createElement('button', { onClick: generatePDF }, 'Generate PDF'),\n    pdfResult \u0026\u0026 React.createElement('div', { style: { marginTop: '10px' } },\n      pdfResult.error\n        ? React.createElement('div', { style: { color: 'red' } }, 'Error: ' + pdfResult.error)\n        : React.createElement('div', { style: { color: 'green' } },\n            '✅ PDF generated successfully!',\n            React.createElement('br'),\n            '📄 Size: ' + pdfResult.size + ' bytes',\n            React.createElement('br'),\n            '📋 Pages: ' + pdfResult.pages\n          )\n    )\n  );\n}",
+      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction PDFBusinessGenerator() {\n  const { wasm: pdf, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'pdf-wasm',\n    name: 'pdf-wasm'\n  });\n  \n  const [documentType, setDocumentType] = useState('invoice');\n  const [moduleInfo, setModuleInfo] = useState(null);\n  const [result, setResult] = useState(null);\n  const [processing, setProcessing] = useState(false);\n\n  useEffect(() =\u003e {\n    if (pdf) {\n      pdf.call('setSilentMode', true);\n      const info = pdf.call('getModuleInfo');\n      setModuleInfo(info);\n    }\n  }, [pdf]);\n\n  const generateDocument = async () =\u003e {\n    if (!pdf) return;\n    setProcessing(true);\n    \n    try {\n      let result;\n      \n      if (documentType === 'invoice') {\n        const invoiceData = {\n          number: 'INV-' + Date.now(),\n          date: new Date().toISOString().split('T')[0],\n          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],\n          company: {\n            name: 'Ma Société',\n            address: '123 Rue Example, 75000 Paris',\n            phone: '+33 1 23 45 67 89',\n            email: 'contact@masociete.fr'\n          },\n          client: {\n            name: 'Client Test',\n            address: '456 Avenue Client, 69000 Lyon'\n          },\n          items: [\n            { description: 'Service de conseil', quantity: 1, price: 500, total: 500 },\n            { description: 'Développement', quantity: 10, price: 80, total: 800 }\n          ],\n          tax: 20,\n          currency: '€'\n        };\n        \n        result = pdf.call('generateInvoice', JSON.stringify(invoiceData));\n        \n      } else if (documentType === 'certificate') {\n        const certData = {\n          title: 'CERTIFICAT DE RÉUSSITE',\n          recipient: 'Jean Dupont',\n          achievement: 'a terminé avec succès la formation en développement web',\n          date: new Date().toLocaleDateString('fr-FR'),\n          issuer: 'Formation Academy'\n        };\n        \n        result = pdf.call('generateCertificate', JSON.stringify(certData));\n        \n      } else if (documentType === 'analysis') {\n        // Create a sample PDF first\n        const samplePages = [{ content: 'Document de test pour analyse', margin: 15 }];\n        const sampleResult = pdf.call('createPDF', JSON.stringify(samplePages));\n        \n        if (sampleResult.error) throw new Error(sampleResult.error);\n        \n        // Analyze the sample PDF\n        result = pdf.call('analyzePDF', sampleResult.pdfData);\n      }\n      \n      if (result.error) {\n        setResult({ error: result.error });\n      } else {\n        setResult(result);\n        \n        // Auto-download for PDF results\n        if (result.pdfData) {\n          const blob = new Blob([atob(result.pdfData)], {type: 'application/pdf'});\n          const url = URL.createObjectURL(blob);\n          const a = document.createElement('a');\n          a.href = url;\n          a.download = `${documentType}-${Date.now()}.pdf`;\n          a.click();\n        }\n      }\n    } catch (err) {\n      setResult({ error: err.message });\n    } finally {\n      setProcessing(false);\n    }\n  };\n\n  if (loading) return React.createElement('div', null, '⏳ Chargement du module PDF...');\n  if (error) return React.createElement('div', null, '❌ Erreur: ' + error.message);\n\n  return React.createElement('div', { style: { padding: '20px', fontFamily: 'Arial' } },\n    React.createElement('h2', null, '🚀 Générateur PDF Avancé v2.0'),\n    \n    moduleInfo \u0026\u0026 React.createElement('div', { style: { marginBottom: '20px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' } },\n      React.createElement('strong', null, 'Module: '), moduleInfo.name + ' v' + moduleInfo.version,\n      React.createElement('br'),\n      React.createElement('strong', null, 'Fonctions disponibles: '), moduleInfo.functions,\n      React.createElement('br'),\n      React.createElement('strong', null, 'Catégories: '), moduleInfo.categories.join(', ')\n    ),\n    \n    React.createElement('div', { style: { marginBottom: '20px' } },\n      React.createElement('label', null, 'Type de document: '),\n      React.createElement('select', {\n        value: documentType,\n        onChange: (e) =\u003e setDocumentType(e.target.value),\n        style: { margin: '0 10px', padding: '5px' }\n      },\n        React.createElement('option', { value: 'invoice' }, '📄 Facture'),\n        React.createElement('option', { value: 'certificate' }, '🎓 Certificat'),\n        React.createElement('option', { value: 'analysis' }, '📊 Analyse PDF')\n      )\n    ),\n    \n    React.createElement('button', {\n      onClick: generateDocument,\n      disabled: processing || !pdf,\n      style: {\n        padding: '10px 20px',\n        backgroundColor: processing ? '#ccc' : '#007bff',\n        color: 'white',\n        border: 'none',\n        borderRadius: '5px',\n        cursor: processing ? 'not-allowed' : 'pointer'\n      }\n    }, processing ? 'Génération en cours...' : 'Générer Document'),\n    \n    result \u0026\u0026 React.createElement('div', { style: { marginTop: '20px', padding: '15px', borderRadius: '5px', backgroundColor: result.error ? '#ffebee' : '#e8f5e8' } },\n      result.error\n        ? React.createElement('div', { style: { color: '#d32f2f' } },\n            '❌ Erreur: ', result.error\n          )\n        : React.createElement('div', { style: { color: '#2e7d32' } },\n            '✅ Document généré avec succès!',\n            React.createElement('br'),\n            result.size \u0026\u0026 React.createElement('span', null, '📄 Taille: ' + result.size + ' bytes'),\n            result.invoiceNumber \u0026\u0026 React.createElement('span', null, React.createElement('br'), '📋 Numéro: ' + result.invoiceNumber),\n            result.total \u0026\u0026 React.createElement('span', null, React.createElement('br'), '� Total: ' + result.total + ' ' + result.currency),\n            result.recipient \u0026\u0026 React.createElement('span', null, React.createElement('br'), '🎓 Destinataire: ' + result.recipient),\n            result.fileSize \u0026\u0026 React.createElement('span', null, React.createElement('br'), '📊 Analyse: ' + result.pages + ' pages, ' + result.fileSize + ' bytes')\n          )\n    )\n  );\n}",
       "language": "jsx",
-      "title": "React Hook Integration"
+      "title": "React Business Document Generator"
+    },
+    {
+      "code": "// Complete PDF processing pipeline\nasync function pdfProcessingPipeline() {\n  const pdf = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'pdf-wasm',\n    name: 'pdf-wasm'\n  });\n  \n  // Step 1: HTML to PDF conversion\n  const htmlContent = `\n    \u003ch1\u003eRapport Technique\u003c/h1\u003e\n    \u003ch2\u003eIntroduction\u003c/h2\u003e\n    \u003cp\u003eCe document présente les résultats de notre analyse technique.\u003c/p\u003e\n    \u003ch2\u003eMétriques de Performance\u003c/h2\u003e\n    \u003cp\u003eLes performances ont été mesurées sur plusieurs indicateurs clés.\u003c/p\u003e\n  `;\n  \n  console.log('🔄 Converting HTML to PDF...');\n  let result = pdf.call('htmlToPDF', htmlContent);\n  if (result.error) throw new Error(result.error);\n  \n  let pdfData = result.pdfData;\n  console.log('✅ HTML converted:', result.size, 'bytes');\n  \n  // Step 2: Add performance data table\n  const performanceTable = {\n    headers: ['Métrique', 'Valeur Actuelle', 'Objectif', 'Status'],\n    rows: [\n      ['Temps de Réponse', '150ms', '200ms', '✅ OK'],\n      ['Disponibilité', '99.9%', '99.5%', '✅ Dépassé'],\n      ['Throughput', '1200 rps', '1000 rps', '✅ Dépassé'],\n      ['Erreurs', '0.1%', '0.5%', '✅ OK']\n    ]\n  };\n  \n  console.log('📊 Adding performance table...');\n  result = pdf.call('addTable', pdfData, JSON.stringify(performanceTable));\n  if (result.error) throw new Error(result.error);\n  \n  pdfData = result.pdfData;\n  console.log('✅ Table added:', result.columns, 'columns,', result.rows, 'rows');\n  \n  // Step 3: Add trend chart\n  const trendChart = {\n    type: 'bar',\n    title: 'Évolution des Performances (6 mois)',\n    data: [\n      { label: 'Jan', value: 85 },\n      { label: 'Fév', value: 88 },\n      { label: 'Mar', value: 92 },\n      { label: 'Avr', value: 95 },\n      { label: 'Mai', value: 97 },\n      { label: 'Jun', value: 99 }\n    ]\n  };\n  \n  console.log('📈 Adding trend chart...');\n  result = pdf.call('addChart', pdfData, JSON.stringify(trendChart));\n  if (result.error) throw new Error(result.error);\n  \n  pdfData = result.pdfData;\n  console.log('✅ Chart added:', result.dataPoints, 'data points');\n  \n  // Step 4: Comprehensive analysis\n  console.log('🔍 Analyzing final document...');\n  const analysis = pdf.call('analyzePDF', pdfData);\n  if (analysis.error) throw new Error(analysis.error);\n  \n  console.log('📋 Analysis results:');\n  console.log('- File size:', analysis.fileSize, 'bytes');\n  console.log('- Pages:', analysis.pages);\n  console.log('- Fonts used:', analysis.fonts.join(', '));\n  console.log('- Optimization tips:', analysis.optimizationTips.length);\n  \n  // Step 5: Intelligent optimization\n  console.log('⚡ Optimizing document...');\n  result = pdf.call('optimizePDF', pdfData, 'balanced');\n  if (result.error) throw new Error(result.error);\n  \n  console.log('✅ Optimization complete:');\n  console.log('- Original size:', result.originalSize, 'bytes');\n  console.log('- Optimized size:', result.optimizedSize, 'bytes');\n  console.log('- Space saved:', result.savingsPercent + '%');\n  console.log('- Optimizations:', result.optimizations.join(', '));\n  \n  // Final download\n  const blob = new Blob([atob(result.pdfData)], {type: 'application/pdf'});\n  const url = URL.createObjectURL(blob);\n  const a = document.createElement('a');\n  a.href = url;\n  a.download = 'technical-report-optimized.pdf';\n  a.click();\n  \n  return {\n    originalSize: result.originalSize,\n    optimizedSize: result.optimizedSize,\n    savings: result.savingsPercent,\n    analysis: analysis\n  };\n}",
+      "language": "javascript",
+      "title": "Complete PDF Processing Pipeline"
     }
   ],
   "fileInfo": {
-    "binarySize": "4.4 MB",
-    "compressedSize": "1.3 MB",
-    "compressionRatio": "71%",
-    "sourceLines": 563
+    "binarySize": "4.9 MB",
+    "compressedSize": "1.4 MB",
+    "compressionRatio": "72%",
+    "sourceLines": 1194
   },
   "functions": [
+    {
+      "description": "Generate professional invoice PDF with customizable template and calculations",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const invoiceData = JSON.stringify({\n  number: 'INV-2025-001',\n  date: '2025-06-19',\n  dueDate: '2025-07-19',\n  company: { name: 'My Company', address: '123 Street', email: 'contact@company.com' },\n  client: { name: 'Client Name', address: '456 Avenue' },\n  items: [{ description: 'Service', quantity: 1, price: 500, total: 500 }],\n  tax: 20, currency: '€'\n});\nconst result = pdf.call('generateInvoice', invoiceData);\nif (result.error) {\n  console.error('Invoice generation failed:', result.error);\n} else {\n  console.log('Invoice generated:', result.invoiceNumber, 'Total:', result.total);\n}",
+      "name": "generateInvoice",
+      "parameters": [
+        {
+          "description": "JSON string of invoice data structure with company, client, items, tax, etc.",
+          "name": "invoiceData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Generate professional certificate or diploma PDF document",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const certData = JSON.stringify({\n  title: 'CERTIFICATE OF COMPLETION',\n  recipient: 'John Doe',\n  achievement: 'Successfully completed the Web Development Course',\n  date: '2025-06-19',\n  issuer: 'Tech Academy'\n});\nconst result = pdf.call('generateCertificate', certData);\nif (result.error) {\n  console.error('Certificate generation failed:', result.error);\n} else {\n  console.log('Certificate generated for:', result.recipient);\n}",
+      "name": "generateCertificate",
+      "parameters": [
+        {
+          "description": "JSON string of certificate data with title, recipient, achievement, date, issuer",
+          "name": "certificateData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Add professionally formatted data table to PDF document",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const tableData = JSON.stringify({\n  headers: ['Product', 'Price', 'Stock'],\n  rows: [['Item A', '$10', '50'], ['Item B', '$15', '25']]\n});\nconst result = pdf.call('addTable', pdfData, tableData);\nif (result.error) {\n  console.error('Table addition failed:', result.error);\n} else {\n  console.log('Table added:', result.columns, 'columns,', result.rows, 'rows');\n}",
+      "name": "addTable",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data",
+          "name": "pdfData",
+          "type": "string"
+        },
+        {
+          "description": "JSON string of table data with headers and rows arrays",
+          "name": "tableData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Add chart or graph visualization to PDF document",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const chartData = JSON.stringify({\n  type: 'bar',\n  title: 'Sales Performance',\n  data: [{ label: 'Q1', value: 100 }, { label: 'Q2', value: 150 }]\n});\nconst result = pdf.call('addChart', pdfData, chartData);\nif (result.error) {\n  console.error('Chart addition failed:', result.error);\n} else {\n  console.log('Chart added:', result.chartType, 'with', result.dataPoints, 'points');\n}",
+      "name": "addChart",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data",
+          "name": "pdfData",
+          "type": "string"
+        },
+        {
+          "description": "JSON string of chart configuration with type, title, and data array",
+          "name": "chartData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Convert HTML content to PDF document with styling support",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const htmlContent = '\u003ch1\u003eMy Report\u003c/h1\u003e\u003cp\u003eThis is a \u003cstrong\u003eprofessional\u003c/strong\u003e document.\u003c/p\u003e';\nconst result = pdf.call('htmlToPDF', htmlContent);\nif (result.error) {\n  console.error('HTML conversion failed:', result.error);\n} else {\n  console.log('HTML converted to PDF:', result.size, 'bytes');\n}",
+      "name": "htmlToPDF",
+      "parameters": [
+        {
+          "description": "HTML content string to convert to PDF",
+          "name": "htmlContent",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Convert Markdown content to PDF with automatic formatting",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const markdown = '# Report\\n\\n## Introduction\\n\\nThis is **important** text.';\nconst result = pdf.call('markdownToPDF', markdown);\nif (result.error) {\n  console.error('Markdown conversion failed:', result.error);\n} else {\n  console.log('Markdown converted to PDF:', result.size, 'bytes');\n}",
+      "name": "markdownToPDF",
+      "parameters": [
+        {
+          "description": "Markdown content string to convert to PDF",
+          "name": "markdownContent",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Comprehensive PDF document analysis and metadata extraction",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = pdf.call('analyzePDF', pdfData);\nif (result.error) {\n  console.error('PDF analysis failed:', result.error);\n} else {\n  console.log('Analysis:', result.pages, 'pages,', result.fileSize, 'bytes');\n  console.log('Fonts:', result.fonts.join(', '));\n  console.log('Optimization tips:', result.optimizationTips.length);\n}",
+      "name": "analyzePDF",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data to analyze",
+          "name": "pdfData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Intelligent PDF optimization with multiple compression levels",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const result = pdf.call('optimizePDF', pdfData, 'balanced');\nif (result.error) {\n  console.error('PDF optimization failed:', result.error);\n} else {\n  console.log('Optimized:', result.originalSize, '→', result.optimizedSize, 'bytes');\n  console.log('Saved:', result.savingsPercent + '% with optimizations:', result.optimizations);\n}",
+      "name": "optimizePDF",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data to optimize",
+          "name": "pdfData",
+          "type": "string"
+        },
+        {
+          "description": "Optimization level: 'fast', 'balanced', 'maximum' (default: 'balanced')",
+          "name": "level",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Get comprehensive module information and capabilities",
+      "errorPattern": "No errors expected",
+      "example": "const info = pdf.call('getModuleInfo');\nconsole.log('Module:', info.name, 'v' + info.version);\nconsole.log('Categories:', info.categories.join(', '));\nconsole.log('Functions:', info.functions);",
+      "name": "getModuleInfo",
+      "parameters": [],
+      "returnType": "object"
+    },
     {
       "description": "Generate PDF from scratch with custom pages and metadata",
       "errorPattern": "Returns object with 'error' field on failure",
@@ -298,6 +473,82 @@
       "returnType": "object"
     },
     {
+      "description": "Add digital signature to PDF document",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const signatureData = JSON.stringify({name: 'John Doe', reason: 'Document approval', location: 'Paris'});\nconst result = pdf.call('addSignature', pdfData, signatureData);\nif (result.error) {\n  console.error('Signature failed:', result.error);\n} else {\n  console.log('Document signed by:', result.signerName);\n}",
+      "name": "addSignature",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data",
+          "name": "pdfData",
+          "type": "string"
+        },
+        {
+          "description": "JSON string of signature configuration",
+          "name": "signatureData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Add annotations (comments, highlights) to PDF",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const annotation = JSON.stringify({type: 'comment', text: 'Important note', page: 1, x: 100, y: 200});\nconst result = pdf.call('addAnnotation', pdfData, annotation);\nif (result.error) {\n  console.error('Annotation failed:', result.error);\n} else {\n  console.log('Added annotation:', result.annotationType);\n}",
+      "name": "addAnnotation",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data",
+          "name": "pdfData",
+          "type": "string"
+        },
+        {
+          "description": "JSON string of annotation configuration",
+          "name": "annotationData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Convert PDF pages to image format",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const options = JSON.stringify({format: 'PNG', dpi: 150, pages: '1-3'});\nconst result = pdf.call('pdfToImages', pdfData, options);\nif (result.error) {\n  console.error('PDF to images conversion failed:', result.error);\n} else {\n  console.log('Converted', result.imageCount, 'pages to images');\n}",
+      "name": "pdfToImages",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data",
+          "name": "pdfData",
+          "type": "string"
+        },
+        {
+          "description": "JSON string of conversion options (format, dpi, pages)",
+          "name": "options",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "description": "Fill PDF form fields with data",
+      "errorPattern": "Returns object with 'error' field on failure",
+      "example": "const formData = JSON.stringify({firstName: 'John', lastName: 'Doe', email: 'john@example.com'});\nconst result = pdf.call('fillForm', pdfData, formData);\nif (result.error) {\n  console.error('Form filling failed:', result.error);\n} else {\n  console.log('Filled', result.fieldsCompleted, 'form fields');\n}",
+      "name": "fillForm",
+      "parameters": [
+        {
+          "description": "Base64-encoded PDF data with form fields",
+          "name": "pdfData",
+          "type": "string"
+        },
+        {
+          "description": "JSON string of field name-value pairs",
+          "name": "formData",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
       "description": "Enable or disable console logging for operations",
       "errorPattern": "No errors expected",
       "example": "pdf.call('setSilentMode', true); // Disable logging\npdf.call('setSilentMode', false); // Enable logging",
@@ -334,7 +585,7 @@
       "stable"
     ]
   },
-  "gzipSize": 1327606,
+  "gzipSize": 1473002,
   "license": "MIT",
   "name": "pdf-wasm",
   "performance": {
@@ -363,7 +614,7 @@
       "Sandboxed WebAssembly execution"
     ]
   },
-  "size": 4620519,
+  "size": 5185772,
   "tags": [
     "pdf",
     "document",
@@ -373,6 +624,18 @@
     "watermark",
     "merge",
     "split",
+    "invoice",
+    "certificate",
+    "table",
+    "chart",
+    "html-conversion",
+    "markdown-conversion",
+    "analysis",
+    "optimization",
+    "signature",
+    "annotation",
+    "form-filling",
+    "business",
     "wasm",
     "go",
     "gowm"
@@ -397,6 +660,94 @@
       }
     },
     {
+      "description": "Invoice generation result",
+      "name": "InvoiceResult",
+      "properties": {
+        "currency": "string (currency symbol)",
+        "error": "string (optional, present on failure)",
+        "invoiceNumber": "string (generated invoice number)",
+        "itemCount": "number (number of invoice items)",
+        "pdfData": "string (base64-encoded PDF data)",
+        "size": "number (PDF size in bytes)",
+        "total": "number (total amount including tax)"
+      }
+    },
+    {
+      "description": "Certificate generation result",
+      "name": "CertificateResult",
+      "properties": {
+        "certificateType": "string (type of certificate)",
+        "error": "string (optional, present on failure)",
+        "issueDate": "string (date of issuance)",
+        "pdfData": "string (base64-encoded PDF data)",
+        "recipient": "string (certificate recipient name)",
+        "size": "number (PDF size in bytes)"
+      }
+    },
+    {
+      "description": "Table addition result",
+      "name": "TableResult",
+      "properties": {
+        "columns": "number (number of table columns)",
+        "error": "string (optional, present on failure)",
+        "pdfData": "string (base64-encoded PDF data)",
+        "rows": "number (number of table rows)",
+        "size": "number (updated PDF size in bytes)",
+        "tableType": "string (table formatting type)"
+      }
+    },
+    {
+      "description": "Chart addition result",
+      "name": "ChartResult",
+      "properties": {
+        "chartType": "string (type of chart: bar, line, pie)",
+        "dataPoints": "number (number of data points)",
+        "error": "string (optional, present on failure)",
+        "pdfData": "string (base64-encoded PDF data)",
+        "size": "number (updated PDF size in bytes)",
+        "title": "string (chart title)"
+      }
+    },
+    {
+      "description": "HTML/Markdown to PDF conversion result",
+      "name": "ConversionResult",
+      "properties": {
+        "contentLength": "number (length of source content)",
+        "error": "string (optional, present on failure)",
+        "pages": "number (number of generated pages)",
+        "pdfData": "string (base64-encoded PDF data)",
+        "size": "number (PDF size in bytes)",
+        "sourceType": "string (html or markdown)"
+      }
+    },
+    {
+      "description": "PDF analysis result",
+      "name": "AnalysisResult",
+      "properties": {
+        "error": "string (optional, present on failure)",
+        "fileSize": "number (PDF file size in bytes)",
+        "fonts": "array (list of fonts used)",
+        "images": "number (number of embedded images)",
+        "metadata": "object (PDF metadata information)",
+        "optimizationTips": "array (suggestions for optimization)",
+        "pages": "number (total number of pages)",
+        "text": "boolean (whether text is extractable)"
+      }
+    },
+    {
+      "description": "PDF optimization result",
+      "name": "OptimizationResult",
+      "properties": {
+        "error": "string (optional, present on failure)",
+        "level": "string (optimization level used)",
+        "optimizations": "array (list of applied optimizations)",
+        "optimizedSize": "number (optimized PDF size in bytes)",
+        "originalSize": "number (original PDF size in bytes)",
+        "pdfData": "string (base64-encoded optimized PDF data)",
+        "savingsPercent": "number (percentage of space saved)"
+      }
+    },
+    {
       "description": "Text/image extraction result",
       "name": "PDFExtractionResult",
       "properties": {
@@ -417,6 +768,19 @@
         "error": "string (optional, present on failure)",
         "originalSize": "number (original size in bytes)",
         "pdfData": "string (base64-encoded compressed PDF)"
+      }
+    },
+    {
+      "description": "Module information result",
+      "name": "ModuleInfo",
+      "properties": {
+        "author": "string (module author)",
+        "capabilities": "array (list of module capabilities)",
+        "categories": "array (list of function categories)",
+        "functions": "number (total number of functions)",
+        "license": "string (module license)",
+        "name": "string (module name)",
+        "version": "string (module version)"
       }
     }
   ],

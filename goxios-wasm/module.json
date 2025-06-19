@@ -2,7 +2,7 @@
   "author": "Ben",
   "buildInfo": {
     "buildCommand": "wasm-manager build",
-    "buildTime": "2025-06-18T23:28:07+02:00",
+    "buildTime": "2025-06-19T16:01:00+02:00",
     "compilerFlags": [
       "GOOS=js",
       "GOARCH=wasm",
@@ -18,12 +18,12 @@
     "goModule": true,
     "goVersion": "1.24.3",
     "language": "Go",
-    "lastModified": "2025-06-18T23:28:05+02:00",
+    "lastModified": "2025-06-19T16:00:58+02:00",
     "outputFile": "main.wasm",
     "target": "js/wasm",
     "wasmOptUsed": true
   },
-  "buildTime": 1750282087,
+  "buildTime": 1750341660,
   "changelog": {
     "changes": [
       "Full axios-like HTTP client implementation",
