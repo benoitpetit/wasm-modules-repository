@@ -1098,9 +1098,20 @@ func xmlNodeToMap(node *xmlquery.Node) interface{} {
 }
 
 func mapToXML(data interface{}, tagName string, indent int) string {
+	// Sanitize tag name to prevent XML errors
+	if tagName == "" {
+		tagName = "item"
+	}
+	// Remove invalid XML tag characters
+	tagName = strings.ReplaceAll(tagName, " ", "_")
+	tagName = strings.ReplaceAll(tagName, "\n", "_")
+	tagName = strings.ReplaceAll(tagName, "\t", "_")
+
 	indentStr := strings.Repeat("  ", indent)
 
 	switch v := data.(type) {
+	case nil:
+		return fmt.Sprintf("%s<%s></%s>\n", indentStr, tagName, tagName)
 	case map[string]interface{}:
 		var result strings.Builder
 		result.WriteString(fmt.Sprintf("%s<%s>\n", indentStr, tagName))
@@ -1119,8 +1130,34 @@ func mapToXML(data interface{}, tagName string, indent int) string {
 		}
 		return result.String()
 
+	case string:
+		// Escape XML special characters
+		escaped := strings.ReplaceAll(v, "&", "&amp;")
+		escaped = strings.ReplaceAll(escaped, "<", "&lt;")
+		escaped = strings.ReplaceAll(escaped, ">", "&gt;")
+		escaped = strings.ReplaceAll(escaped, "\"", "&quot;")
+		escaped = strings.ReplaceAll(escaped, "'", "&apos;")
+		return fmt.Sprintf("%s<%s>%s</%s>\n", indentStr, tagName, escaped, tagName)
+
+	case bool:
+		return fmt.Sprintf("%s<%s>%t</%s>\n", indentStr, tagName, v, tagName)
+
+	case float64:
+		return fmt.Sprintf("%s<%s>%g</%s>\n", indentStr, tagName, v, tagName)
+
+	case int:
+		return fmt.Sprintf("%s<%s>%d</%s>\n", indentStr, tagName, v, tagName)
+
 	default:
-		return fmt.Sprintf("%s<%s>%v</%s>\n", indentStr, tagName, v, tagName)
+		// Convert to string safely
+		value := fmt.Sprintf("%v", v)
+		// Escape XML special characters
+		escaped := strings.ReplaceAll(value, "&", "&amp;")
+		escaped = strings.ReplaceAll(escaped, "<", "&lt;")
+		escaped = strings.ReplaceAll(escaped, ">", "&gt;")
+		escaped = strings.ReplaceAll(escaped, "\"", "&quot;")
+		escaped = strings.ReplaceAll(escaped, "'", "&apos;")
+		return fmt.Sprintf("%s<%s>%s</%s>\n", indentStr, tagName, escaped, tagName)
 	}
 }
 
