@@ -31,7 +31,9 @@
       "Strip debugging symbols (-ldflags=\"-s -w\")",
       "Trim path information (-trimpath)",
       "Disable CGO for security",
-      "wasm-opt optimization when available"
+      "wasm-opt optimization when available",
+      "Memory optimization for large operations",
+      "Concurrent processing optimization"
     ],
     "outputFile": "main.wasm",
     "target": "js/wasm",
@@ -108,7 +110,7 @@
       "Safari 13+",
       "Edge 79+"
     ],
-    "gowm": "1.0.0+",
+    "gowm": "1.1.0+",
     "nodejs": "16.0.0+"
   },
   "description": "Comprehensive data format conversion and processing module written in Go and compiled to WebAssembly. Features JSON, XML, CSV, and YAML parsing, validation, and transformation capabilities. Optimized for GoWM integration.",
@@ -148,35 +150,47 @@
     ]
   },
   "errorHandling": {
-    "description": "Data processing module returns objects with 'error' field when operations fail",
-    "detection": "if (result.error) { /* handle error */ } else { /* use result data */ }",
+    "description": "Enhanced error handling system compatible with GOWM 1.1.0+",
+    "detection": "if (result.error) { const { code, message, details } = result.error; /* handle structured error */ }",
     "examples": [
       {
         "cause": "Called parseJSON() with malformed JSON string",
-        "error": "Invalid JSON: unexpected character 'a' at position 5"
+        "error": {
+          "code": "INVALID_JSON",
+          "message": "Invalid JSON: unexpected character 'a' at position 5",
+          "details": {
+            "position": 5,
+            "character": "a",
+            "context": "..."
+          }
+        }
       },
       {
         "cause": "Called parseXML() with malformed XML structure",
-        "error": "Invalid XML: element is not closed"
+        "error": {
+          "code": "INVALID_XML",
+          "message": "Invalid XML: element is not closed",
+          "details": {
+            "element": "user",
+            "line": 5,
+            "column": 10
+          }
+        }
       },
       {
-        "cause": "Called csvToJSON() with inconsistent CSV structure",
-        "error": "Invalid CSV: record has wrong number of fields"
-      },
-      {
-        "cause": "Called yamlToJSON() with invalid YAML syntax",
-        "error": "Invalid YAML: mapping values are not allowed here"
-      },
-      {
-        "cause": "Called extractJSONPath() with non-existent path",
-        "error": "JSON path not found: user.profile.invalid"
-      },
-      {
-        "cause": "Called validateJSONSchema() with data that doesn't match schema",
-        "error": "Schema validation failed: required property missing"
+        "cause": "Memory limit exceeded during large file processing",
+        "error": {
+          "code": "MEMORY_LIMIT",
+          "message": "Operation exceeded memory limit",
+          "details": {
+            "limit": "128MB",
+            "attempted": "256MB",
+            "operation": "parseJSON"
+          }
+        }
       }
     ],
-    "pattern": "object-based"
+    "pattern": "structured-error"
   },
   "examples": [
     {
@@ -205,9 +219,9 @@
       "title": "Error Handling Patterns and Data Validation"
     },
     {
-      "code": "import React, { useState, useEffect } from 'react';\nimport { useWasmFromGitHub } from 'gowm/hooks/useWasm';\n\nfunction DataConverter() {\n  const { wasm: jsonxml, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {\n    path: 'jsonxml-wasm',\n    filename: 'main.wasm',\n    name: 'jsonxml-wasm'\n  });\n  \n  const [inputData, setInputData] = useState('');\n  const [outputData, setOutputData] = useState('');\n  const [inputFormat, setInputFormat] = useState('json');\n  const [outputFormat, setOutputFormat] = useState('xml');\n  const [functions, setFunctions] = useState([]);\n\n  useEffect(() =\u003e {\n    if (jsonxml) {\n      jsonxml.call('setSilentMode', true);\n      const availableFunctions = jsonxml.call('getAvailableFunctions');\n      setFunctions(availableFunctions);\n    }\n  }, [jsonxml]);\n\n  const convertData = () =\u003e {\n    if (!jsonxml || !inputData) return;\n    \n    let conversionFunction = '';\n    if (inputFormat === 'json' \u0026\u0026 outputFormat === 'xml') {\n      conversionFunction = 'jsonToXML';\n    } else if (inputFormat === 'xml' \u0026\u0026 outputFormat === 'json') {\n      conversionFunction = 'xmlToJSON';\n    } else if (inputFormat === 'csv' \u0026\u0026 outputFormat === 'json') {\n      conversionFunction = 'csvToJSON';\n    } else if (inputFormat === 'yaml' \u0026\u0026 outputFormat === 'json') {\n      conversionFunction = 'yamlToJSON';\n    }\n    \n    if (conversionFunction) {\n      const result = jsonxml.call(conversionFunction, inputData);\n      if (result.error) {\n        setOutputData(`Error: ${result.error}`);\n      } else {\n        setOutputData(typeof result.data === 'string' ? result.data : JSON.stringify(result.data, null, 2));\n      }\n    }\n  };\n\n  if (loading) return \u003cdiv\u003eLoading data converter...\u003c/div\u003e;\n  if (error) return \u003cdiv\u003eError: {error.message}\u003c/div\u003e;\n\n  return (\n    \u003cdiv className=\"data-converter\"\u003e\n      \u003cdiv className=\"format-selectors\"\u003e\n        \u003cselect value={inputFormat} onChange={(e) =\u003e setInputFormat(e.target.value)}\u003e\n          \u003coption value=\"json\"\u003eJSON\u003c/option\u003e\n          \u003coption value=\"xml\"\u003eXML\u003c/option\u003e\n          \u003coption value=\"csv\"\u003eCSV\u003c/option\u003e\n          \u003coption value=\"yaml\"\u003eYAML\u003c/option\u003e\n        \u003c/select\u003e\n        \u003cspan\u003e → \u003c/span\u003e\n        \u003cselect value={outputFormat} onChange={(e) =\u003e setOutputFormat(e.target.value)}\u003e\n          \u003coption value=\"json\"\u003eJSON\u003c/option\u003e\n          \u003coption value=\"xml\"\u003eXML\u003c/option\u003e\n          \u003coption value=\"csv\"\u003eCSV\u003c/option\u003e\n          \u003coption value=\"yaml\"\u003eYAML\u003c/option\u003e\n        \u003c/select\u003e\n      \u003c/div\u003e\n      \n      \u003cdiv className=\"conversion-area\"\u003e\n        \u003ctextarea\n          value={inputData}\n          onChange={(e) =\u003e setInputData(e.target.value)}\n          placeholder={`Enter ${inputFormat.toUpperCase()} data...`}\n          rows={10}\n          cols={50}\n        /\u003e\n        \u003cbutton onClick={convertData}\u003eConvert\u003c/button\u003e\n        \u003ctextarea\n          value={outputData}\n          readOnly\n          placeholder={`${outputFormat.toUpperCase()} output will appear here...`}\n          rows={10}\n          cols={50}\n        /\u003e\n      \u003c/div\u003e\n      \n      \u003cdiv className=\"module-info\"\u003e\n        \u003cp\u003eAvailable functions: {functions.length}\u003c/p\u003e\n      \u003c/div\u003e\n    \u003c/div\u003e\n  );\n}",
-      "language": "jsx",
-      "title": "React Data Converter Component"
+      "code": "// Universal data format converter with validation\nimport { loadFromGitHub } from 'gowm';\n\nclass DataConverter {\n  constructor() {\n    this.jsonxml = null;\n    this.ready = false;\n    this.conversionHistory = [];\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.jsonxml = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'jsonxml-wasm',\n        filename: 'main.wasm',\n        name: 'jsonxml-wasm'\n      });\n      \n      // Configure for production use\n      this.jsonxml.call('setSilentMode', true);\n      \n      // Get available functions\n      const functions = this.jsonxml.call('getAvailableFunctions');\n      console.log('Available conversion functions:', functions);\n      \n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load JSONXML module:', error);\n    }\n  }\n\n  // Universal conversion method\n  convert(inputData, fromFormat, toFormat, options = {}) {\n    if (!this.ready) {\n      throw new Error('JSONXML module not ready');\n    }\n    \n    if (!inputData) {\n      throw new Error('No input data provided');\n    }\n    \n    const conversionKey = `${fromFormat}To${toFormat.toUpperCase()}`;\n    const functionMap = {\n      'jsonToXML': 'jsonToXML',\n      'xmlToJSON': 'xmlToJSON',\n      'csvToJSON': 'csvToJSON',\n      'jsonToCSV': 'jsonToCSV',\n      'yamlToJSON': 'yamlToJSON',\n      'jsonToYAML': 'jsonToYAML'\n    };\n    \n    const functionName = functionMap[conversionKey];\n    if (!functionName) {\n      throw new Error(`Conversion from ${fromFormat} to ${toFormat} not supported`);\n    }\n    \n    // Perform conversion\n    const result = options.rootElement && fromFormat === 'json' && toFormat === 'xml'\n      ? this.jsonxml.call(functionName, inputData, options.rootElement)\n      : this.jsonxml.call(functionName, inputData);\n    \n    if (result.error) {\n      throw new Error(result.error);\n    }\n    \n    // Log conversion history\n    this.conversionHistory.push({\n      from: fromFormat,\n      to: toFormat,\n      timestamp: new Date().toISOString(),\n      inputSize: inputData.length,\n      outputSize: typeof result.data === 'string' ? result.data.length : JSON.stringify(result.data).length\n    });\n    \n    return result;\n  }\n\n  // Specific conversion methods\n  jsonToXml(jsonData, rootElement = 'root') {\n    return this.convert(jsonData, 'json', 'xml', { rootElement });\n  }\n\n  xmlToJson(xmlData) {\n    return this.convert(xmlData, 'xml', 'json');\n  }\n\n  csvToJson(csvData) {\n    return this.convert(csvData, 'csv', 'json');\n  }\n\n  jsonToCsv(jsonData) {\n    return this.convert(jsonData, 'json', 'csv');\n  }\n\n  yamlToJson(yamlData) {\n    return this.convert(yamlData, 'yaml', 'json');\n  }\n\n  jsonToYaml(jsonData) {\n    return this.convert(jsonData, 'json', 'yaml');\n  }\n\n  // Validation methods\n  validateJson(jsonString) {\n    if (!this.ready) throw new Error('JSONXML module not ready');\n    \n    const result = this.jsonxml.call('validateJSON', jsonString);\n    return {\n      valid: result.valid,\n      errors: result.errors || [],\n      data: result.data\n    };\n  }\n\n  validateXml(xmlString) {\n    if (!this.ready) throw new Error('JSONXML module not ready');\n    \n    const result = this.jsonxml.call('validateXML', xmlString);\n    return {\n      valid: result.valid,\n      errors: result.errors || [],\n      root: result.root\n    };\n  }\n\n  // Batch conversion utility\n  batchConvert(datasets, fromFormat, toFormat) {\n    if (!Array.isArray(datasets)) {\n      throw new Error('Datasets must be an array');\n    }\n    \n    const results = [];\n    const errors = [];\n    \n    datasets.forEach((data, index) => {\n      try {\n        const result = this.convert(data, fromFormat, toFormat);\n        results.push({\n          index,\n          success: true,\n          data: result.data,\n          originalSize: data.length,\n          convertedSize: typeof result.data === 'string' ? result.data.length : JSON.stringify(result.data).length\n        });\n      } catch (error) {\n        errors.push({\n          index,\n          error: error.message,\n          originalData: data.substring(0, 100) + '...'\n        });\n      }\n    });\n    \n    return {\n      successful: results.length,\n      failed: errors.length,\n      results,\n      errors\n    };\n  }\n\n  // Get conversion statistics\n  getStats() {\n    const formats = [...new Set([\n      ...this.conversionHistory.map(h => h.from),\n      ...this.conversionHistory.map(h => h.to)\n    ])];\n    \n    return {\n      ready: this.ready,\n      totalConversions: this.conversionHistory.length,\n      supportedFormats: formats,\n      mostUsedConversion: this.getMostUsedConversion(),\n      averageInputSize: this.getAverageInputSize(),\n      averageOutputSize: this.getAverageOutputSize()\n    };\n  }\n\n  getMostUsedConversion() {\n    const conversions = {};\n    this.conversionHistory.forEach(h => {\n      const key = `${h.from} → ${h.to}`;\n      conversions[key] = (conversions[key] || 0) + 1;\n    });\n    \n    return Object.entries(conversions).sort((a, b) => b[1] - a[1])[0] || null;\n  }\n\n  getAverageInputSize() {\n    if (this.conversionHistory.length === 0) return 0;\n    const total = this.conversionHistory.reduce((sum, h) => sum + h.inputSize, 0);\n    return Math.round(total / this.conversionHistory.length);\n  }\n\n  getAverageOutputSize() {\n    if (this.conversionHistory.length === 0) return 0;\n    const total = this.conversionHistory.reduce((sum, h) => sum + h.outputSize, 0);\n    return Math.round(total / this.conversionHistory.length);\n  }\n}\n\n// Usage example\nconst converter = new DataConverter();\n\n// Wait for module to load\nsetTimeout(() => {\n  if (converter.ready) {\n    try {\n      // JSON to XML conversion\n      const jsonData = JSON.stringify({\n        users: [\n          { id: 1, name: 'John Doe', email: 'john@example.com' },\n          { id: 2, name: 'Jane Smith', email: 'jane@example.com' }\n        ]\n      });\n      \n      console.log('Converting JSON to XML...');\n      const xmlResult = converter.jsonToXml(jsonData, 'userDatabase');\n      console.log('XML Result:', xmlResult.data.substring(0, 200) + '...');\n      \n      // XML to JSON conversion\n      console.log('\\nConverting XML back to JSON...');\n      const jsonResult = converter.xmlToJson(xmlResult.data);\n      console.log('JSON Result:', JSON.stringify(jsonResult.data, null, 2));\n      \n      // CSV to JSON conversion\n      const csvData = 'id,name,email\\n1,John Doe,john@example.com\\n2,Jane Smith,jane@example.com';\n      console.log('\\nConverting CSV to JSON...');\n      const csvResult = converter.csvToJson(csvData);\n      console.log('CSV to JSON Result:', JSON.stringify(csvResult.data, null, 2));\n      \n      // Validation examples\n      console.log('\\nValidating JSON...');\n      const validation = converter.validateJson(jsonData);\n      console.log('JSON Valid:', validation.valid);\n      \n      // Batch conversion\n      console.log('\\nBatch conversion test...');\n      const batchResults = converter.batchConvert([\n        '{\"test1\": \"value1\"}',\n        '{\"test2\": \"value2\"}',\n        'invalid json{'\n      ], 'json', 'xml');\n      console.log('Batch Results:', {\n        successful: batchResults.successful,\n        failed: batchResults.failed,\n        errors: batchResults.errors.map(e => e.error)\n      });\n      \n      // Statistics\n      console.log('\\nConverter Statistics:', converter.getStats());\n      \n    } catch (error) {\n      console.error('Conversion failed:', error.message);\n    }\n  }\n}, 1000);",
+      "language": "javascript",
+      "title": "Data Format Converter"
     }
   ],
   "fileInfo": {
@@ -651,7 +665,7 @@
     "Data visualization preprocessing",
     "RESTful API data handling"
   ],
-  "version": "0.1.0",
+  "version": "0.2.0",
   "wasmConfig": {
     "filename": "main.wasm",
     "globalFunctions": true,

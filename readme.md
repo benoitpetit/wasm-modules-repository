@@ -1,8 +1,18 @@
 # WASM Modules 🚀
 
-High-performance WebAssembly modules collection written in Go, designed for seamless integration with [GoWM (Go Wasm Manager)](https://github.com/benoitpetit/gowm).
+High-performance WebAssembly modules collection written in Go, designed for seamless integration with [GoWM (Go Wasm Manager) v1.1.0+](https://github.com/benoitpetit/gowm).
 
 Built with a **Go-based build system** featuring parallel processing, advanced optimizations, and integrated toolchain management.
+
+## GoWM v1.1.0 Compatibility
+
+All modules are fully compatible with GoWM v1.1.0 and later versions:
+
+- ✅ **Core API**: Full support for load(), loadFromGitHub(), call(), callAsync()
+- ✅ **Memory Management**: Advanced buffer management and cleanup
+- ✅ **Error Handling**: Structured error responses with detailed messages
+- ✅ **TypeScript**: Complete type safety with included definitions
+- 🚀 **Coming in v1.1.1**: React hooks and Vue composables support
 
 ## Available Modules
 

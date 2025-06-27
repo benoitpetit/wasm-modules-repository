@@ -3,43 +3,101 @@
 package main
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"runtime"
+	"runtime/debug"
 	"strings"
+	"sync"
 	"syscall/js"
 	"time"
 )
 
 var silentMode = false
 var globalDefaults = RequestConfig{
-	Timeout: 5000, // Default timeout of 5 seconds
+	Timeout: 30000, // Default timeout of 30 seconds
 	Headers: make(map[string]string),
 }
 
-// RequestConfig structure pour la configuration des requêtes
-type RequestConfig struct {
-	Method  string            `json:"method"`
-	URL     string            `json:"url"`
-	Headers map[string]string `json:"headers"`
-	Data    interface{}       `json:"data"`
-	Timeout int               `json:"timeout"` // en millisecondes
+var (
+	requestPool sync.Pool
+	clientPool  sync.Pool
+)
+
+// StructuredError represents a detailed error response
+type StructuredError struct {
+	Code    string                 `json:"code"`
+	Message string                 `json:"message"`
+	Details map[string]interface{} `json:"details,omitempty"`
 }
 
-// Response structure pour les réponses
+// RequestConfig structure for request configuration
+type RequestConfig struct {
+	Method      string            `json:"method"`
+	URL         string            `json:"url"`
+	Headers     map[string]string `json:"headers"`
+	Data        interface{}       `json:"data"`
+	Timeout     int               `json:"timeout"`     // in milliseconds
+	MaxBodySize int64             `json:"maxBodySize"` // in bytes
+}
+
+// Response structure for responses
 type Response struct {
 	Data    interface{}       `json:"data"`
 	Status  int               `json:"status"`
 	Headers map[string]string `json:"headers"`
 	Config  RequestConfig     `json:"config"`
+	Error   *StructuredError  `json:"error,omitempty"`
 }
 
-// Error structure pour les erreurs
-type HTTPError struct {
-	Message  string        `json:"message"`
-	Status   int           `json:"status"`
-	Response *Response     `json:"response,omitempty"`
-	Config   RequestConfig `json:"config"`
+func init() {
+	// Initialize request buffer pool
+	requestPool = sync.Pool{
+		New: func() interface{} {
+			return make([]byte, 0, 32*1024) // 32KB initial capacity
+		},
+	}
+
+	// Initialize HTTP client pool
+	clientPool = sync.Pool{
+		New: func() interface{} {
+			return &http.Client{
+				Timeout: time.Duration(globalDefaults.Timeout) * time.Millisecond,
+			}
+		},
+	}
+}
+
+// cleanupMemory forces a garbage collection
+func cleanupMemory() {
+	runtime.GC()
+	debug.FreeOSMemory()
+}
+
+// getBuffer gets a buffer from the pool
+func getBuffer() []byte {
+	return requestPool.Get().([]byte)
+}
+
+// putBuffer returns a buffer to the pool
+func putBuffer(buf []byte) {
+	requestPool.Put(buf[:0])
+}
+
+// getClient gets a client from the pool
+func getClient(timeout time.Duration) *http.Client {
+	client := clientPool.Get().(*http.Client)
+	client.Timeout = timeout
+	return client
+}
+
+// putClient returns a client to the pool
+func putClient(client *http.Client) {
+	clientPool.Put(client)
 }
 
 // Fonction pour activer/désactiver le mode silencieux
@@ -494,169 +552,157 @@ func parseJSValue(value js.Value) interface{} {
 
 // Fonction principale pour faire la requête HTTP
 func makeRequest(config RequestConfig) interface{} {
-	// Créer une Promise JavaScript
-	promiseConstructor := js.Global().Get("Promise")
-	return promiseConstructor.New(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	// Create promise
+	handler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		resolve := args[0]
 		reject := args[1]
 
 		go func() {
-			// Validation de l'URL
-			if config.URL == "" {
-				rejectWithError(reject, HTTPError{
-					Message: "URL is required",
-					Status:  0,
-					Config:  config,
-				})
-				return
-			}
+			// Get client from pool
+			client := getClient(time.Duration(config.Timeout) * time.Millisecond)
+			defer putClient(client)
 
-			// Validation de la méthode
-			if config.Method == "" {
-				config.Method = "GET"
-			}
+			// Create context with timeout
+			ctx, cancel := context.WithTimeout(context.Background(), time.Duration(config.Timeout)*time.Millisecond)
+			defer cancel()
 
-			// Préparation des données
-			var dataString string
+			// Prepare request body
+			var body io.Reader
 			if config.Data != nil {
-				if config.Headers == nil {
-					config.Headers = make(map[string]string)
-				}
+				buf := getBuffer()
+				defer putBuffer(buf)
 
-				// Si les données sont un objet, les convertir en JSON
-				if _, ok := config.Data.(map[string]interface{}); ok {
-					dataBytes, err := json.Marshal(config.Data)
-					if err != nil {
-						rejectWithError(reject, HTTPError{
-							Message: fmt.Sprintf("Failed to marshal request data: %v", err),
-							Status:  0,
-							Config:  config,
-						})
-						return
-					}
-					dataString = string(dataBytes)
-					if config.Headers["Content-Type"] == "" {
-						config.Headers["Content-Type"] = "application/json"
-					}
-				} else if str, ok := config.Data.(string); ok {
-					dataString = str
+				jsonData, err := json.Marshal(config.Data)
+				if err != nil {
+					rejectWithError(reject, StructuredError{
+						Code:    "INVALID_DATA",
+						Message: fmt.Sprintf("Failed to marshal request data: %v", err),
+						Details: map[string]interface{}{
+							"error": err.Error(),
+							"data":  fmt.Sprintf("%v", config.Data),
+						},
+					})
+					return
 				}
+				body = bytes.NewReader(jsonData)
 			}
 
-			// Créer la requête HTTP
-			var req *http.Request
-			var err error
-
-			if dataString != "" {
-				req, err = http.NewRequest(config.Method, config.URL, strings.NewReader(dataString))
-			} else {
-				req, err = http.NewRequest(config.Method, config.URL, nil)
-			}
-
+			// Create request
+			req, err := http.NewRequestWithContext(ctx, config.Method, config.URL, body)
 			if err != nil {
-				rejectWithError(reject, HTTPError{
+				rejectWithError(reject, StructuredError{
+					Code:    "INVALID_REQUEST",
 					Message: fmt.Sprintf("Failed to create request: %v", err),
-					Status:  0,
-					Config:  config,
+					Details: map[string]interface{}{
+						"error":  err.Error(),
+						"method": config.Method,
+						"url":    config.URL,
+					},
 				})
 				return
 			}
 
-			// Ajouter les headers
+			// Set headers
 			for key, value := range config.Headers {
 				req.Header.Set(key, value)
 			}
 
-			// Créer le client HTTP avec timeout
-			client := &http.Client{
-				Timeout: time.Duration(config.Timeout) * time.Millisecond,
-			}
-
-			if !silentMode {
-				fmt.Printf("Goxios WASM: %s %s\n", config.Method, config.URL)
-			}
-
-			// Faire la requête
+			// Make request
 			resp, err := client.Do(req)
 			if err != nil {
-				rejectWithError(reject, HTTPError{
+				rejectWithError(reject, StructuredError{
+					Code:    "REQUEST_FAILED",
 					Message: fmt.Sprintf("Request failed: %v", err),
-					Status:  0,
-					Config:  config,
+					Details: map[string]interface{}{
+						"error":  err.Error(),
+						"method": config.Method,
+						"url":    config.URL,
+					},
 				})
 				return
 			}
 			defer resp.Body.Close()
 
-			// Lire la réponse
-			var responseData interface{}
-			contentType := resp.Header.Get("Content-Type")
-
-			if strings.Contains(contentType, "application/json") {
-				var jsonData interface{}
-				decoder := json.NewDecoder(resp.Body)
-				if err := decoder.Decode(&jsonData); err == nil {
-					responseData = jsonData
-				}
-			} else {
-				// Pour les autres types de contenu, lire comme string
-				bodyBytes := make([]byte, 0)
-				buffer := make([]byte, 1024)
-				for {
-					n, err := resp.Body.Read(buffer)
-					if n > 0 {
-						bodyBytes = append(bodyBytes, buffer[:n]...)
-					}
-					if err != nil {
-						break
-					}
-				}
-				responseData = string(bodyBytes)
-			}
-
-			// Créer la réponse
-			response := Response{
-				Data:    responseData,
-				Status:  resp.StatusCode,
-				Headers: make(map[string]string),
-				Config:  config,
-			}
-
-			// Copier les headers de réponse
-			for key, values := range resp.Header {
-				if len(values) > 0 {
-					response.Headers[key] = values[0]
-				}
-			}
-
-			// Vérifier le status code
-			if resp.StatusCode >= 400 {
-				rejectWithError(reject, HTTPError{
-					Message:  fmt.Sprintf("Request failed with status %d", resp.StatusCode),
-					Status:   resp.StatusCode,
-					Response: &response,
-					Config:   config,
+			// Check response size
+			if config.MaxBodySize > 0 && resp.ContentLength > config.MaxBodySize {
+				rejectWithError(reject, StructuredError{
+					Code:    "RESPONSE_TOO_LARGE",
+					Message: "Response body exceeds size limit",
+					Details: map[string]interface{}{
+						"limit": config.MaxBodySize,
+						"size":  resp.ContentLength,
+					},
 				})
 				return
 			}
 
-			// Convertir la réponse en objet JavaScript
-			responseJS := convertToJSValue(response)
-			resolve.Invoke(responseJS)
+			// Read response body with buffer pool
+			buf := getBuffer()
+			defer putBuffer(buf)
 
-			if !silentMode {
-				fmt.Printf("Goxios WASM: Response %d from %s\n", resp.StatusCode, config.URL)
+			bodyReader := io.LimitReader(resp.Body, 1024*1024*10) // 10MB max
+			bodyBytes, err := io.ReadAll(bodyReader)
+			if err != nil {
+				rejectWithError(reject, StructuredError{
+					Code:    "READ_ERROR",
+					Message: fmt.Sprintf("Failed to read response: %v", err),
+					Details: map[string]interface{}{
+						"error": err.Error(),
+					},
+				})
+				return
 			}
+
+			// Parse response headers
+			headers := make(map[string]string)
+			for key, values := range resp.Header {
+				headers[key] = strings.Join(values, ", ")
+			}
+
+			// Create response
+			response := Response{
+				Status:  resp.StatusCode,
+				Headers: headers,
+				Config:  config,
+			}
+
+			// Try to parse JSON response
+			var jsonData interface{}
+			if err := json.Unmarshal(bodyBytes, &jsonData); err == nil {
+				response.Data = jsonData
+			} else {
+				response.Data = string(bodyBytes)
+			}
+
+			// Check for error status codes
+			if resp.StatusCode >= 400 {
+				response.Error = &StructuredError{
+					Code:    fmt.Sprintf("HTTP_%d", resp.StatusCode),
+					Message: fmt.Sprintf("HTTP error: %d %s", resp.StatusCode, resp.Status),
+					Details: map[string]interface{}{
+						"status":     resp.StatusCode,
+						"statusText": resp.Status,
+						"headers":    headers,
+					},
+				}
+			}
+
+			resolve.Invoke(js.ValueOf(response))
+			cleanupMemory()
 		}()
 
 		return nil
-	}))
+	})
+
+	// Create and return promise
+	return js.Global().Get("Promise").New(handler)
 }
 
-// Fonction utilitaire pour rejeter une promesse avec une erreur
-func rejectWithError(reject js.Value, err HTTPError) {
-	errorJS := convertToJSValue(err)
-	reject.Invoke(errorJS)
+// rejectWithError - Helper to reject promise with structured error
+func rejectWithError(reject js.Value, err StructuredError) {
+	reject.Invoke(js.ValueOf(map[string]interface{}{
+		"error": err,
+	}))
 }
 
 // Fonction utilitaire pour créer une promesse d'erreur
@@ -664,9 +710,9 @@ func createErrorPromise(message string) interface{} {
 	promiseConstructor := js.Global().Get("Promise")
 	return promiseConstructor.New(js.FuncOf(func(this js.Value, args []js.Value) interface{} {
 		reject := args[1]
-		errorJS := convertToJSValue(HTTPError{
+		errorJS := convertToJSValue(StructuredError{
+			Code:    "GENERIC_ERROR",
 			Message: message,
-			Status:  0,
 		})
 		reject.Invoke(errorJS)
 		return nil
