@@ -416,11 +416,11 @@ func parseXML(this js.Value, args []js.Value) interface{} {
 // xmlToJSON - Convert XML to JSON
 func xmlToJSON(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(JSONResult{
-			Error: &StructuredError{
-				Code:    "INVALID_ARGS",
-				Message: "xmlToJSON requires exactly 1 argument (xmlString)",
-				Details: map[string]interface{}{
+		return js.ValueOf(map[string]interface{}{
+			"error": map[string]interface{}{
+				"code":    "INVALID_ARGS",
+				"message": "xmlToJSON requires exactly 1 argument (xmlString)",
+				"details": map[string]interface{}{
 					"expected": 1,
 					"received": len(args),
 				},
@@ -432,14 +432,14 @@ func xmlToJSON(this js.Value, args []js.Value) interface{} {
 	doc, err := xmlquery.Parse(strings.NewReader(xmlString))
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
-			Valid:  false,
-			Size:   len(xmlString),
-			Format: "json",
-			Error: &StructuredError{
-				Code:    "INVALID_XML",
-				Message: fmt.Sprintf("Invalid XML: %v", err),
-				Details: map[string]interface{}{
+		return js.ValueOf(map[string]interface{}{
+			"valid":  false,
+			"size":   len(xmlString),
+			"format": "json",
+			"error": map[string]interface{}{
+				"code":    "INVALID_XML",
+				"message": fmt.Sprintf("Invalid XML: %v", err),
+				"details": map[string]interface{}{
 					"error": err.Error(),
 				},
 			},
@@ -450,11 +450,11 @@ func xmlToJSON(this js.Value, args []js.Value) interface{} {
 	jsonBytes, err := json.Marshal(data)
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
-			Error: &StructuredError{
-				Code:    "CONVERSION_ERROR",
-				Message: fmt.Sprintf("Failed to convert to JSON: %v", err),
-				Details: map[string]interface{}{
+		return js.ValueOf(map[string]interface{}{
+			"error": map[string]interface{}{
+				"code":    "CONVERSION_ERROR",
+				"message": fmt.Sprintf("Failed to convert to JSON: %v", err),
+				"details": map[string]interface{}{
 					"error": err.Error(),
 					"data":  fmt.Sprintf("%v", data),
 				},
@@ -468,11 +468,11 @@ func xmlToJSON(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("XML WASM: Successfully converted XML to JSON (%d bytes)\n", len(jsonString))
 	}
 
-	return js.ValueOf(JSONResult{
-		Data:   jsonString,
-		Valid:  true,
-		Size:   len(jsonString),
-		Format: "json",
+	return js.ValueOf(map[string]interface{}{
+		"data":   jsonString,
+		"valid":  true,
+		"size":   len(jsonString),
+		"format": "json",
 	})
 }
 
