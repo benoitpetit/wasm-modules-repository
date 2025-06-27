@@ -492,9 +492,13 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 	}
 
 	jsonString := args[0].String()
+	rootName := "root"
+	if len(args) > 1 && args[1].Type() == js.TypeString && args[1].String() != "" {
+		rootName = args[1].String()
+	}
+
 	var data interface{}
 	err := json.Unmarshal([]byte(jsonString), &data)
-
 	if err != nil {
 		return js.ValueOf(XMLResult{
 			Valid:  false,
@@ -512,9 +516,39 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 		})
 	}
 
-	// Convert to XML
-	xmlString := mapToXML(data, "root", 0)
+	// Only allow object or array at root
+	switch data.(type) {
+	case map[string]interface{}, []interface{}:
+		// ok
+	default:
+		return js.ValueOf(XMLResult{
+			Valid:  false,
+			Size:   len(jsonString),
+			Format: "xml",
+			Error: &StructuredError{
+				Code:    "UNSUPPORTED_TYPE",
+				Message: "Root JSON value must be an object or array for XML conversion",
+				Details: map[string]interface{}{
+					"type": fmt.Sprintf("%T", data),
+				},
+			},
+		})
+	}
+
+	xmlString := mapToXML(data, rootName, 0)
 	xmlString = `<?xml version="1.0" encoding="UTF-8"?>` + "\n" + xmlString
+
+	if xmlString == "" {
+		return js.ValueOf(XMLResult{
+			Valid:  false,
+			Size:   len(jsonString),
+			Format: "xml",
+			Error: &StructuredError{
+				Code:    "CONVERSION_ERROR",
+				Message: "Failed to convert JSON to XML: empty result",
+			},
+		})
+	}
 
 	if !silentMode {
 		fmt.Printf("XML WASM: Converted JSON to XML (%d → %d bytes)\n",
@@ -526,7 +560,7 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 		Valid:    true,
 		Size:     len(xmlString),
 		Format:   "xml",
-		Root:     "root",
+		Root:     rootName,
 		Encoding: "UTF-8",
 	})
 }
