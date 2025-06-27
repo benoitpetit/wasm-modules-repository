@@ -479,11 +479,11 @@ func xmlToJSON(this js.Value, args []js.Value) interface{} {
 // jsonToXML - Convert JSON to XML
 func jsonToXML(this js.Value, args []js.Value) interface{} {
 	if len(args) < 1 {
-		return js.ValueOf(XMLResult{
-			Error: &StructuredError{
-				Code:    "INVALID_ARGS",
-				Message: "jsonToXML requires at least 1 argument (jsonString)",
-				Details: map[string]interface{}{
+		return js.ValueOf(map[string]interface{}{
+			"error": map[string]interface{}{
+				"code":    "INVALID_ARGS",
+				"message": "jsonToXML requires at least 1 argument (jsonString)",
+				"details": map[string]interface{}{
 					"expected": "at least 1",
 					"received": len(args),
 				},
@@ -500,14 +500,14 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 	var data interface{}
 	err := json.Unmarshal([]byte(jsonString), &data)
 	if err != nil {
-		return js.ValueOf(XMLResult{
-			Valid:  false,
-			Size:   len(jsonString),
-			Format: "xml",
-			Error: &StructuredError{
-				Code:    "INVALID_JSON",
-				Message: fmt.Sprintf("Invalid JSON: %v", err),
-				Details: map[string]interface{}{
+		return js.ValueOf(map[string]interface{}{
+			"valid":  false,
+			"size":   len(jsonString),
+			"format": "xml",
+			"error": map[string]interface{}{
+				"code":    "INVALID_JSON",
+				"message": fmt.Sprintf("Invalid JSON: %v", err),
+				"details": map[string]interface{}{
 					"error":    err.Error(),
 					"position": getErrorPosition(err),
 					"context":  getErrorContext(jsonString, err),
@@ -521,14 +521,14 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 	case map[string]interface{}, []interface{}:
 		// ok
 	default:
-		return js.ValueOf(XMLResult{
-			Valid:  false,
-			Size:   len(jsonString),
-			Format: "xml",
-			Error: &StructuredError{
-				Code:    "UNSUPPORTED_TYPE",
-				Message: "Root JSON value must be an object or array for XML conversion",
-				Details: map[string]interface{}{
+		return js.ValueOf(map[string]interface{}{
+			"valid":  false,
+			"size":   len(jsonString),
+			"format": "xml",
+			"error": map[string]interface{}{
+				"code":    "UNSUPPORTED_TYPE",
+				"message": "Root JSON value must be an object or array for XML conversion",
+				"details": map[string]interface{}{
 					"type": fmt.Sprintf("%T", data),
 				},
 			},
@@ -539,13 +539,13 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 	xmlString = `<?xml version="1.0" encoding="UTF-8"?>` + "\n" + xmlString
 
 	if xmlString == "" {
-		return js.ValueOf(XMLResult{
-			Valid:  false,
-			Size:   len(jsonString),
-			Format: "xml",
-			Error: &StructuredError{
-				Code:    "CONVERSION_ERROR",
-				Message: "Failed to convert JSON to XML: empty result",
+		return js.ValueOf(map[string]interface{}{
+			"valid":  false,
+			"size":   len(jsonString),
+			"format": "xml",
+			"error": map[string]interface{}{
+				"code":    "CONVERSION_ERROR",
+				"message": "Failed to convert JSON to XML: empty result",
 			},
 		})
 	}
@@ -555,13 +555,13 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 			len(jsonString), len(xmlString))
 	}
 
-	return js.ValueOf(XMLResult{
-		Data:     xmlString,
-		Valid:    true,
-		Size:     len(xmlString),
-		Format:   "xml",
-		Root:     rootName,
-		Encoding: "UTF-8",
+	return js.ValueOf(map[string]interface{}{
+		"data":     xmlString,
+		"valid":    true,
+		"size":     len(xmlString),
+		"format":   "xml",
+		"root":     rootName,
+		"encoding": "UTF-8",
 	})
 }
 
