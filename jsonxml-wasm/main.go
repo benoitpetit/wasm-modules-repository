@@ -446,7 +446,18 @@ func xmlToJSON(this js.Value, args []js.Value) interface{} {
 		})
 	}
 
-	data := xmlNodeToMap(doc)
+	// Get the root element from the document
+	rootElement := doc.SelectElement("/*")
+	if rootElement == nil {
+		return js.ValueOf(map[string]interface{}{
+			"error": map[string]interface{}{
+				"code":    "INVALID_XML",
+				"message": "No root element found in XML",
+			},
+		})
+	}
+
+	data := xmlNodeToMap(rootElement)
 	jsonBytes, err := json.Marshal(data)
 
 	if err != nil {
