@@ -129,6 +129,20 @@
       "returnType": "object"
     },
     {
+      "description": "Compress PNG image with optimized encoding",
+      "errorPattern": "Returns error string on failure",
+      "example": "const result = image.call('compressPNG', imageUint8Array);",
+      "name": "compressPNG",
+      "parameters": [
+        {
+          "description": "Uint8Array of image data",
+          "name": "imageData",
+          "type": "Uint8Array"
+        }
+      ],
+      "returnType": "Uint8Array"
+    },
+    {
       "description": "Convert image to WebP format",
       "errorPattern": "Returns object with 'error' field on failure",
       "example": "const result = image.call('convertToWebP', base64Data, 85);",

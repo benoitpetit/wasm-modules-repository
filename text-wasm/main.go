@@ -703,7 +703,7 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 }
 
 func main() {
-	c := make(chan struct{}, 0)
+	c := make(chan struct{})
 
 	// Register functions
 	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
@@ -725,6 +725,8 @@ func main() {
 	js.Global().Set("generatePassword", js.FuncOf(generatePassword))
 	js.Global().Set("validateEmail", js.FuncOf(validateEmail))
 	js.Global().Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
+
+	js.Global().Set("__gowm_ready", js.ValueOf(true))
 
 	fmt.Println("Go Text Processing WASM Module Loaded")
 	<-c

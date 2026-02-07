@@ -1278,6 +1278,8 @@ func main() {
 	js.Global().Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
 	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
 
+	js.Global().Set("__gowm_ready", js.ValueOf(true))
+
 	fmt.Println("JSONXML WASM: Module loaded successfully with comprehensive data processing capabilities")
 	fmt.Println("Available functions:")
 	fmt.Println("- JSON: parseJSON, stringifyJSON, validateJSON, minifyJSON")

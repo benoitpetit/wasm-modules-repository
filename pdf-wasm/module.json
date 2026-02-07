@@ -121,14 +121,6 @@
       {
         "cause": "Called analyzePDF() with non-PDF base64 data",
         "error": "PDF analysis failed: invalid PDF header signature"
-      },
-      {
-        "cause": "Called addSignature() with missing signature data",
-        "error": "Digital signature failed: signer name is required"
-      },
-      {
-        "cause": "Called fillForm() on PDF without form fields",
-        "error": "Form filling failed: no form fields found in document"
       }
     ],
     "pattern": "object-based"
@@ -473,82 +465,6 @@
       "returnType": "object"
     },
     {
-      "description": "Add digital signature to PDF document",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const signatureData = JSON.stringify({name: 'John Doe', reason: 'Document approval', location: 'Paris'});\nconst result = pdf.call('addSignature', pdfData, signatureData);\nif (result.error) {\n  console.error('Signature failed:', result.error);\n} else {\n  console.log('Document signed by:', result.signerName);\n}",
-      "name": "addSignature",
-      "parameters": [
-        {
-          "description": "Base64-encoded PDF data",
-          "name": "pdfData",
-          "type": "string"
-        },
-        {
-          "description": "JSON string of signature configuration",
-          "name": "signatureData",
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Add annotations (comments, highlights) to PDF",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const annotation = JSON.stringify({type: 'comment', text: 'Important note', page: 1, x: 100, y: 200});\nconst result = pdf.call('addAnnotation', pdfData, annotation);\nif (result.error) {\n  console.error('Annotation failed:', result.error);\n} else {\n  console.log('Added annotation:', result.annotationType);\n}",
-      "name": "addAnnotation",
-      "parameters": [
-        {
-          "description": "Base64-encoded PDF data",
-          "name": "pdfData",
-          "type": "string"
-        },
-        {
-          "description": "JSON string of annotation configuration",
-          "name": "annotationData",
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Convert PDF pages to image format",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const options = JSON.stringify({format: 'PNG', dpi: 150, pages: '1-3'});\nconst result = pdf.call('pdfToImages', pdfData, options);\nif (result.error) {\n  console.error('PDF to images conversion failed:', result.error);\n} else {\n  console.log('Converted', result.imageCount, 'pages to images');\n}",
-      "name": "pdfToImages",
-      "parameters": [
-        {
-          "description": "Base64-encoded PDF data",
-          "name": "pdfData",
-          "type": "string"
-        },
-        {
-          "description": "JSON string of conversion options (format, dpi, pages)",
-          "name": "options",
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Fill PDF form fields with data",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const formData = JSON.stringify({firstName: 'John', lastName: 'Doe', email: 'john@example.com'});\nconst result = pdf.call('fillForm', pdfData, formData);\nif (result.error) {\n  console.error('Form filling failed:', result.error);\n} else {\n  console.log('Filled', result.fieldsCompleted, 'form fields');\n}",
-      "name": "fillForm",
-      "parameters": [
-        {
-          "description": "Base64-encoded PDF data with form fields",
-          "name": "pdfData",
-          "type": "string"
-        },
-        {
-          "description": "JSON string of field name-value pairs",
-          "name": "formData",
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
       "description": "Enable or disable console logging for operations",
       "errorPattern": "No errors expected",
       "example": "pdf.call('setSilentMode', true); // Disable logging\npdf.call('setSilentMode', false); // Enable logging",
@@ -790,7 +706,7 @@
     "concurrency": "thread-safe",
     "memoryUsage": "moderate"
   },
-  "version": "0.1.0",
+  "version": "2.0.0",
   "wasmConfig": {
     "filename": "main.wasm",
     "globalFunctions": true,

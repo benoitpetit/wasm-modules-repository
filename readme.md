@@ -1,33 +1,33 @@
-# WASM Modules 🚀
+# WASM Modules Repository 🚀
 
-High-performance WebAssembly modules collection written in Go, designed for seamless integration with [GoWM (Go Wasm Manager) v1.1.0+](https://github.com/benoitpetit/gowm).
+High-performance WebAssembly modules collection written in Go, designed for use with [GoWM (Go Wasm Manager)](https://github.com/benoitpetit/gowm).
 
 Built with a **Go-based build system** featuring parallel processing, advanced optimizations, and integrated toolchain management.
 
-## GoWM v1.1.0 Compatibility
-
-All modules are fully compatible with GoWM v1.1.0 and later versions:
-
-- ✅ **Core API**: Full support for load(), loadFromGitHub(), call(), callAsync()
-- ✅ **Memory Management**: Advanced buffer management and cleanup
-- ✅ **Error Handling**: Structured error responses with detailed messages
-- ✅ **TypeScript**: Complete type safety with included definitions
-- 🚀 **Coming in v1.1.1**: React hooks and Vue composables support
-
 ## Available Modules
 
-| Module | Description | Functions | Original → Optimized → Compressed |
-|--------|-------------|-----------|-----------------------------------|
-| **goxios-wasm** | HTTP Client (axios-like) | get, post, put, delete, patch, request, create | 9.9M → 2.7M → 891K |
-| **math-wasm** | Mathematical calculations | add, subtract, multiply, divide, power, factorial | 2.4M → 688K → 201K |
-| **image-wasm** | Image processing | compressJPEG, compressPNG, convertToWebP, resizeImage | 3.0M → 852K → 298K |
-| **crypto-wasm** | Cryptographic operations | hashSHA256, encryptAES, generateRSA, JWT, bcrypt, UUID | 6.1M → 1.7M → 487K |
-| **qr-wasm** | QR Codes & Barcodes | generateQRCode, generateBarcode, generateVCard, generateWiFiQR | 3.1M → 800K → 267K |
-| **text-wasm** | Advanced text processing | textSimilarity, levenshteinDistance, soundex, slugify, camelCase, extractEmails | 3.7M → 3.5M → 1.0M |
+| Module           | Description                   | Functions                                                                                       | Size (wasm → gzip) |
+| ---------------- | ----------------------------- | ----------------------------------------------------------------------------------------------- | ------------------ |
+| **math-wasm**    | Mathematical calculations     | add, subtract, multiply, divide, power, factorial, sqrt, gcd, fibonacci, mean, median... (25)   | 2.5M → 720K        |
+| **crypto-wasm**  | Cryptographic operations      | hashSHA256, encryptAES, generateRSAKeyPair, generateJWT, bcryptHash, generateUUID... (19)       | 6.1M → 1.7M        |
+| **text-wasm**    | Advanced text processing      | textSimilarity, levenshtein, slugify, camelCase, extractEmails, wordCount, readingTime... (17)  | 3.8M → 1.1M        |
+| **image-wasm**   | Image processing              | compressJPEG, compressPNG, convertToWebP, resizeImage, getImageInfo (5)                         | 3.0M → 864K        |
+| **qr-wasm**      | QR Codes & Barcodes           | generateQRCode, decodeQRCode, generateBarcode, decodeBarcode, generateVCard, generateWiFiQR (6) | 3.3M → 920K        |
+| **pdf-wasm**     | PDF generation & manipulation | createPDF, mergePDFs, splitPDF, generateInvoice, generateReport, htmlToPDF, analyzePDF... (18)  | 5.4M → 1.5M        |
+| **jsonxml-wasm** | JSON/XML/CSV/YAML conversion  | parseJSON, validateJSON, parseXML, xmlToJSON, csvToJSON, yamlToJSON, jsonToYAML... (14)         | 7.5M → 2.3M        |
+| **goxios-wasm**  | HTTP client (axios-like)      | get, post, put, delete, patch, request, create, setDefaults (8)                                 | 11M → 2.7M         |
+
+Each module also exposes the utility functions `setSilentMode`, `getAvailableFunctions`, and `getModuleInfo`.
 
 ## Quick Start
 
+### Prerequisites
+
+- Go 1.21+
+- (Optional) [Binaryen](https://github.com/WebAssembly/binaryen) for wasm-opt optimization
+
 ### Setup
+
 ```bash
 # Install dependencies and build the manager
 make setup
@@ -38,552 +38,177 @@ go build -o wasm-manager .
 ```
 
 ### Building Modules
+
 ```bash
-# Build all modules (parallel processing)
+# Build all modules (parallel)
 ./wasm-manager build
 
-# Build specific module
+# Build a specific module
 ./wasm-manager build math-wasm
 
-# Build multiple specific modules
+# Build multiple modules
 ./wasm-manager build math-wasm crypto-wasm qr-wasm
-
-# Build with custom worker count
-./wasm-manager build --workers 8
 
 # Build without optimization (faster for development)
 ./wasm-manager build --optimize=false
 
-# Clean build (removes artifacts first)
+# Clean build
 ./wasm-manager build --clean
 
-# Build with compression disabled
-./wasm-manager build --compress=false
-
-# Build without integrity hashes
-./wasm-manager build --integrity=false
+# Custom worker count
+./wasm-manager build --workers 8
 ```
 
 ### Available Commands
 
-```bash
-# Main commands
-./wasm-manager --help                    # Show all available commands
-./wasm-manager build                     # Build all modules
-./wasm-manager validate                  # Validate all modules  
-./wasm-manager test                      # Test all modules
-./wasm-manager clean                     # Clean build artifacts
-./wasm-manager install-tools             # Install optimization tools
-```
-
-| Command | Description | Key Options | Examples |
-|---------|-------------|-------------|----------|
-| **build** | Build WASM modules with optimizations | `--workers`, `--no-optimize`, `--clean` | `./wasm-manager build math-wasm --workers 8` |
-| **validate** | Validate module structure and compliance | `--strict`, `--fix` | `./wasm-manager validate --strict` |
-| **test** | Test function implementations | `--integration`, `--coverage` | `./wasm-manager test --integration` |
-| **clean** | Clean build artifacts and caches | `--all`, `--cache` | `./wasm-manager clean --all` |
-| **install-tools** | Install WASM optimization tools | `--check`, `--force`, `--binaryen` | `./wasm-manager install-tools --check` |
-
-## Build System Features
-
-### ⚡ Parallel Processing
-- **Worker Pools**: Configurable number of parallel builds (default: CPU cores)
-- **Concurrent Operations**: Multiple modules build simultaneously
-- **Smart Scheduling**: Optimal resource utilization
-- **Error Isolation**: Failed builds don't stop others
-
-### 🛡️ Advanced Optimizations
-- **WASM optimization** using wasm-opt with intelligent flags
-- **Compression pipeline** with gzip and brotli
-- **Integrity verification** with SHA256 hashes
-- **Size analysis** and compression reporting
-
-### 📊 Performance
-- **5-10x faster builds** compared to sequential processing
-- **Full CPU utilization** with worker pools
-- **Type-safe operations** with Go's type system
-- **Robust error handling** and recovery
-
-## Usage with GoWM
-
-### Installation
+| Command         | Description                | Key Options                                                       |
+| --------------- | -------------------------- | ----------------------------------------------------------------- |
+| `build`         | Build WASM modules         | `--workers`, `--optimize`, `--clean`, `--compress`, `--integrity` |
+| `validate`      | Validate module structure  | `--strict`, `--fix`                                               |
+| `test`          | Test implementations       | `--integration`, `--coverage`                                     |
+| `clean`         | Remove build artifacts     | `--all`, `--cache`                                                |
+| `install-tools` | Install optimization tools | `--check`, `--force`, `--binaryen`                                |
 
 ```bash
-npm install gowm
+./wasm-manager --help    # Full help
 ```
 
-### Basic Usage
+## Build System
 
-```javascript
-import { loadFromGitHub } from 'gowm';
+### Parallel Processing
 
-// Load math module
-const math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'master',
-  name: 'math-wasm'
-});
+- **Configurable worker pools** (defaults to CPU core count)
+- Simultaneous multi-module builds
+- Error isolation: a failed build doesn't stop others
 
-// Configure module
-math.call('setSilentMode', true);
+### Optimization Pipeline
 
-// Get available functions
-const functions = math.call('getAvailableFunctions');
-console.log('Available functions:', functions);
+- WASM optimization via `wasm-opt` (Binaryen)
+- Gzip and brotli compression
+- SHA256 hash generation (`.wasm.integrity` files)
+- Size reporting and compression ratios
 
-// Use math functions with error handling
-const result = math.call('add', 5, 3);
-if (typeof result === 'string' && result.includes('Erreur')) {
-  console.error('Math error:', result);
-} else {
-  console.log('5 + 3 =', result); // 8
-}
+### Example Output
+
+```
+🚀 Building 8 modules with 8 workers
+
+✅ math-wasm        2.5M → 720K (30s)
+✅ crypto-wasm      6.1M → 1.7M (40s)
+✅ image-wasm       3.0M → 864K (35s)
+✅ qr-wasm          3.3M → 920K (36s)
+✅ text-wasm        3.8M → 1.1M (38s)
+✅ pdf-wasm         5.4M → 1.5M (40s)
+✅ jsonxml-wasm     7.5M → 2.3M (44s)
+✅ goxios-wasm       11M → 2.7M (45s)
+
+📊 Statistics:
+   Successful: 8
+   Failed: 0
+   Compression ratio: 27%
 ```
 
-### Advanced Examples
+## Module Structure
 
-#### Math Module
+Each WASM module follows the same structure:
 
-```javascript
-// Load math module
-const math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'master',
-  name: 'math-wasm'
-});
-
-// Enable silent mode for production
-math.call('setSilentMode', true);
-
-// Perform calculations with error handling
-const operations = [
-  { func: 'add', args: [10, 5] },
-  { func: 'divide', args: [10, 0] }, // Will return error
-  { func: 'factorial', args: [5] },
-  { func: 'power', args: [2, 8] }
-];
-
-operations.forEach(({ func, args }) => {
-  const result = math.call(func, ...args);
-  if (typeof result === 'string' && result.includes('Erreur')) {
-    console.error(`${func}(${args.join(', ')}) failed:`, result);
-  } else {
-    console.log(`${func}(${args.join(', ')}) =`, result);
-  }
-});
+```
+module-wasm/
+├── main.go              # Go source code
+├── go.mod               # Go dependencies
+├── module.json          # Metadata (functions, examples, config)
+├── main.wasm            # Compiled binary
+├── main.wasm.gz         # Gzip compressed version
+└── main.wasm.integrity  # SHA256 hash (SRI)
 ```
 
-#### Crypto Module
+### module.json
 
-```javascript
-// Load crypto module
-const crypto = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'master',
-  name: 'crypto-wasm'
-});
+The `module.json` file describes the module for GoWM integration:
 
-// Hash operations
-const hashResult = crypto.call('hashSHA256', 'Hello World');
-if (hashResult.error) {
-  console.error('Hash error:', hashResult.error);
-} else {
-  console.log('SHA256:', hashResult.hash);
-  console.log('Algorithm:', hashResult.algorithm);
-}
-
-// AES encryption
-const keyResult = crypto.call('generateAESKey', 32); // 256-bit
-if (keyResult.error) {
-  console.error('Key generation failed:', keyResult.error);
-} else {
-  const encryptResult = crypto.call('encryptAES', 'Secret message', keyResult.key);
-  if (encryptResult.error) {
-    console.error('Encryption failed:', encryptResult.error);
-  } else {
-    console.log('Encrypted data:', encryptResult.encryptedData);
-    
-    // Decrypt
-    const decryptResult = crypto.call('decryptAES', encryptResult.encryptedData, keyResult.key);
-    if (decryptResult.error) {
-      console.error('Decryption failed:', decryptResult.error);
-    } else {
-      console.log('Decrypted:', decryptResult.decryptedData);
-    }
-  }
-}
-```
-
-#### Text Processing Module
-
-```javascript
-// Load text processing module
-const text = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'master',
-  name: 'text-wasm'
-});
-
-// Configure module
-text.call('setSilentMode', true);
-
-// Text similarity analysis
-const similarity = text.call('textSimilarity', 'hello world', 'hello earth');
-console.log('Similarity:', similarity); // ~0.75
-
-// String case conversions
-console.log('camelCase:', text.call('camelCase', 'hello world test')); // helloWorldTest
-console.log('kebab-case:', text.call('kebabCase', 'HelloWorldTest')); // hello-world-test
-console.log('snake_case:', text.call('snakeCase', 'HelloWorldTest')); // hello_world_test
-
-// Extract information from text
-const sampleText = 'Contact us at support@example.com or visit https://example.com';
-const emails = text.call('extractEmails', sampleText);
-const urls = text.call('extractURLs', sampleText);
-
-console.log('Emails found:', emails); // ['support@example.com']
-console.log('URLs found:', urls); // ['https://example.com']
-
-// Text analysis
-const wordCount = text.call('wordCount', sampleText);
-const readingTime = text.call('readingTime', sampleText, 200);
-console.log('Words:', wordCount, 'Reading time:', readingTime.minutes, 'minutes');
-
-// Advanced text processing
-const withAccents = 'Café naïve résumé';
-const withoutAccents = text.call('removeDiacritics', withAccents);
-const slug = text.call('slugify', withAccents);
-console.log('Without accents:', withoutAccents); // Cafe naive resume
-console.log('Slug:', slug); // cafe-naive-resume
-```
-
-#### QR Module
-
-```javascript
-// Load QR module
-const qr = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'master',
-  name: 'qr-wasm'
-});
-
-// Enable silent mode for production
-qr.call('setSilentMode', true);
-
-// Generate basic QR code
-const qrResult = qr.call('generateQRCode', 'Hello QR World!', 256, 'HIGH');
-if (qrResult.error) {
-  console.error('QR generation failed:', qrResult.error);
-} else {
-  console.log('QR Base64:', qrResult.base64Image);
-  // Display QR code
-  const img = document.createElement('img');
-  img.src = 'data:image/png;base64,' + qrResult.base64Image;
-  document.body.appendChild(img);
-}
-
-// Generate vCard contact QR
-const contact = {
-  name: 'John Doe',
-  organization: 'Tech Corp',
-  phone: '+1234567890',
-  email: 'john@example.com',
-  url: 'https://johndoe.com'
-};
-const vCardResult = qr.call('generateVCard', contact, 300);
-
-// Generate WiFi connection QR
-const wifi = {
-  ssid: 'MyNetwork',
-  password: 'mypassword',
-  security: 'WPA',
-  hidden: false
-};
-const wifiResult = qr.call('generateWiFiQR', wifi, 256);
-
-// Generate barcode
-const barcodeResult = qr.call('generateBarcode', '1234567890128', 'ean13', 400, 200);
-if (barcodeResult.error) {
-  console.error('Barcode generation failed:', barcodeResult.error);
-} else {
-  console.log('Barcode type:', barcodeResult.type);
-  console.log('Dimensions:', barcodeResult.width + 'x' + barcodeResult.height);
-}
-```
-
-#### Image Processing
-
-```javascript
-// Load image module
-const image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {
-  branch: 'master',
-  name: 'image-wasm'
-});
-
-// Process image with error handling
-const imageData = /* your image data */;
-const compressResult = image.call('compressJPEG', imageData, 0.8);
-
-if (compressResult.error) {
-  console.error('Compression failed:', compressResult.error);
-} else {
-  console.log('Original size:', compressResult.originalSize);
-  console.log('Compressed size:', compressResult.compressedSize);
-  console.log('Compression ratio:', compressResult.compressionRatio);
-  // Access compressed data: compressResult.data
-}
-```
-
-### React Integration
-
-```jsx
-import React, { useState, useEffect } from 'react';
-import { useWasmFromGitHub } from 'gowm/hooks/useWasm';
-
-function QRGenerator() {
-  const { wasm: qr, loading, error } = useWasmFromGitHub('benoitpetit/wasm-modules-repository', {
-    branch: 'master',
-    name: 'qr-wasm'
-  });
-  
-  const [qrImage, setQrImage] = useState('');
-  const [text, setText] = useState('Hello QR World!');
-
-  useEffect(() => {
-    if (qr) {
-      qr.call('setSilentMode', true);
-    }
-  }, [qr]);
-
-  const generateQR = () => {
-    if (!qr) return;
-    
-    const result = qr.call('generateQRCode', text, 256, 'HIGH');
-    if (result.error) {
-      console.error('QR generation error:', result.error);
-    } else {
-      setQrImage('data:image/png;base64,' + result.base64Image);
-    }
-  };
-
-  return (
-    <div>
-      <input 
-        value={text} 
-        onChange={(e) => setText(e.target.value)}
-        placeholder="Enter text for QR code" 
-      />
-      <button onClick={generateQR} disabled={!qr}>
-        Generate QR Code
-      </button>
-      {qrImage && <img src={qrImage} alt="Generated QR Code" />}
-    </div>
-  );
-}
-```
-
-## Build Configuration
-
-### Environment Variables
-```bash
-# Number of worker goroutines (default: CPU cores)
-export WASM_WORKERS=8
-
-# Enable verbose output
-export WASM_VERBOSE=true
-
-# Optimization level
-export WASM_OPTIMIZE=true
-```
-
-### Configuration File (.wasm-manager.yaml)
-```yaml
-workers: 8
-optimize: true
-compress: true
-generateIntegrity: true
-verbose: false
-timeout: 10m
-```
+- **Metadata**: name, version, description, author, license
+- **Functions**: list with parameters, return types, descriptions
+- **Examples**: ready-to-use code snippets
+- **GoWM config**: readySignal, standard functions, auto-detection
+- **Build info**: language, build command, target
 
 ## Development Workflow
 
-### Complete Development Workflow
-
-#### Setup and Build Manager
 ```bash
-# Initial setup
-make setup                               # Install dependencies and build manager
-# OR manually:
-go mod tidy && go build -o wasm-manager .
-
-# Rebuild manager after changes
-make build                               # Quick rebuild
-```
-
-#### Development Cycle
-```bash
-# 1. Build and test specific module
+# 1. Edit the Go source code of a module
+# 2. Build and test
 ./wasm-manager build math-wasm --verbose
 ./wasm-manager test math-wasm
 
-# 2. Validate module compliance
+# 3. Validate compliance
 ./wasm-manager validate math-wasm --strict
 
-# 3. Clean artifacts when needed
-./wasm-manager clean math-wasm
-
-# 4. Full rebuild after changes
-./wasm-manager build math-wasm --clean
-```
-
-#### Production Build
-```bash
-# Build all modules for production
-./wasm-manager clean --all               # Clean everything
-./wasm-manager install-tools --check     # Verify tools
-./wasm-manager build --workers 8         # Parallel build
-./wasm-manager validate --strict         # Final validation
-./wasm-manager test --integration        # Integration tests
-```
-
-### Advanced Usage
-
-#### Validation Commands
-```bash
-# Validate all modules
-./wasm-manager validate
-
-# Validate specific module
-./wasm-manager validate math-wasm
-
-# Strict validation with enhanced checks
-./wasm-manager validate --strict
-
-# Auto-fix validation issues
-./wasm-manager validate --fix
-```
-
-#### Testing Commands
-```bash
-# Test all modules
-./wasm-manager test
-
-# Test specific module
-./wasm-manager test crypto-wasm
-
-# Run integration tests
-./wasm-manager test --integration
-
-# Generate test coverage report
-./wasm-manager test --coverage
-```
-
-#### Cleaning Commands
-```bash
-# Clean build artifacts for all modules
-./wasm-manager clean
-
-# Clean specific module
-./wasm-manager clean math-wasm
-
-# Clean everything including caches
+# 4. Full production build
 ./wasm-manager clean --all
-
-# Clean only caches
-./wasm-manager clean --cache
-```
-
-#### Tool Management
-```bash
-# Install all optimization tools
-./wasm-manager install-tools
-
-# Check current tool installations
 ./wasm-manager install-tools --check
-
-# Force reinstall tools
-./wasm-manager install-tools --force
-
-# Install only Binaryen (wasm-opt)
-./wasm-manager install-tools --binaryen
-
-# Install only WABT toolkit
-./wasm-manager install-tools --wabt
+./wasm-manager build --workers 8
+./wasm-manager validate --strict
 ```
 
-#### Global Options
-```bash
-# Verbose output for debugging
-./wasm-manager build --verbose
+## Creating a New Module
 
-# Custom worker count
-./wasm-manager build --workers 12
+1. Create a `my-module-wasm/` directory
+2. Add `main.go` with functions exported via `js.Global().Set()`
+3. Add `go.mod` with the Go module
+4. Add `module.json` with metadata
+5. End `main()` with `js.Global().Set("__gowm_ready", js.ValueOf(true))` and a blocking channel
+6. Build with `./wasm-manager build my-module-wasm`
 
-# Use configuration file
-./wasm-manager build --config custom-config.yaml
+### Minimal Template
 
-# Show version
-./wasm-manager --version
+```go
+//go:build js && wasm
+
+package main
+
+import (
+    "fmt"
+    "syscall/js"
+)
+
+func myFunction(this js.Value, args []js.Value) interface{} {
+    // Implementation
+    return js.ValueOf("result")
+}
+
+func main() {
+    c := make(chan struct{})
+
+    js.Global().Set("myFunction", js.FuncOf(myFunction))
+    js.Global().Set("__gowm_ready", js.ValueOf(true))
+
+    fmt.Println("Module loaded")
+    <-c
+}
 ```
 
-## Performance & Optimization
+## Why Not TinyGo?
 
-### Build Performance
-- **Parallel Processing**: 5-10x faster than sequential builds
-- **Resource Utilization**: Full CPU core utilization
-- **Memory Efficiency**: Optimized goroutine pools
-- **Smart Caching**: Avoid redundant operations
+TinyGo produces much smaller WASM binaries (~100KB vs ~2-5MB), but it is **incompatible** with GoWM:
 
-### WASM Optimization
-- **Size Reduction**: 50-70% reduction through optimization
-- **Compression**: Additional 60-80% reduction with gzip/brotli
-- **Integrity**: SHA256 verification for security
-- **Compatibility**: Maintained across all optimizations
+- **Different ABI**: TinyGo uses a `wasm_exec.js` that is incompatible with the standard Go one. GoWM relies on `new Go()` → `go.importObject` → `go.run()` from the standard Go runtime.
+- **Unsupported packages**: `crypto/rsa`, `crypto/x509`, `net/http`, `net/mail`, and several third-party dependencies used by the modules are not supported by TinyGo.
+- Only `math-wasm` would potentially compile with TinyGo, but the cost of adapting the GoWM engine to support two runtimes would be disproportionate.
 
-### Build Output Example
+## Project Structure
+
 ```
-🚀 Building 5 modules with 8 workers
-
-✅ math-wasm        2.4M → 688K → 201K (1.2s)
-✅ crypto-wasm      6.1M → 1.7M → 487K (2.8s)  
-✅ image-wasm       3.0M → 852K → 298K (1.9s)
-✅ qr-wasm          3.1M → 800K → 267K (1.7s)
-✅ goxios-wasm      9.9M → 2.7M → 891K (3.1s)
-
-📊 Statistics:
-   Successful: 5
-   Failed: 0
-   Total time: 3.1s
-   Size reduction: 18.3M → 6.7M (63.4%)
-   Compression ratio: 26.8%
-```
-
-## Contributing
-
-The Go-based build system makes it easy to contribute:
-
-1. **Add new commands**: Implement in `cmd/` directory
-2. **Extend functionality**: Add to `internal/` packages
-3. **Custom optimizations**: Enhance the build pipeline
-4. **New modules**: Follow the existing structure
-
-### Project Structure
-```
-wasm-projects/
-├── main.go                  # Entry point
-├── go.mod                   # Dependencies
-├── Makefile                 # Build automation
-├── cmd/                     # CLI commands
-├── internal/                # Core functionality
-├── [module-name]/           # WASM modules
-│   ├── main.go
-│   ├── go.mod
-│   └── module.json
-└── shared/                  # Shared resources
+wasm-modules-repository/
+├── main.go              # Build manager entry point
+├── go.mod               # Dependencies
+├── Makefile             # Build automation
+├── wasm-manager         # Compiled manager binary
+├── cmd/                 # CLI commands (build, clean, test, validate, install)
+├── internal/            # Internal logic (builder, cleaner, tester, validator)
+├── shared/              # Shared resources (wasm_exec.js)
+└── *-wasm/              # Individual WASM modules
 ```
 
 ## License
 
-MIT License
-
----
-
-**Built with Go for Performance and Reliability** 🚀
-
-This project leverages Go's concurrency model with goroutines and worker pools to deliver high-performance, parallel WASM builds that are 5-10x faster than traditional sequential approaches.
+MIT

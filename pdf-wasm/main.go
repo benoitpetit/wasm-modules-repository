@@ -58,17 +58,17 @@ type PDFWatermark struct {
 
 // InvoiceData represents invoice data structure
 type InvoiceData struct {
-	Number      string                   `json:"number"`
-	Date        string                   `json:"date"`
-	DueDate     string                   `json:"dueDate"`
-	Company     CompanyInfo              `json:"company"`
-	Client      CompanyInfo              `json:"client"`
-	Items       []InvoiceItem            `json:"items"`
-	Tax         float64                  `json:"tax"`
-	Discount    float64                  `json:"discount"`
-	Currency    string                   `json:"currency"`
-	Notes       string                   `json:"notes"`
-	PaymentInfo map[string]interface{}   `json:"paymentInfo"`
+	Number      string                 `json:"number"`
+	Date        string                 `json:"date"`
+	DueDate     string                 `json:"dueDate"`
+	Company     CompanyInfo            `json:"company"`
+	Client      CompanyInfo            `json:"client"`
+	Items       []InvoiceItem          `json:"items"`
+	Tax         float64                `json:"tax"`
+	Discount    float64                `json:"discount"`
+	Currency    string                 `json:"currency"`
+	Notes       string                 `json:"notes"`
+	PaymentInfo map[string]interface{} `json:"paymentInfo"`
 }
 
 // CompanyInfo represents company information
@@ -91,9 +91,9 @@ type InvoiceItem struct {
 
 // TableData represents table structure
 type TableData struct {
-	Headers []string                 `json:"headers"`
-	Rows    [][]string               `json:"rows"`
-	Style   map[string]interface{}   `json:"style"`
+	Headers []string               `json:"headers"`
+	Rows    [][]string             `json:"rows"`
+	Style   map[string]interface{} `json:"style"`
 }
 
 // ChartData represents chart configuration
@@ -137,28 +137,28 @@ type ContractData struct {
 
 // SignatureField represents a signature area
 type SignatureField struct {
-	Name     string  `json:"name"`
-	Title    string  `json:"title"`
-	Date     string  `json:"date"`
-	X        float64 `json:"x"`
-	Y        float64 `json:"y"`
-	Width    float64 `json:"width"`
-	Height   float64 `json:"height"`
+	Name   string  `json:"name"`
+	Title  string  `json:"title"`
+	Date   string  `json:"date"`
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	Width  float64 `json:"width"`
+	Height float64 `json:"height"`
 }
 
 // AnalysisResult represents PDF analysis results
 type AnalysisResult struct {
-	FileSize        int                    `json:"fileSize"`
-	Pages           int                    `json:"pages"`
-	Images          int                    `json:"images"`
-	Fonts           []string               `json:"fonts"`
-	Hyperlinks      []string               `json:"hyperlinks"`
-	FormFields      int                    `json:"formFields"`
-	Encrypted       bool                   `json:"encrypted"`
-	Version         string                 `json:"version"`
-	Metadata        map[string]interface{} `json:"metadata"`
-	TextContent     string                 `json:"textContent"`
-	OptimizationTips []string              `json:"optimizationTips"`
+	FileSize         int                    `json:"fileSize"`
+	Pages            int                    `json:"pages"`
+	Images           int                    `json:"images"`
+	Fonts            []string               `json:"fonts"`
+	Hyperlinks       []string               `json:"hyperlinks"`
+	FormFields       int                    `json:"formFields"`
+	Encrypted        bool                   `json:"encrypted"`
+	Version          string                 `json:"version"`
+	Metadata         map[string]interface{} `json:"metadata"`
+	TextContent      string                 `json:"textContent"`
+	OptimizationTips []string               `json:"optimizationTips"`
 }
 
 // setSilentMode - Set silent mode for operations
@@ -910,12 +910,12 @@ func generateInvoice(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"pdfData":     invoicePdfData,
-		"size":        buf.Len(),
+		"pdfData":       invoicePdfData,
+		"size":          buf.Len(),
 		"invoiceNumber": invoice.Number,
-		"total":       subtotal,
-		"currency":    invoice.Currency,
-		"format":      "application/pdf",
+		"total":         subtotal,
+		"currency":      invoice.Currency,
+		"format":        "application/pdf",
 	})
 }
 
@@ -983,10 +983,10 @@ func generateCertificate(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"pdfData":    certificatePdfData,
-		"size":       buf.Len(),
-		"recipient":  cert.Recipient,
-		"format":     "application/pdf",
+		"pdfData":   certificatePdfData,
+		"size":      buf.Len(),
+		"recipient": cert.Recipient,
+		"format":    "application/pdf",
 	})
 }
 
@@ -1115,11 +1115,11 @@ func addChart(this js.Value, args []js.Value) interface{} {
 			y := 60 + chartHeight - barHeight
 
 			pdf.Rect(x, y, barWidth-2, barHeight, "F")
-			
+
 			// Label
 			pdf.SetXY(x, y+barHeight+5)
 			pdf.Cell(barWidth, 5, point.Label)
-			
+
 			// Value
 			pdf.SetXY(x, y-10)
 			pdf.Cell(barWidth, 5, fmt.Sprintf("%.1f", point.Value))
@@ -1169,11 +1169,11 @@ func htmlToPDF(this js.Value, args []js.Value) interface{} {
 
 	// Simple HTML parsing (basic tags)
 	content := htmlContent
-	
+
 	// Remove HTML tags and extract text
 	re := regexp.MustCompile("<[^>]*>")
 	plainText := re.ReplaceAllString(content, "")
-	
+
 	// Handle basic formatting
 	if strings.Contains(content, "<h1>") {
 		pdf.SetFont("Arial", "B", 16)
@@ -1200,10 +1200,10 @@ func htmlToPDF(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"pdfData":     htmlPdfData,
-		"size":        buf.Len(),
+		"pdfData":        htmlPdfData,
+		"size":           buf.Len(),
 		"originalLength": len(htmlContent),
-		"format":      "application/pdf",
+		"format":         "application/pdf",
 	})
 }
 
@@ -1222,10 +1222,10 @@ func markdownToPDF(this js.Value, args []js.Value) interface{} {
 	pdf.SetMargins(20, 20, 20)
 
 	lines := strings.Split(markdownContent, "\n")
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
-		
+
 		if strings.HasPrefix(line, "# ") {
 			// H1
 			pdf.SetFont("Arial", "B", 16)
@@ -1308,11 +1308,11 @@ func analyzePDF(this js.Value, args []js.Value) interface{} {
 		Version:     "1.4",
 		TextContent: "Extracted text content would appear here",
 		Metadata: map[string]interface{}{
-			"title":      "Analyzed PDF",
-			"author":     "PDF-WASM",
-			"creator":    "Go PDF-WASM Module",
-			"producer":   "GoFPDF",
-			"createdAt":  time.Now().Format("2006-01-02T15:04:05Z"),
+			"title":     "Analyzed PDF",
+			"author":    "PDF-WASM",
+			"creator":   "Go PDF-WASM Module",
+			"producer":  "GoFPDF",
+			"createdAt": time.Now().Format("2006-01-02T15:04:05Z"),
 		},
 		OptimizationTips: []string{
 			"Consider compressing images to reduce file size",
@@ -1355,7 +1355,7 @@ func optimizePDF(this js.Value, args []js.Value) interface{} {
 	}
 
 	originalSize := len(pdfBytes)
-	
+
 	// Optimization simulation based on level
 	var optimizations []string
 
@@ -1402,18 +1402,18 @@ func optimizePDF(this js.Value, args []js.Value) interface{} {
 	optimizedPdfData := base64.StdEncoding.EncodeToString(buf.Bytes())
 
 	if !silentMode {
-		fmt.Printf("Go WASM: Optimized PDF from %d to %d bytes (%.1f%% savings)\n", 
+		fmt.Printf("Go WASM: Optimized PDF from %d to %d bytes (%.1f%% savings)\n",
 			originalSize, optimizedSize, savingsPercent)
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"pdfData":         optimizedPdfData,
-		"originalSize":    originalSize,
-		"optimizedSize":   optimizedSize,
-		"savingsPercent":  savingsPercent,
+		"pdfData":           optimizedPdfData,
+		"originalSize":      originalSize,
+		"optimizedSize":     optimizedSize,
+		"savingsPercent":    savingsPercent,
 		"optimizationLevel": optimizationLevel,
-		"optimizations":   optimizations,
-		"format":          "application/pdf",
+		"optimizations":     optimizations,
+		"format":            "application/pdf",
 	})
 }
 
@@ -1426,10 +1426,10 @@ func getModuleInfo(this js.Value, args []js.Value) interface{} {
 		"author":      "Ben",
 		"language":    "Go",
 		"target":      "WebAssembly",
-		"functions":   32,
+		"functions":   21,
 		"categories": []string{
 			"PDF Generation",
-			"Document Conversion", 
+			"Document Conversion",
 			"Business Documents",
 			"Analysis & Optimization",
 		},
@@ -1463,23 +1463,21 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 	functions := []string{
 		// Core PDF operations
 		"createPDF", "addPage", "extractText", "extractImages",
-		"mergePDFs", "splitPDF", "addWatermark", "getPDFInfo", 
+		"mergePDFs", "splitPDF", "addWatermark", "getPDFInfo",
 		"compressPDF", "optimizePDF",
-		
-		// Advanced generation
-		"generateInvoice", "generateCertificate", "generateContract", 
-		"generateBusinessCard", "generateReport",
-		
+
+		// Business document generation
+		"generateInvoice", "generateCertificate", "generateReport",
+
 		// Content manipulation
-		"addTable", "addChart", "addSignature", "addBarcode",
-		"addHeader", "addFooter", "addPageNumbers",
-		
+		"addTable", "addChart",
+
 		// Conversion functions
-		"htmlToPDF", "markdownToPDF", "jsonToPDF",
-		
-		// Analysis and validation
-		"analyzePDF", "validatePDF", "extractMetadata",
-		
+		"htmlToPDF", "markdownToPDF",
+
+		// Analysis
+		"analyzePDF",
+
 		// Utility functions
 		"setSilentMode", "getAvailableFunctions", "getModuleInfo",
 	}
@@ -1492,7 +1490,7 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 }
 
 func main() {
-	c := make(chan struct{}, 0)
+	c := make(chan struct{})
 
 	// Core PDF operations
 	js.Global().Set("createPDF", js.FuncOf(createPDF))
@@ -1526,6 +1524,8 @@ func main() {
 	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
 	js.Global().Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
 	js.Global().Set("getModuleInfo", js.FuncOf(getModuleInfo))
+
+	js.Global().Set("__gowm_ready", js.ValueOf(true))
 
 	fmt.Println("🚀 Go WASM: Advanced PDF module v2.0.0 loaded successfully")
 	fmt.Println("📋 Core functions: createPDF, mergePDFs, splitPDF, extractText, compressPDF")
