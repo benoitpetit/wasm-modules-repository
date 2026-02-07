@@ -187,14 +187,6 @@ func main() {
 }
 ```
 
-## Why Not TinyGo?
-
-TinyGo produces much smaller WASM binaries (~100KB vs ~2-5MB), but it is **incompatible** with GoWM:
-
-- **Different ABI**: TinyGo uses a `wasm_exec.js` that is incompatible with the standard Go one. GoWM relies on `new Go()` → `go.importObject` → `go.run()` from the standard Go runtime.
-- **Unsupported packages**: `crypto/rsa`, `crypto/x509`, `net/http`, `net/mail`, and several third-party dependencies used by the modules are not supported by TinyGo.
-- Only `math-wasm` would potentially compile with TinyGo, but the cost of adapting the GoWM engine to support two runtimes would be disproportionate.
-
 ## Project Structure
 
 ```
