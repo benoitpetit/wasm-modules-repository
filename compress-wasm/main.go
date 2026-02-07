@@ -28,7 +28,7 @@ func toJSValue(v interface{}) js.Value {
 		return js.ValueOf(fmt.Sprintf("Error: Failed to unmarshal result: %v", err))
 	}
 	
-	return toJSValue(result)
+	return js.ValueOf(result)
 }
 
 // setSilentMode enables/disables silent mode for console logs
