@@ -1289,7 +1289,18 @@ func getModuleInfo(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Module info retrieved for validation-wasm v0.1.0\n")
 	}
 
-	return js.ValueOf(info)
+	// Convert to JSON and back to avoid nested map issues with js.ValueOf
+	jsonBytes, err := json.Marshal(info)
+	if err != nil {
+		return fmt.Sprintf("Error: Failed to marshal module info: %v", err)
+	}
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(jsonBytes, &result); err != nil {
+		return fmt.Sprintf("Error: Failed to unmarshal module info: %v", err)
+	}
+
+	return js.ValueOf(result)
 }
 
 // getAvailableFunctions returns list of all available functions
