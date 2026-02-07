@@ -16,6 +16,8 @@ Built with a **Go-based build system** featuring parallel processing, advanced o
 | **pdf-wasm**     | PDF generation & manipulation | createPDF, mergePDFs, splitPDF, generateInvoice, generateReport, htmlToPDF, analyzePDF... (18)  | 5.4M → 1.5M        |
 | **jsonxml-wasm** | JSON/XML/CSV/YAML conversion  | parseJSON, validateJSON, parseXML, xmlToJSON, csvToJSON, yamlToJSON, jsonToYAML... (14)         | 7.5M → 2.3M        |
 | **goxios-wasm**  | HTTP client (axios-like)      | get, post, put, delete, patch, request, create, setDefaults (8)                                 | 11M → 2.7M         |
+| **compress-wasm**    | Compression & archiving       | gzipCompress, deflateCompress, lz4Compress, snappyCompress, zipCreate, tarCreate, analyzeCompression... (19) | TBD |
+| **validation-wasm**  | Data validation               | validateEmail, validateURL, validatePhoneNumber, validateIBAN, validateCreditCard, validatePostalCode, validateJSONSchema, validateRegex... (16) | TBD |
 
 Each module also exposes the utility functions `setSilentMode`, `getAvailableFunctions`, and `getModuleInfo`.
 

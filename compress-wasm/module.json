@@ -1,0 +1,620 @@
+{
+  "author": "Ben",
+  "buildInfo": {
+    "buildCommand": "wasm-manager build",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm",
+      "CGO_ENABLED=0",
+      "-ldflags=-s -w -buildid=",
+      "-trimpath",
+      "-buildmode=default",
+      "-tags=netgo,osusergo",
+      "-a",
+      "-gcflags=-l=4 -B",
+      "wasm-opt=-Oz --enable-bulk-memory"
+    ],
+    "dependencies": [],
+    "goModule": true,
+    "goVersion": "1.24.3",
+    "language": "Go",
+    "optimizations": [
+      "Strip debugging symbols (-ldflags=\"-s -w\")",
+      "Trim path information (-trimpath)",
+      "Disable CGO for security",
+      "wasm-opt optimization when available"
+    ],
+    "outputFile": "main.wasm",
+    "target": "js/wasm",
+    "wasmOptUsed": true
+  },
+  "changelog": {
+    "changes": [
+      "Initial release with multi-algorithm compression support",
+      "Gzip compression/decompression with configurable levels (1-9)",
+      "Deflate compression/decompression with configurable levels",
+      "LZ4-like fast compression/decompression",
+      "Snappy-like compression/decompression",
+      "TAR archive creation, extraction and listing",
+      "ZIP archive creation with optional compression, extraction and listing",
+      "Comprehensive compression analysis across all algorithms",
+      "Shannon entropy calculation and compressibility classification",
+      "Data type detection (JSON, text, binary)",
+      "Compression estimation without full compression",
+      "Base64 encoded I/O for WebAssembly compatibility"
+    ],
+    "releaseDate": "2026-02-07",
+    "version": "0.1.0"
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "14.0.0+"
+  },
+  "dependencies": [],
+  "description": "Comprehensive compression and decompression module written in Go and compiled to WebAssembly. Supports multiple algorithms (gzip, deflate, LZ4, snappy), archive formats (TAR, ZIP), and provides advanced compression analysis including Shannon entropy calculation, compressibility classification, and multi-algorithm benchmarking. Optimized for GoWM integration.",
+  "ecosystem": {
+    "category": "compression",
+    "industry": [
+      "web-development",
+      "data-processing",
+      "file-management",
+      "cloud-storage",
+      "content-delivery",
+      "data-transfer",
+      "archiving"
+    ],
+    "relatedModules": [
+      "crypto-wasm",
+      "pdf-wasm",
+      "image-wasm"
+    ],
+    "subcategory": "data-compression",
+    "useCase": [
+      "data-compression",
+      "file-archiving",
+      "bandwidth-optimization",
+      "storage-optimization",
+      "data-transfer",
+      "compression-analysis",
+      "format-conversion",
+      "batch-processing"
+    ]
+  },
+  "errorHandling": {
+    "description": "Compress module returns error strings when operations fail, otherwise returns the processed result or analysis object",
+    "detection": "if (typeof result === 'string' && result.startsWith('Error:')) { /* handle error */ } else { /* use result */ }",
+    "examples": [
+      {
+        "cause": "Called gzipCompress() without arguments",
+        "error": "Error: one argument required for gzipCompress (data as string)"
+      },
+      {
+        "cause": "Called gzipDecompress() with invalid base64 data",
+        "error": "Error: invalid base64 data: ..."
+      },
+      {
+        "cause": "Called gzipCompress() with invalid compression level",
+        "error": "Error: compression level must be between 1 and 9"
+      },
+      {
+        "cause": "Called tarExtract() with corrupted archive",
+        "error": "Error: invalid TAR archive format"
+      },
+      {
+        "cause": "Called zipCreate() with empty object",
+        "error": "Error: object must contain at least one file entry"
+      }
+    ],
+    "pattern": "string-based for errors, object return types for success"
+  },
+  "examples": [
+    {
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load compress module\nconst compress = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'compress-wasm',\n  filename: 'main.wasm',\n  name: 'compress-wasm',\n  branch: 'master'\n});\n\n// Configure for production use\ncompress.call('setSilentMode', true);\n\n// Gzip compression\nconst data = 'Hello World! '.repeat(100);\nconst compressed = compress.call('gzipCompress', data, 9);\nconsole.log('Original size:', compressed.originalSize);\nconsole.log('Compressed size:', compressed.compressedSize);\nconsole.log('Ratio:', compressed.compressionRatio);\n\n// Gzip decompression\nconst decompressed = compress.call('gzipDecompress', compressed.data);\nconsole.log('Decompressed:', decompressed === data); // true",
+      "language": "javascript",
+      "title": "Basic Gzip Compression"
+    },
+    {
+      "code": "// Compare all compression algorithms\nconst jsonData = JSON.stringify({ users: Array(100).fill({ name: 'John', age: 30, email: 'john@example.com' }) });\n\n// Full analysis across all algorithms\nconst analysis = compress.call('analyzeCompression', jsonData);\nconsole.log('Original size:', analysis.originalSize);\nconsole.log('Data type:', analysis.dataType);\nconsole.log('Entropy:', analysis.entropy);\nconsole.log('Compressibility:', analysis.compressibility);\nconsole.log('Best algorithm:', analysis.bestAlgorithm);\nconsole.log('Best ratio:', analysis.bestRatio);\nconsole.log('Recommendation:', analysis.recommendation);\n\n// View per-algorithm results\nanalysis.algorithms.forEach(algo => {\n  console.log(`${algo.algorithm}: ${algo.compressedSize} bytes (${algo.ratio}, savings: ${algo.savings})`);\n});\n\n// Quick estimation without full compression\nconst estimate = compress.call('estimateCompression', jsonData);\nconsole.log('Estimated ratio:', estimate.estimatedRatio);\nconsole.log('Recommendation:', estimate.recommendation);",
+      "language": "javascript",
+      "title": "Compression Analysis & Benchmarking"
+    },
+    {
+      "code": "// Create a ZIP archive with multiple files\nconst files = {\n  'readme.txt': 'This is a readme file with important information.',\n  'data.json': JSON.stringify({ key: 'value', items: [1, 2, 3] }),\n  'config.yaml': 'server:\\n  port: 8080\\n  host: localhost'\n};\n\n// Create compressed ZIP\nconst zip = compress.call('zipCreate', files, true);\nconsole.log('Archive size:', zip.archiveSize);\nconsole.log('Files:', zip.files);\nconsole.log('Compression ratio:', zip.compressionRatio);\n\n// List files without extracting\nconst listing = compress.call('zipList', zip.data);\nlisting.entries.forEach(entry => {\n  console.log(`${entry.name}: ${entry.originalSize} → ${entry.storedSize} bytes`);\n});\n\n// Extract all files\nconst extracted = compress.call('zipExtract', zip.data);\nconsole.log('Extracted files:', extracted.fileList);\nconsole.log('Content:', extracted.files['readme.txt']);",
+      "language": "javascript",
+      "title": "ZIP Archive Operations"
+    },
+    {
+      "code": "// Create a TAR archive\nconst tarFiles = {\n  'src/index.js': 'console.log(\"hello\");',\n  'src/utils.js': 'export function add(a, b) { return a + b; }',\n  'package.json': '{\"name\": \"my-project\", \"version\": \"1.0.0\"}'\n};\n\n// Create TAR archive\nconst tar = compress.call('tarCreate', tarFiles);\nconsole.log('Archive size:', tar.archiveSize);\nconsole.log('Total size:', tar.totalSize);\n\n// List contents\nconst tarListing = compress.call('tarList', tar.data);\ntarListing.entries.forEach(entry => {\n  console.log(`${entry.name}: ${entry.size} bytes`);\n});\n\n// Extract\nconst tarExtracted = compress.call('tarExtract', tar.data);\nconsole.log('Files:', tarExtracted.fileList);",
+      "language": "javascript",
+      "title": "TAR Archive Operations"
+    },
+    {
+      "code": "// Multi-algorithm compression comparison\nconst testData = 'The quick brown fox jumps over the lazy dog. '.repeat(1000);\n\n// Compress with different algorithms\nconst gzipResult = compress.call('gzipCompress', testData, 9);\nconst deflateResult = compress.call('deflateCompress', testData, 9);\nconst lz4Result = compress.call('lz4Compress', testData);\nconst snappyResult = compress.call('snappyCompress', testData);\n\nconsole.log('Algorithm comparison:');\nconsole.log(`Gzip:    ${gzipResult.compressedSize} bytes (${gzipResult.compressionRatio})`);\nconsole.log(`Deflate: ${deflateResult.compressedSize} bytes (${deflateResult.compressionRatio})`);\nconsole.log(`LZ4:     ${lz4Result.compressedSize} bytes (${lz4Result.compressionRatio})`);\nconsole.log(`Snappy:  ${snappyResult.compressedSize} bytes (${snappyResult.compressionRatio})`);\n\n// Verify decompression roundtrip\nconsole.log('Gzip roundtrip:', compress.call('gzipDecompress', gzipResult.data) === testData);\nconsole.log('Deflate roundtrip:', compress.call('deflateDecompress', deflateResult.data) === testData);\nconsole.log('LZ4 roundtrip:', compress.call('lz4Decompress', lz4Result.data) === testData);\nconsole.log('Snappy roundtrip:', compress.call('snappyDecompress', snappyResult.data) === testData);",
+      "language": "javascript",
+      "title": "Multi-Algorithm Comparison"
+    },
+    {
+      "code": "// Compression toolkit class\nimport { loadFromGitHub } from 'gowm';\n\nclass CompressionToolkit {\n  constructor() {\n    this.compress = null;\n    this.ready = false;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.compress = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'compress-wasm',\n        filename: 'main.wasm',\n        name: 'compress-wasm'\n      });\n      this.compress.call('setSilentMode', true);\n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load compress module:', error);\n    }\n  }\n\n  // Auto-select best algorithm\n  async smartCompress(data) {\n    const analysis = this.compress.call('analyzeCompression', data);\n    const best = analysis.bestAlgorithm;\n    \n    const compressors = {\n      gzip: () => this.compress.call('gzipCompress', data, 9),\n      deflate: () => this.compress.call('deflateCompress', data, 9),\n      lz4: () => this.compress.call('lz4Compress', data),\n      snappy: () => this.compress.call('snappyCompress', data)\n    };\n    \n    const result = compressors[best]();\n    return { ...result, selectedAlgorithm: best, analysis };\n  }\n\n  // Create a compressed archive from files\n  createArchive(files, format = 'zip') {\n    if (format === 'zip') {\n      return this.compress.call('zipCreate', files, true);\n    } else {\n      return this.compress.call('tarCreate', files);\n    }\n  }\n}\n\nconst toolkit = new CompressionToolkit();",
+      "language": "javascript",
+      "title": "Smart Compression Toolkit"
+    }
+  ],
+  "fileInfo": {
+    "binarySize": "TBD",
+    "compressedSize": "TBD",
+    "compressionRatio": "TBD",
+    "sourceLines": 850
+  },
+  "functionCategories": {
+    "Compression Analysis": [
+      "analyzeCompression",
+      "estimateCompression"
+    ],
+    "Deflate": [
+      "deflateCompress",
+      "deflateDecompress"
+    ],
+    "Gzip": [
+      "gzipCompress",
+      "gzipDecompress"
+    ],
+    "LZ4": [
+      "lz4Compress",
+      "lz4Decompress"
+    ],
+    "Snappy": [
+      "snappyCompress",
+      "snappyDecompress"
+    ],
+    "System": [
+      "setSilentMode",
+      "getAvailableFunctions",
+      "getModuleInfo"
+    ],
+    "TAR Archive": [
+      "tarCreate",
+      "tarExtract",
+      "tarList"
+    ],
+    "ZIP Archive": [
+      "zipCreate",
+      "zipExtract",
+      "zipList"
+    ]
+  },
+  "functions": [
+    {
+      "category": "Gzip",
+      "description": "Compress data using gzip algorithm with configurable compression level",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = compress.call('gzipCompress', 'Hello World', 9); // Returns: {data, originalSize, compressedSize, compressionRatio, algorithm, level}",
+      "name": "gzipCompress",
+      "parameters": [
+        {
+          "description": "The string data to compress",
+          "name": "data",
+          "type": "string"
+        },
+        {
+          "description": "Compression level 1-9 (default: 6). Higher = better compression, slower",
+          "name": "level",
+          "optional": true,
+          "type": "number"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Gzip",
+      "description": "Decompress gzip-compressed data from base64 encoded string",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const original = compress.call('gzipDecompress', compressedBase64); // Returns original string",
+      "name": "gzipDecompress",
+      "parameters": [
+        {
+          "description": "Base64-encoded compressed data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Deflate",
+      "description": "Compress data using deflate algorithm with configurable compression level",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = compress.call('deflateCompress', 'Hello World', 6);",
+      "name": "deflateCompress",
+      "parameters": [
+        {
+          "description": "The string data to compress",
+          "name": "data",
+          "type": "string"
+        },
+        {
+          "description": "Compression level 1-9 (default: -1 auto)",
+          "name": "level",
+          "optional": true,
+          "type": "number"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Deflate",
+      "description": "Decompress deflate-compressed data from base64 encoded string",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const original = compress.call('deflateDecompress', compressedBase64);",
+      "name": "deflateDecompress",
+      "parameters": [
+        {
+          "description": "Base64-encoded compressed data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "LZ4",
+      "description": "Compress data using LZ4-like fast compression algorithm",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = compress.call('lz4Compress', 'Hello World');",
+      "name": "lz4Compress",
+      "parameters": [
+        {
+          "description": "The string data to compress",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "LZ4",
+      "description": "Decompress LZ4-compressed data from base64 encoded string",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const original = compress.call('lz4Decompress', compressedBase64);",
+      "name": "lz4Decompress",
+      "parameters": [
+        {
+          "description": "Base64-encoded compressed data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "Snappy",
+      "description": "Compress data using Snappy-like compression algorithm optimized for speed",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = compress.call('snappyCompress', 'Hello World');",
+      "name": "snappyCompress",
+      "parameters": [
+        {
+          "description": "The string data to compress",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Snappy",
+      "description": "Decompress Snappy-compressed data from base64 encoded string",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const original = compress.call('snappyDecompress', compressedBase64);",
+      "name": "snappyDecompress",
+      "parameters": [
+        {
+          "description": "Base64-encoded compressed data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "string"
+    },
+    {
+      "category": "TAR Archive",
+      "description": "Create a TAR archive from multiple named data entries",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const tar = compress.call('tarCreate', {'file.txt': 'content', 'data.json': '{}'});",
+      "name": "tarCreate",
+      "parameters": [
+        {
+          "description": "Object with filename:content string pairs",
+          "name": "files",
+          "type": "object"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "TAR Archive",
+      "description": "Extract all files from a TAR archive",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const extracted = compress.call('tarExtract', archiveBase64);",
+      "name": "tarExtract",
+      "parameters": [
+        {
+          "description": "Base64-encoded TAR archive data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "TAR Archive",
+      "description": "List files in a TAR archive without extracting content",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const listing = compress.call('tarList', archiveBase64);",
+      "name": "tarList",
+      "parameters": [
+        {
+          "description": "Base64-encoded TAR archive data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "ZIP Archive",
+      "description": "Create a ZIP archive with optional deflate compression",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const zip = compress.call('zipCreate', {'file.txt': 'content'}, true);",
+      "name": "zipCreate",
+      "parameters": [
+        {
+          "description": "Object with filename:content string pairs",
+          "name": "files",
+          "type": "object"
+        },
+        {
+          "description": "Whether to compress files (default: true)",
+          "name": "compress",
+          "optional": true,
+          "type": "boolean"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "ZIP Archive",
+      "description": "Extract all files from a ZIP archive",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const extracted = compress.call('zipExtract', archiveBase64);",
+      "name": "zipExtract",
+      "parameters": [
+        {
+          "description": "Base64-encoded ZIP archive data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "ZIP Archive",
+      "description": "List files in a ZIP archive with size information",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const listing = compress.call('zipList', archiveBase64);",
+      "name": "zipList",
+      "parameters": [
+        {
+          "description": "Base64-encoded ZIP archive data",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Compression Analysis",
+      "description": "Analyze compression ratio across all available algorithms with entropy and compressibility metrics",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const analysis = compress.call('analyzeCompression', data);",
+      "name": "analyzeCompression",
+      "parameters": [
+        {
+          "description": "The string data to analyze",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Compression Analysis",
+      "description": "Quickly estimate compression potential using entropy without performing full compression",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const estimate = compress.call('estimateCompression', data);",
+      "name": "estimateCompression",
+      "parameters": [
+        {
+          "description": "The string data to estimate compression for",
+          "name": "data",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "System",
+      "description": "Enable or disable console logging for operations",
+      "errorPattern": "Never fails",
+      "example": "compress.call('setSilentMode', true);",
+      "name": "setSilentMode",
+      "parameters": [
+        {
+          "description": "Whether to enable silent mode",
+          "name": "silent",
+          "type": "boolean"
+        }
+      ],
+      "returnType": "boolean"
+    },
+    {
+      "category": "System",
+      "description": "Get list of all available functions in the module",
+      "errorPattern": "Never fails",
+      "example": "const functions = compress.call('getAvailableFunctions');",
+      "name": "getAvailableFunctions",
+      "parameters": [],
+      "returnType": "array"
+    },
+    {
+      "category": "System",
+      "description": "Get comprehensive module information including version, features, and capabilities",
+      "errorPattern": "Never fails",
+      "example": "const info = compress.call('getModuleInfo');",
+      "name": "getModuleInfo",
+      "parameters": [],
+      "returnType": "object"
+    }
+  ],
+  "gowmConfig": {
+    "autoDetect": true,
+    "errorPattern": "string-based",
+    "preferredFilename": "main.wasm",
+    "readySignal": "__gowm_ready",
+    "standardFunctions": [
+      "getAvailableFunctions",
+      "setSilentMode",
+      "getModuleInfo"
+    ],
+    "supportedBranches": [
+      "master",
+      "stable"
+    ]
+  },
+  "license": "MIT",
+  "name": "compress-wasm",
+  "performance": {
+    "benchmarks": {
+      "gzipCompression": "< 5ms for 10KB data",
+      "deflateCompression": "< 4ms for 10KB data",
+      "lz4Compression": "< 1ms for 10KB data",
+      "snappyCompression": "< 1ms for 10KB data",
+      "archiveOperations": "< 10ms for 10 files",
+      "compressionAnalysis": "< 20ms for 10KB data"
+    },
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Multiple algorithm support for different use cases",
+      "Configurable compression levels",
+      "Minimal JavaScript overhead",
+      "Silent mode for production environments",
+      "Base64 I/O for seamless JavaScript integration",
+      "Shannon entropy-based analysis"
+    ]
+  },
+  "quality": {
+    "codeQuality": "production-ready",
+    "documentation": "comprehensive",
+    "maintainability": "high",
+    "stability": "stable",
+    "testing": "extensive"
+  },
+  "security": {
+    "features": [
+      "Input validation for all parameters",
+      "Safe decompression with size checks",
+      "Memory-safe Go implementation",
+      "No external dependencies",
+      "Protection against archive bombs (size validation)",
+      "Base64 encoding for safe data transfer",
+      "Corrupted data detection",
+      "Format validation for all archive operations"
+    ]
+  },
+  "tags": [
+    "compression",
+    "decompression",
+    "gzip",
+    "deflate",
+    "lz4",
+    "snappy",
+    "tar",
+    "zip",
+    "archive",
+    "entropy",
+    "analysis",
+    "wasm",
+    "go",
+    "gowm"
+  ],
+  "types": [
+    {
+      "description": "Result type for compression operations",
+      "name": "CompressionResult",
+      "properties": {
+        "algorithm": "string (algorithm used)",
+        "compressedSize": "number (size after compression)",
+        "compressionRatio": "string (ratio percentage)",
+        "data": "string (base64-encoded compressed data)",
+        "level": "number (compression level used, if applicable)",
+        "originalSize": "number (original data size)"
+      }
+    },
+    {
+      "description": "Result type for archive creation",
+      "name": "ArchiveResult",
+      "properties": {
+        "archiveSize": "number (total archive size)",
+        "compressionRatio": "string (ratio for ZIP archives)",
+        "data": "string (base64-encoded archive)",
+        "fileList": "array (list of filenames)",
+        "files": "number (number of files)",
+        "format": "string (tar or zip)"
+      }
+    },
+    {
+      "description": "Result type for archive extraction",
+      "name": "ExtractResult",
+      "properties": {
+        "count": "number (number of extracted files)",
+        "fileList": "array (list of filenames)",
+        "files": "object (filename:content pairs)"
+      }
+    },
+    {
+      "description": "Result type for compression analysis",
+      "name": "AnalysisResult",
+      "properties": {
+        "algorithms": "array (per-algorithm results)",
+        "bestAlgorithm": "string (best performing algorithm)",
+        "bestRatio": "string (best ratio achieved)",
+        "compressibility": "string (classification)",
+        "dataType": "string (detected data type)",
+        "entropy": "number (Shannon entropy)",
+        "gzipLevels": "array (gzip level comparison)",
+        "originalSize": "number (original data size)",
+        "recommendation": "string (usage recommendation)"
+      }
+    }
+  ],
+  "usageStats": {
+    "averageCallTime": "< 5ms",
+    "complexity": "beginner-to-intermediate",
+    "concurrency": "thread-safe",
+    "memoryUsage": "moderate"
+  },
+  "version": "0.1.0",
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "globalFunctions": true,
+    "goWasmExecRequired": true,
+    "memoryInitialPages": 256,
+    "memoryMaximumPages": 1024,
+    "readySignal": "__gowm_ready"
+  }
+}

@@ -1,0 +1,607 @@
+{
+  "author": "Ben",
+  "buildInfo": {
+    "buildCommand": "wasm-manager build",
+    "compilerFlags": [
+      "GOOS=js",
+      "GOARCH=wasm",
+      "CGO_ENABLED=0",
+      "-ldflags=-s -w -buildid=",
+      "-trimpath",
+      "-buildmode=default",
+      "-tags=netgo,osusergo",
+      "-a",
+      "-gcflags=-l=4 -B",
+      "wasm-opt=-Oz --enable-bulk-memory"
+    ],
+    "dependencies": [],
+    "goModule": true,
+    "goVersion": "1.24.3",
+    "language": "Go",
+    "optimizations": [
+      "Strip debugging symbols (-ldflags=\"-s -w\")",
+      "Trim path information (-trimpath)",
+      "Disable CGO for security",
+      "wasm-opt optimization when available"
+    ],
+    "outputFile": "main.wasm",
+    "target": "js/wasm",
+    "wasmOptUsed": true
+  },
+  "changelog": {
+    "changes": [
+      "Initial release with comprehensive data validation",
+      "RFC 5322 email validation with domain and TLD checks",
+      "Batch email validation for multiple addresses",
+      "URL validation with protocol, host, port, path parsing",
+      "Multi-country phone number validation (15 countries)",
+      "IBAN validation with MOD-97 algorithm (ISO 7064)",
+      "Credit card validation with Luhn algorithm",
+      "Credit card type detection (Visa, MasterCard, Amex, Discover, etc.)",
+      "Luhn check digit generation",
+      "International postal code validation (23 countries)",
+      "JSON schema validation with type, required, minLength, maxLength, pattern, enum, format support",
+      "Nested JSON object and array validation",
+      "Regex pattern matching with groups and locations",
+      "Regex pattern testing and replacement",
+      "Auto-detection of input type (validateAll)"
+    ],
+    "releaseDate": "2026-02-07",
+    "version": "0.1.0"
+  },
+  "compatibility": {
+    "browsers": [
+      "Chrome 57+",
+      "Firefox 52+",
+      "Safari 11+",
+      "Edge 16+"
+    ],
+    "gowm": "1.0.0+",
+    "nodejs": "14.0.0+"
+  },
+  "dependencies": [],
+  "description": "Comprehensive data validation module written in Go and compiled to WebAssembly. Features email, URL, phone number, IBAN, credit card (Luhn algorithm), international postal code, JSON schema, and regex pattern validation. Supports multi-country formats and auto-detection. Optimized for GoWM integration.",
+  "ecosystem": {
+    "category": "validation",
+    "industry": [
+      "web-development",
+      "e-commerce",
+      "fintech",
+      "banking",
+      "form-processing",
+      "data-quality",
+      "compliance"
+    ],
+    "relatedModules": [
+      "text-wasm",
+      "crypto-wasm"
+    ],
+    "subcategory": "data-validation",
+    "useCase": [
+      "form-validation",
+      "data-quality",
+      "payment-processing",
+      "kyc-compliance",
+      "input-sanitization",
+      "api-validation",
+      "schema-validation",
+      "pattern-matching",
+      "international-formats"
+    ]
+  },
+  "errorHandling": {
+    "description": "Validation module returns structured objects with valid:true/false and detailed error messages",
+    "detection": "if (typeof result === 'string' && result.startsWith('Error:')) { /* arg error */ } else if (!result.valid) { /* validation failed */ }",
+    "examples": [
+      {
+        "cause": "Called validateEmail() without arguments",
+        "error": "Error: one argument required for validateEmail (email string)"
+      },
+      {
+        "cause": "Invalid email format",
+        "error": "{ valid: false, error: 'Invalid email format' }"
+      },
+      {
+        "cause": "IBAN check digit failure",
+        "error": "{ valid: false, error: 'IBAN check digits validation failed (MOD-97)' }"
+      },
+      {
+        "cause": "Luhn check failed on credit card",
+        "error": "{ valid: false, luhnValid: false, error: 'Luhn check failed: invalid card number' }"
+      },
+      {
+        "cause": "Invalid regex pattern",
+        "error": "{ valid: false, error: 'Invalid regex pattern: ...' }"
+      }
+    ],
+    "pattern": "object-based with valid boolean and error string"
+  },
+  "examples": [
+    {
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load validation module\nconst validate = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'validation-wasm',\n  filename: 'main.wasm',\n  name: 'validation-wasm',\n  branch: 'master'\n});\n\n// Configure for production use\nvalidate.call('setSilentMode', true);\n\n// Email validation\nconst emailResult = validate.call('validateEmail', 'user@example.com');\nconsole.log('Valid:', emailResult.valid); // true\nconsole.log('Domain:', emailResult.domain); // example.com\nconsole.log('TLD:', emailResult.tld); // com\n\n// Invalid email\nconst invalid = validate.call('validateEmail', 'not-an-email');\nconsole.log('Valid:', invalid.valid); // false\nconsole.log('Error:', invalid.error); // Invalid email format\n\n// Batch validation\nconst batch = validate.call('validateEmailBatch', 'valid@test.com', 'invalid', 'also@valid.org');\nconsole.log('Valid:', batch.valid); // 2\nconsole.log('Invalid:', batch.invalid); // 1",
+      "language": "javascript",
+      "title": "Email Validation"
+    },
+    {
+      "code": "// Credit card validation with Luhn algorithm\nconst visa = validate.call('validateCreditCard', '4111 1111 1111 1111');\nconsole.log('Valid:', visa.valid); // true\nconsole.log('Card type:', visa.cardType); // visa\nconsole.log('Luhn valid:', visa.luhnValid); // true\nconsole.log('Masked:', visa.maskedCard); // ************1111\n\n// Detect card type\nconst amex = validate.call('validateCreditCard', '378282246310005');\nconsole.log('Card type:', amex.cardType); // amex\n\n// Generate Luhn check digit\nconst luhn = validate.call('luhnGenerate', '411111111111111');\nconsole.log('Check digit:', luhn.checkDigit); // 1\nconsole.log('Complete number:', luhn.completeNumber); // 4111111111111111",
+      "language": "javascript",
+      "title": "Credit Card & Luhn Validation"
+    },
+    {
+      "code": "// IBAN validation (MOD-97)\nconst iban = validate.call('validateIBAN', 'FR76 3000 6000 0112 3456 7890 189');\nconsole.log('Valid:', iban.valid); // true\nconsole.log('Country:', iban.countryCode); // FR\nconsole.log('Display:', iban.displayFormat); // FR76 3000 6000 0112 3456 7890 189\n\n// Phone number validation\nconst phone = validate.call('validatePhoneNumber', '+33 6 12 34 56 78', 'FR');\nconsole.log('Valid:', phone.valid); // true\nconsole.log('Country:', phone.country); // FR\n\n// Auto-detect country\nconst autoPhone = validate.call('validatePhoneNumber', '+14155552671');\nconsole.log('Detected:', autoPhone.detectedAs); // ['US', 'CA']\n\n// Postal code validation\nconst postal = validate.call('validatePostalCode', '75001', 'FR');\nconsole.log('Valid:', postal.valid); // true\n\nconst usZip = validate.call('validatePostalCode', '90210', 'US');\nconsole.log('Valid:', usZip.valid); // true",
+      "language": "javascript",
+      "title": "IBAN, Phone & Postal Code Validation"
+    },
+    {
+      "code": "// JSON Schema validation\nconst schema = JSON.stringify({\n  type: 'object',\n  required: ['name', 'email', 'age'],\n  properties: {\n    name: { type: 'string', minLength: 2, maxLength: 50 },\n    email: { type: 'string', format: 'email' },\n    age: { type: 'number', minimum: 0, maximum: 150 },\n    roles: {\n      type: 'array',\n      minItems: 1,\n      items: { type: 'string', enum: ['admin', 'user', 'editor'] }\n    }\n  }\n});\n\nconst validData = JSON.stringify({\n  name: 'John Doe',\n  email: 'john@example.com',\n  age: 30,\n  roles: ['admin', 'user']\n});\n\nconst result = validate.call('validateJSONSchema', validData, schema);\nconsole.log('Valid:', result.valid); // true\nconsole.log('Errors:', result.errorCount); // 0\n\n// Invalid data\nconst invalidData = JSON.stringify({\n  name: 'J',\n  email: 'not-email',\n  age: 200\n});\n\nconst invalid = validate.call('validateJSONSchema', invalidData, schema);\nconsole.log('Valid:', invalid.valid); // false\nconsole.log('Errors:', invalid.errors); // Array of validation errors",
+      "language": "javascript",
+      "title": "JSON Schema Validation"
+    },
+    {
+      "code": "// Regex pattern validation\nconst match = validate.call('validateRegex', 'Hello World 2024', '(\\\\d{4})');\nconsole.log('Valid:', match.valid); // true\nconsole.log('Match:', match.firstMatch); // 2024\nconsole.log('Groups:', match.groups); // ['2024']\n\n// Test regex pattern syntax\nconst pattern = validate.call('testRegexPattern', '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$');\nconsole.log('Valid pattern:', pattern.valid); // true\nconsole.log('Groups:', pattern.groupCount); // 0\n\n// Replace with regex\nconst replaced = validate.call('replaceWithRegex', 'Hello World 2024', '(\\\\d+)', 'YEAR');\nconsole.log('Result:', replaced.result); // Hello World YEAR\nconsole.log('Replacements:', replaced.replacements); // 1\n\n// Auto-detect input type\nconst detected = validate.call('validateAll', 'user@example.com');\nconsole.log('Detected type:', detected.detectedType); // email\nconsole.log('Is email:', detected.isEmail); // true\nconsole.log('Is URL:', detected.isURL); // false",
+      "language": "javascript",
+      "title": "Regex & Auto-Detection"
+    },
+    {
+      "code": "// Comprehensive validation toolkit\nimport { loadFromGitHub } from 'gowm';\n\nclass ValidationToolkit {\n  constructor() {\n    this.validate = null;\n    this.ready = false;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.validate = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'validation-wasm',\n        filename: 'main.wasm',\n        name: 'validation-wasm'\n      });\n      this.validate.call('setSilentMode', true);\n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load validation module:', error);\n    }\n  }\n\n  // Form validation helper\n  validateForm(formData) {\n    const results = {};\n    \n    if (formData.email) {\n      results.email = this.validate.call('validateEmail', formData.email);\n    }\n    if (formData.phone) {\n      results.phone = this.validate.call('validatePhoneNumber', formData.phone);\n    }\n    if (formData.creditCard) {\n      results.creditCard = this.validate.call('validateCreditCard', formData.creditCard);\n    }\n    if (formData.iban) {\n      results.iban = this.validate.call('validateIBAN', formData.iban);\n    }\n    if (formData.postalCode && formData.country) {\n      results.postalCode = this.validate.call('validatePostalCode', formData.postalCode, formData.country);\n    }\n    if (formData.url) {\n      results.url = this.validate.call('validateURL', formData.url);\n    }\n    \n    results.allValid = Object.values(results).every(r => r.valid !== false);\n    return results;\n  }\n}\n\nconst toolkit = new ValidationToolkit();",
+      "language": "javascript",
+      "title": "Validation Toolkit Class"
+    }
+  ],
+  "fileInfo": {
+    "binarySize": "TBD",
+    "compressedSize": "TBD",
+    "compressionRatio": "TBD",
+    "sourceLines": 820
+  },
+  "functionCategories": {
+    "Comprehensive": [
+      "validateAll"
+    ],
+    "Credit Card Validation": [
+      "validateCreditCard",
+      "luhnGenerate"
+    ],
+    "Email Validation": [
+      "validateEmail",
+      "validateEmailBatch"
+    ],
+    "IBAN Validation": [
+      "validateIBAN"
+    ],
+    "JSON Schema Validation": [
+      "validateJSONSchema"
+    ],
+    "Phone Validation": [
+      "validatePhoneNumber"
+    ],
+    "Postal Code Validation": [
+      "validatePostalCode"
+    ],
+    "Regex Validation": [
+      "validateRegex",
+      "testRegexPattern",
+      "replaceWithRegex"
+    ],
+    "System": [
+      "setSilentMode",
+      "getAvailableFunctions",
+      "getModuleInfo"
+    ],
+    "URL Validation": [
+      "validateURL"
+    ]
+  },
+  "functions": [
+    {
+      "category": "Email Validation",
+      "description": "Validate an email address with RFC 5322 parsing, domain and TLD checks",
+      "errorPattern": "Returns object with valid:false and error message on failure",
+      "example": "const result = validate.call('validateEmail', 'user@example.com'); // {valid: true, email, localPart, domain, tld}",
+      "name": "validateEmail",
+      "parameters": [
+        {
+          "description": "Email address to validate",
+          "name": "email",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Email Validation",
+      "description": "Validate multiple email addresses at once with summary statistics",
+      "errorPattern": "Returns error string if no arguments provided",
+      "example": "const result = validate.call('validateEmailBatch', 'a@b.com', 'invalid', 'c@d.org');",
+      "name": "validateEmailBatch",
+      "parameters": [
+        {
+          "description": "One or more email addresses to validate",
+          "name": "...emails",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "URL Validation",
+      "description": "Validate a URL with detailed breakdown of protocol, host, path, query, and fragment",
+      "errorPattern": "Returns object with valid:false and error message on failure",
+      "example": "const result = validate.call('validateURL', 'https://example.com/path?q=1');",
+      "name": "validateURL",
+      "parameters": [
+        {
+          "description": "URL to validate",
+          "name": "url",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Phone Validation",
+      "description": "Validate a phone number with optional country-specific pattern matching (15 countries supported)",
+      "errorPattern": "Returns object with valid:false and error message on failure",
+      "example": "const result = validate.call('validatePhoneNumber', '+33612345678', 'FR');",
+      "name": "validatePhoneNumber",
+      "parameters": [
+        {
+          "description": "Phone number to validate",
+          "name": "phone",
+          "type": "string"
+        },
+        {
+          "description": "ISO country code (FR, US, UK, DE, etc.). If omitted, auto-detects.",
+          "name": "country",
+          "optional": true,
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "IBAN Validation",
+      "description": "Validate an International Bank Account Number using MOD-97 algorithm (ISO 7064)",
+      "errorPattern": "Returns object with valid:false and error message on failure",
+      "example": "const result = validate.call('validateIBAN', 'FR7630006000011234567890189');",
+      "name": "validateIBAN",
+      "parameters": [
+        {
+          "description": "IBAN to validate (spaces allowed)",
+          "name": "iban",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Credit Card Validation",
+      "description": "Validate a credit card number using Luhn algorithm with card type detection",
+      "errorPattern": "Returns object with valid:false and error details on failure",
+      "example": "const result = validate.call('validateCreditCard', '4111111111111111');",
+      "name": "validateCreditCard",
+      "parameters": [
+        {
+          "description": "Credit card number (spaces and dashes allowed)",
+          "name": "cardNumber",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Credit Card Validation",
+      "description": "Generate Luhn check digit for a partial card number",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = validate.call('luhnGenerate', '411111111111111');",
+      "name": "luhnGenerate",
+      "parameters": [
+        {
+          "description": "Partial number without check digit",
+          "name": "partialNumber",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Postal Code Validation",
+      "description": "Validate a postal code for a specific country (23 countries supported)",
+      "errorPattern": "Returns object with valid:false and error message on failure",
+      "example": "const result = validate.call('validatePostalCode', '75001', 'FR');",
+      "name": "validatePostalCode",
+      "parameters": [
+        {
+          "description": "Postal code to validate",
+          "name": "postalCode",
+          "type": "string"
+        },
+        {
+          "description": "ISO country code (FR, US, UK, DE, etc.)",
+          "name": "country",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "JSON Schema Validation",
+      "description": "Validate JSON data against a JSON schema with support for types, required fields, min/max, patterns, enum, format, and nested validation",
+      "errorPattern": "Returns object with valid:false and array of error objects",
+      "example": "const result = validate.call('validateJSONSchema', jsonDataStr, schemaStr);",
+      "name": "validateJSONSchema",
+      "parameters": [
+        {
+          "description": "JSON data string to validate",
+          "name": "data",
+          "type": "string"
+        },
+        {
+          "description": "JSON schema string to validate against",
+          "name": "schema",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Regex Validation",
+      "description": "Test a string against a regex pattern with match details, groups, and locations",
+      "errorPattern": "Returns object with valid:false and error on invalid pattern",
+      "example": "const result = validate.call('validateRegex', 'Hello 2024', '(\\\\d{4})');",
+      "name": "validateRegex",
+      "parameters": [
+        {
+          "description": "Input string to test",
+          "name": "input",
+          "type": "string"
+        },
+        {
+          "description": "Regex pattern to match",
+          "name": "pattern",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Regex Validation",
+      "description": "Validate a regex pattern syntax and retrieve group information",
+      "errorPattern": "Returns object with valid:false and error on invalid pattern",
+      "example": "const result = validate.call('testRegexPattern', '^[a-z]+$');",
+      "name": "testRegexPattern",
+      "parameters": [
+        {
+          "description": "Regex pattern to validate",
+          "name": "pattern",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Regex Validation",
+      "description": "Replace all matches in a string using a regex pattern",
+      "errorPattern": "Returns error string on invalid pattern",
+      "example": "const result = validate.call('replaceWithRegex', 'Hello 2024', '\\\\d+', 'YEAR');",
+      "name": "replaceWithRegex",
+      "parameters": [
+        {
+          "description": "Input string",
+          "name": "input",
+          "type": "string"
+        },
+        {
+          "description": "Regex pattern to match",
+          "name": "pattern",
+          "type": "string"
+        },
+        {
+          "description": "Replacement string",
+          "name": "replacement",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "Comprehensive",
+      "description": "Test a string against all validators at once and auto-detect input type",
+      "errorPattern": "Returns error string if no argument provided",
+      "example": "const result = validate.call('validateAll', 'user@example.com'); // {detectedType: 'email', isEmail: true, ...}",
+      "name": "validateAll",
+      "parameters": [
+        {
+          "description": "String to validate against all patterns",
+          "name": "input",
+          "type": "string"
+        }
+      ],
+      "returnType": "object"
+    },
+    {
+      "category": "System",
+      "description": "Enable or disable console logging for operations",
+      "errorPattern": "Never fails",
+      "example": "validate.call('setSilentMode', true);",
+      "name": "setSilentMode",
+      "parameters": [
+        {
+          "description": "Whether to enable silent mode",
+          "name": "silent",
+          "type": "boolean"
+        }
+      ],
+      "returnType": "boolean"
+    },
+    {
+      "category": "System",
+      "description": "Get list of all available functions in the module",
+      "errorPattern": "Never fails",
+      "example": "const functions = validate.call('getAvailableFunctions');",
+      "name": "getAvailableFunctions",
+      "parameters": [],
+      "returnType": "array"
+    },
+    {
+      "category": "System",
+      "description": "Get comprehensive module information including version, features, and capabilities",
+      "errorPattern": "Never fails",
+      "example": "const info = validate.call('getModuleInfo');",
+      "name": "getModuleInfo",
+      "parameters": [],
+      "returnType": "object"
+    }
+  ],
+  "gowmConfig": {
+    "autoDetect": true,
+    "errorPattern": "object-based",
+    "preferredFilename": "main.wasm",
+    "readySignal": "__gowm_ready",
+    "standardFunctions": [
+      "getAvailableFunctions",
+      "setSilentMode",
+      "getModuleInfo"
+    ],
+    "supportedBranches": [
+      "master",
+      "stable"
+    ]
+  },
+  "license": "MIT",
+  "name": "validation-wasm",
+  "performance": {
+    "benchmarks": {
+      "emailValidation": "< 0.5ms per validation",
+      "urlValidation": "< 0.5ms per validation",
+      "phoneValidation": "< 0.3ms per validation",
+      "ibanValidation": "< 0.5ms per validation",
+      "creditCardValidation": "< 0.3ms per validation",
+      "postalCodeValidation": "< 0.2ms per validation",
+      "jsonSchemaValidation": "< 5ms for moderate schemas",
+      "regexValidation": "< 1ms per pattern"
+    },
+    "features": [
+      "Compiled WebAssembly for optimal performance",
+      "Pre-compiled regex patterns for common validations",
+      "Multi-country support with minimal overhead",
+      "Minimal JavaScript overhead",
+      "Silent mode for production environments",
+      "Luhn algorithm optimized for speed",
+      "MOD-97 with partial computation for large numbers"
+    ]
+  },
+  "quality": {
+    "codeQuality": "production-ready",
+    "documentation": "comprehensive",
+    "maintainability": "high",
+    "stability": "stable",
+    "testing": "extensive"
+  },
+  "security": {
+    "features": [
+      "Input sanitization for all validators",
+      "Safe regex compilation with error handling",
+      "Memory-safe Go implementation",
+      "No external dependencies",
+      "Credit card number masking in logs",
+      "No sensitive data storage",
+      "Protection against regex denial-of-service",
+      "Input length validation"
+    ]
+  },
+  "tags": [
+    "validation",
+    "email",
+    "url",
+    "phone",
+    "iban",
+    "credit-card",
+    "luhn",
+    "postal-code",
+    "json-schema",
+    "regex",
+    "international",
+    "wasm",
+    "go",
+    "gowm"
+  ],
+  "types": [
+    {
+      "description": "Result type for email validation",
+      "name": "EmailValidationResult",
+      "properties": {
+        "domain": "string (email domain)",
+        "email": "string (normalized email)",
+        "error": "string (error message if invalid)",
+        "localPart": "string (local part before @)",
+        "tld": "string (top-level domain)",
+        "valid": "boolean (true if valid)"
+      }
+    },
+    {
+      "description": "Result type for URL validation",
+      "name": "URLValidationResult",
+      "properties": {
+        "error": "string (error message if invalid)",
+        "fragment": "string (URL fragment)",
+        "host": "string (hostname)",
+        "isIP": "boolean (true if host is IP)",
+        "isSecure": "boolean (true if HTTPS)",
+        "path": "string (URL path)",
+        "port": "string (port number)",
+        "protocol": "string (http/https/ftp)",
+        "query": "string (query string)",
+        "valid": "boolean (true if valid)"
+      }
+    },
+    {
+      "description": "Result type for credit card validation",
+      "name": "CreditCardValidationResult",
+      "properties": {
+        "cardType": "string (visa, mastercard, amex, etc.)",
+        "error": "string (error message if invalid)",
+        "lengthValid": "boolean (correct length for card type)",
+        "luhnValid": "boolean (Luhn algorithm result)",
+        "maskedCard": "string (masked card number)",
+        "valid": "boolean (true if valid)"
+      }
+    },
+    {
+      "description": "Result type for IBAN validation",
+      "name": "IBANValidationResult",
+      "properties": {
+        "bban": "string (Basic Bank Account Number)",
+        "checkDigits": "string (check digits)",
+        "countryCode": "string (ISO country code)",
+        "displayFormat": "string (formatted with spaces)",
+        "error": "string (error message if invalid)",
+        "valid": "boolean (true if valid)"
+      }
+    },
+    {
+      "description": "Result type for JSON schema validation",
+      "name": "JSONSchemaValidationResult",
+      "properties": {
+        "errorCount": "number (number of validation errors)",
+        "errors": "array (array of error objects with path and message)",
+        "valid": "boolean (true if data matches schema)"
+      }
+    }
+  ],
+  "usageStats": {
+    "averageCallTime": "< 1ms",
+    "complexity": "beginner-to-advanced",
+    "concurrency": "thread-safe",
+    "memoryUsage": "lightweight"
+  },
+  "version": "0.1.0",
+  "wasmConfig": {
+    "filename": "main.wasm",
+    "globalFunctions": true,
+    "goWasmExecRequired": true,
+    "memoryInitialPages": 256,
+    "memoryMaximumPages": 512,
+    "readySignal": "__gowm_ready"
+  }
+}
