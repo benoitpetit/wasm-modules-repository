@@ -15,6 +15,22 @@ import (
 
 var silentMode = false
 
+// toJSValue safely converts a Go value to js.Value via JSON marshaling
+// This avoids issues with nested maps and slices that js.ValueOf cannot handle directly
+func toJSValue(v interface{}) js.Value {
+	jsonBytes, err := json.Marshal(v)
+	if err != nil {
+		return js.ValueOf(fmt.Sprintf("Error: Failed to marshal result: %v", err))
+	}
+	
+	var result map[string]interface{}
+	if err := json.Unmarshal(jsonBytes, &result); err != nil {
+		return js.ValueOf(fmt.Sprintf("Error: Failed to unmarshal result: %v", err))
+	}
+	
+	return toJSValue(result)
+}
+
 // setSilentMode enables/disables silent mode for console logs
 func setSilentMode(this js.Value, args []js.Value) interface{} {
 	if len(args) == 1 {
@@ -78,7 +94,7 @@ func gzipCompress(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: gzip compressed %d bytes → %d bytes (%.2f%%)\n", len(data), len(compressed), ratio)
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // gzipDecompress decompresses gzip data
@@ -164,7 +180,7 @@ func deflateCompress(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: deflate compressed %d bytes → %d bytes (%.2f%%)\n", len(data), len(compressed), ratio)
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // deflateDecompress decompresses deflate data
@@ -221,7 +237,7 @@ func lz4Compress(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: LZ4 compressed %d bytes → %d bytes (%.2f%%)\n", len(data), len(compressed), ratio)
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // lz4CompressBlock implements a simplified LZ4-like block compression
@@ -382,7 +398,7 @@ func snappyCompress(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Snappy compressed %d bytes → %d bytes (%.2f%%)\n", len(data), len(compressed), ratio)
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // snappyCompressBlock implements a simplified Snappy-like compression
@@ -559,7 +575,7 @@ func tarCreate(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: TAR archive created with %d files (%d bytes)\n", numKeys, archive.Len())
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // tarExtract extracts files from a TAR-like archive
@@ -626,7 +642,7 @@ func tarExtract(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: TAR archive extracted %d files\n", len(fileList))
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // tarList lists files in a TAR archive without extracting
@@ -685,7 +701,7 @@ func tarList(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: TAR archive contains %d files\n", len(entries))
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // ============================================================================
@@ -794,7 +810,7 @@ func zipCreate(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: ZIP archive created with %d files (%.2f%% ratio)\n", numKeys, ratio)
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // zipExtract extracts files from a ZIP-like archive
@@ -876,7 +892,7 @@ func zipExtract(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: ZIP archive extracted %d files\n", len(fileList))
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // zipList lists files in a ZIP archive without extracting
@@ -942,7 +958,7 @@ func zipList(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: ZIP archive contains %d files\n", len(entries))
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // ============================================================================
@@ -1190,7 +1206,7 @@ func estimateCompression(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Compression estimate - %s, entropy: %.4f\n", compressibility, entropy)
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 func getCompressionRecommendation(dataType string, compressibility string) string {
@@ -1262,7 +1278,7 @@ func getModuleInfo(this js.Value, args []js.Value) interface{} {
 		return fmt.Sprintf("Error: Failed to unmarshal module info: %v", err)
 	}
 
-	return js.ValueOf(result)
+	return toJSValue(result)
 }
 
 // getAvailableFunctions returns list of all available functions
