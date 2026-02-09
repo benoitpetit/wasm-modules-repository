@@ -4,6 +4,7 @@
     "description": "A lightweight local file-based database module for WASM, storing data in localStorage with full CRUD operations",
     "author": "Ben",
     "language": "Go",
+    "buildTime": 1739103000,
     "buildInfo": {
         "buildCommand": "wasm-manager build",
         "buildTime": "2026-02-09T14:30:00+02:00",
@@ -326,6 +327,157 @@
         "compressedSize": "879 KB",
         "compressionRatio": "72%",
         "sourceLines": 531
+    },
+    "gowmConfig": {
+        "autoDetect": true,
+        "errorPattern": "object-based",
+        "preferredFilename": "main.wasm",
+        "readySignal": "__gowm_ready",
+        "standardFunctions": [
+            "getAvailableFunctions",
+            "setSilentMode"
+        ],
+        "supportedBranches": [
+            "master",
+            "stable"
+        ]
+    },
+    "gzipSize": 900096,
+    "size": 3145728,
+    "performance": {
+        "benchmarks": {
+            "createDatabase": "< 1ms",
+            "insertData": "< 0.5ms per operation",
+            "getData": "< 0.3ms per operation",
+            "getAllData": "< 2ms for 100 entries",
+            "exportDatabase": "< 3ms for 100 entries",
+            "importDatabase": "< 5ms for 100 entries"
+        },
+        "features": [
+            "Compiled WebAssembly for optimal performance",
+            "Native Go JSON encoding/decoding",
+            "Efficient localStorage operations",
+            "Minimal JavaScript overhead",
+            "Silent mode for production environments",
+            "Optimized for GoWM integration",
+            "Fast key-value lookups",
+            "Batch operations support"
+        ]
+    },
+    "quality": {
+        "documentation": "complete",
+        "maintainability": "high",
+        "stability": "stable",
+        "testing": "comprehensive"
+    },
+    "security": {
+        "features": [
+            "Client-side only (no network access)",
+            "localStorage isolation per domain",
+            "Memory-safe Go implementation",
+            "Input validation and sanitization",
+            "Protection against injection attacks",
+            "Secure JSON parsing and serialization",
+            "No external dependencies"
+        ]
+    },
+    "tags": [
+        "database",
+        "storage",
+        "localStorage",
+        "crud",
+        "key-value",
+        "persistence",
+        "json",
+        "offline",
+        "browser",
+        "wasm",
+        "go",
+        "gowm"
+    ],
+    "types": [
+        {
+            "name": "DatabaseResult",
+            "type": "object",
+            "description": "Standard result type for database operations",
+            "details": "Returns object with 'success' boolean and 'data' on success, or 'error' field on failure"
+        },
+        {
+            "name": "CreateDatabaseResult",
+            "properties": {
+                "success": "boolean",
+                "message": "string",
+                "data": {
+                    "name": "string (database name)",
+                    "created": "boolean (true if created, false if already existed)",
+                    "timestamp": "string (ISO 8601 timestamp)"
+                },
+                "error": "string (optional, present on failure)"
+            }
+        },
+        {
+            "name": "InsertDataResult",
+            "properties": {
+                "success": "boolean",
+                "data": {
+                    "key": "string",
+                    "value": "any",
+                    "valueType": "string (string|number|boolean|object)",
+                    "timestamp": "string (ISO 8601 timestamp)"
+                },
+                "error": "string (optional, present on failure)"
+            }
+        },
+        {
+            "name": "GetDataResult",
+            "properties": {
+                "success": "boolean",
+                "data": {
+                    "key": "string",
+                    "value": "any",
+                    "valueType": "string",
+                    "timestamp": "string"
+                },
+                "error": "string (optional, present on failure)"
+            }
+        },
+        {
+            "name": "ListKeysResult",
+            "properties": {
+                "success": "boolean",
+                "data": {
+                    "keys": "string[] (array of all keys)",
+                    "count": "number (total number of keys)"
+                },
+                "error": "string (optional, present on failure)"
+            }
+        },
+        {
+            "name": "StatsResult",
+            "properties": {
+                "success": "boolean",
+                "data": {
+                    "name": "string (database name)",
+                    "entries": "number (total entries)",
+                    "storageSizeKB": "number (storage size in KB)"
+                },
+                "error": "string (optional, present on failure)"
+            }
+        }
+    ],
+    "usageStats": {
+        "averageCallTime": "< 1ms",
+        "complexity": "beginner",
+        "concurrency": "thread-safe",
+        "memoryUsage": "lightweight"
+    },
+    "wasmConfig": {
+        "filename": "main.wasm",
+        "globalFunctions": true,
+        "goWasmExecRequired": true,
+        "memoryInitialPages": 256,
+        "memoryMaximumPages": 512,
+        "readySignal": "__gowm_ready"
     },
     "keywords": [
         "database",

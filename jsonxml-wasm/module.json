@@ -646,7 +646,7 @@
     "initialization": "Load the WASM module and wait for __gowm_ready signal"
   },
   "usageStats": {
-    "averageCallTime": "\u003c 2ms for typical documents",
+    "averageCallTime": "\u003c 2ms",
     "complexity": "beginner-to-intermediate",
     "concurrency": "thread-safe",
     "memoryUsage": "scales with document size"
