@@ -22,12 +22,12 @@ func toJSValue(v interface{}) js.Value {
 	if err != nil {
 		return js.ValueOf(fmt.Sprintf("Error: Failed to marshal result: %v", err))
 	}
-	
+
 	var result map[string]interface{}
 	if err := json.Unmarshal(jsonBytes, &result); err != nil {
 		return js.ValueOf(fmt.Sprintf("Error: Failed to unmarshal result: %v", err))
 	}
-	
+
 	return js.ValueOf(result)
 }
 
@@ -1306,12 +1306,15 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Available functions: %d\n", len(functions))
 	}
 
-	return js.ValueOf(functions)
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 func main() {
-	c := make(chan struct{})
-
 	fmt.Println("Go WASM Compress Module initializing...")
 
 	// Register Gzip functions
@@ -1355,5 +1358,6 @@ func main() {
 	fmt.Println("Go WASM Compress Module ready!")
 	fmt.Println("Available: Gzip, Deflate, LZ4, Snappy, TAR, ZIP, Compression Analysis")
 
-	<-c
+	// Keep the program alive
+	select {}
 }

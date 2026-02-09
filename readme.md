@@ -6,18 +6,18 @@ Built with a **Go-based build system** featuring parallel processing, advanced o
 
 ## Available Modules
 
-| Module           | Description                   | Functions                                                                                       | Size (wasm → gzip) |
-| ---------------- | ----------------------------- | ----------------------------------------------------------------------------------------------- | ------------------ |
-| **math-wasm**    | Mathematical calculations     | add, subtract, multiply, divide, power, factorial, sqrt, gcd, fibonacci, mean, median... (25)   | 2.5M → 720K        |
-| **crypto-wasm**  | Cryptographic operations      | hashSHA256, encryptAES, generateRSAKeyPair, generateJWT, bcryptHash, generateUUID... (19)       | 6.1M → 1.7M        |
-| **text-wasm**    | Advanced text processing      | textSimilarity, levenshtein, slugify, camelCase, extractEmails, wordCount, readingTime... (17)  | 3.8M → 1.1M        |
-| **image-wasm**   | Image processing              | compressJPEG, compressPNG, convertToWebP, resizeImage, getImageInfo (5)                         | 3.0M → 864K        |
-| **qr-wasm**      | QR Codes & Barcodes           | generateQRCode, decodeQRCode, generateBarcode, decodeBarcode, generateVCard, generateWiFiQR (6) | 3.3M → 920K        |
-| **pdf-wasm**     | PDF generation & manipulation | createPDF, mergePDFs, splitPDF, generateInvoice, generateReport, htmlToPDF, analyzePDF... (18)  | 5.4M → 1.5M        |
-| **jsonxml-wasm** | JSON/XML/CSV/YAML conversion  | parseJSON, validateJSON, parseXML, xmlToJSON, csvToJSON, yamlToJSON, jsonToYAML... (14)         | 7.5M → 2.3M        |
-| **goxios-wasm**  | HTTP client (axios-like)      | get, post, put, delete, patch, request, create, setDefaults (8)                                 | 11M → 2.7M         |
-| **compress-wasm**    | Compression & archiving       | gzipCompress, deflateCompress, lz4Compress, snappyCompress, zipCreate, tarCreate, analyzeCompression... (19) | TBD |
-| **validation-wasm**  | Data validation               | validateEmail, validateURL, validatePhoneNumber, validateIBAN, validateCreditCard, validatePostalCode, validateJSONSchema, validateRegex... (16) | TBD |
+| Module              | Description                   | Functions                                                                                                                                        | Size (wasm → gzip) |
+| ------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------ |
+| **math-wasm**       | Mathematical calculations     | add, subtract, multiply, divide, power, factorial, sqrt, gcd, fibonacci, mean, median... (25)                                                    | 2.5M → 720K        |
+| **crypto-wasm**     | Cryptographic operations      | hashSHA256, encryptAES, generateRSAKeyPair, generateJWT, bcryptHash, generateUUID... (19)                                                        | 6.1M → 1.7M        |
+| **text-wasm**       | Advanced text processing      | textSimilarity, levenshtein, slugify, camelCase, extractEmails, wordCount, readingTime... (17)                                                   | 3.8M → 1.1M        |
+| **image-wasm**      | Image processing              | compressJPEG, compressPNG, convertToWebP, resizeImage, getImageInfo (5)                                                                          | 3.0M → 864K        |
+| **qr-wasm**         | QR Codes & Barcodes           | generateQRCode, decodeQRCode, generateBarcode, decodeBarcode, generateVCard, generateWiFiQR (6)                                                  | 3.3M → 920K        |
+| **pdf-wasm**        | PDF generation & manipulation | createPDF, mergePDFs, splitPDF, generateInvoice, generateReport, htmlToPDF, analyzePDF... (18)                                                   | 5.4M → 1.5M        |
+| **jsonxml-wasm**    | JSON/XML/CSV/YAML conversion  | parseJSON, validateJSON, parseXML, xmlToJSON, csvToJSON, yamlToJSON, jsonToYAML... (14)                                                          | 7.5M → 2.3M        |
+| **goxios-wasm**     | HTTP client (axios-like)      | get, post, put, delete, patch, request, create, setDefaults (8)                                                                                  | 11M → 2.7M         |
+| **compress-wasm**   | Compression & archiving       | gzipCompress, deflateCompress, lz4Compress, snappyCompress, zipCreate, tarCreate, analyzeCompression... (19)                                     | TBD                |
+| **validation-wasm** | Data validation               | validateEmail, validateURL, validatePhoneNumber, validateIBAN, validateCreditCard, validatePostalCode, validateJSONSchema, validateRegex... (16) | TBD                |
 
 Each module also exposes the utility functions `setSilentMode`, `getAvailableFunctions`, and `getModuleInfo`.
 

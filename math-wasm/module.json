@@ -32,19 +32,19 @@
   "buildTime": 1750341637,
   "changelog": {
     "changes": [
+      "Added interpolation functions (mod, clamp, lerp, map) for advanced math operations",
+      "Added advanced statistical functions (mode, variance, percentile, correlation)",
+      "Enhanced statistical analysis capabilities with correlation coefficient",
+      "Added percentile calculation with linear interpolation",
+      "Improved data analysis with mode and variance calculations",
       "Added comprehensive trigonometric functions (sin, cos, tan)",
       "Implemented logarithmic functions (log, log10)",
       "Added number theory functions (gcd, lcm, isPrime, fibonacci)",
-      "Implemented statistical functions (mean, median, standardDeviation)",
-      "Added utility functions (round, ceil, floor, min, max)",
       "Enhanced error handling and input validation",
-      "Improved power function using native math library",
-      "Added overflow protection for factorial and fibonacci",
-      "Updated documentation with comprehensive examples",
       "Optimized performance for all mathematical operations"
     ],
-    "releaseDate": "2025-01-20",
-    "version": "0.2.0"
+    "releaseDate": "2026-02-09",
+    "version": "0.3.0"
   },
   "compatibility": {
     "browsers": [
@@ -57,7 +57,7 @@
     "nodejs": "14.0.0+"
   },
   "dependencies": [],
-  "description": "Comprehensive high-performance mathematical calculation module written in Go and compiled to WebAssembly. Features basic arithmetic, advanced mathematics, trigonometry, logarithms, number theory, statistics, and utility functions. Optimized for GoWM integration.",
+  "description": "Comprehensive high-performance mathematical calculation module written in Go and compiled to WebAssembly. Features basic arithmetic, advanced mathematics, trigonometry, logarithms, number theory, interpolation (mod, clamp, lerp, map), advanced statistics (mode, variance, percentile, correlation), and utility functions. Optimized for GoWM integration.",
   "ecosystem": {
     "category": "mathematics",
     "industry": [
@@ -118,7 +118,7 @@
   },
   "examples": [
     {
-      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load enhanced math module\nconst math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'math-wasm',\n  filename: 'main.wasm',\n  name: 'math-wasm',\n  branch: 'master'\n});\n\n// Configure for production use\nmath.call('setSilentMode', true);\n\n// Basic arithmetic\nconsole.log('Addition:', math.call('add', 15, 25)); // 40\nconsole.log('Division:', math.call('divide', 100, 4)); // 25\nconsole.log('Power:', math.call('power', 2, 10)); // 1024\n\n// Advanced functions\nconsole.log('Square root:', math.call('sqrt', 144)); // 12\nconsole.log('Factorial:', math.call('factorial', 7)); // 5040\nconsole.log('Fibonacci:', math.call('fibonacci', 15)); // 610",
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load enhanced math module\nconst math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'math-wasm',\n  name: 'math-wasm',\n  branch: 'master'\n});\n\n// Configure for production use\nmath.call('setSilentMode', true);\n\n// Basic arithmetic\nconsole.log('Addition:', math.call('add', 15, 25)); // 40\nconsole.log('Division:', math.call('divide', 100, 4)); // 25\nconsole.log('Power:', math.call('power', 2, 10)); // 1024\n\n// Advanced functions\nconsole.log('Square root:', math.call('sqrt', 144)); // 12\nconsole.log('Factorial:', math.call('factorial', 7)); // 5040\nconsole.log('Fibonacci:', math.call('fibonacci', 15)); // 610",
       "language": "javascript",
       "title": "Basic Calculator Implementation"
     },
@@ -138,7 +138,7 @@
       "title": "Error Handling Best Practices"
     },
     {
-      "code": "// Advanced calculator class with comprehensive math functions\nimport { loadFromGitHub } from 'gowm';\n\nclass AdvancedCalculator {\n  constructor() {\n    this.math = null;\n    this.ready = false;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'math-wasm',\n        filename: 'main.wasm',\n        name: 'math-wasm'\n      });\n      \n      // Configure for production use\n      this.math.call('setSilentMode', true);\n      \n      // Get available functions\n      const functions = this.math.call('getAvailableFunctions');\n      console.log('Available math functions:', functions);\n      \n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load math module:', error);\n    }\n  }\n\n  calculate(operation, ...args) {\n    if (!this.math || !this.ready) {\n      throw new Error('Math module not ready');\n    }\n    \n    const result = this.math.call(operation, ...args);\n    if (typeof result === 'string' && result.startsWith('Error:')) {\n      throw new Error(result);\n    }\n    return result;\n  }\n\n  // Function categories with comprehensive coverage\n  getCategories() {\n    return {\n      'Basic Arithmetic': ['add', 'subtract', 'multiply', 'divide', 'power', 'factorial'],\n      'Advanced Math': ['sqrt', 'abs', 'min', 'max'],\n      'Trigonometry': ['sin', 'cos', 'tan'],\n      'Logarithms': ['log', 'log10'],\n      'Number Theory': ['gcd', 'lcm', 'isPrime', 'fibonacci'],\n      'Statistics': ['mean', 'median', 'standardDeviation'],\n      'Utilities': ['round', 'ceil', 'floor']\n    };\n  }\n\n  // Method shortcuts for common operations\n  add(a, b) { return this.calculate('add', a, b); }\n  subtract(a, b) { return this.calculate('subtract', a, b); }\n  multiply(a, b) { return this.calculate('multiply', a, b); }\n  divide(a, b) { return this.calculate('divide', a, b); }\n  sqrt(x) { return this.calculate('sqrt', x); }\n  power(base, exp) { return this.calculate('power', base, exp); }\n  factorial(n) { return this.calculate('factorial', n); }\n  \n  // Statistical analysis\n  analyzeDataset(data) {\n    return {\n      mean: this.calculate('mean', ...data),\n      median: this.calculate('median', ...data),\n      stdDev: this.calculate('standardDeviation', ...data),\n      min: this.calculate('min', ...data),\n      max: this.calculate('max', ...data)\n    };\n  }\n}\n\n// Usage example\nconst calculator = new AdvancedCalculator();\n\n// Wait for module to load\nsetTimeout(() => {\n  if (calculator.ready) {\n    console.log('5 + 3 =', calculator.add(5, 3));\n    console.log('√16 =', calculator.sqrt(16));\n    console.log('5! =', calculator.factorial(5));\n    \n    // Analyze dataset\n    const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\n    const stats = calculator.analyzeDataset(data);\n    console.log('Dataset statistics:', stats);\n  }\n}, 1000);",
+      "code": "// Advanced calculator class with comprehensive math functions\nimport { loadFromGitHub } from 'gowm';\n\nclass AdvancedCalculator {\n  constructor() {\n    this.math = null;\n    this.ready = false;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.math = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'math-wasm',\n              name: 'math-wasm'\n      });\n      \n      // Configure for production use\n      this.math.call('setSilentMode', true);\n      \n      // Get available functions\n      const functions = this.math.call('getAvailableFunctions');\n      console.log('Available math functions:', functions);\n      \n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load math module:', error);\n    }\n  }\n\n  calculate(operation, ...args) {\n    if (!this.math || !this.ready) {\n      throw new Error('Math module not ready');\n    }\n    \n    const result = this.math.call(operation, ...args);\n    if (typeof result === 'string' && result.startsWith('Error:')) {\n      throw new Error(result);\n    }\n    return result;\n  }\n\n  // Function categories with comprehensive coverage\n  getCategories() {\n    return {\n      'Basic Arithmetic': ['add', 'subtract', 'multiply', 'divide', 'power', 'factorial'],\n      'Advanced Math': ['sqrt', 'abs', 'min', 'max'],\n      'Trigonometry': ['sin', 'cos', 'tan'],\n      'Logarithms': ['log', 'log10'],\n      'Number Theory': ['gcd', 'lcm', 'isPrime', 'fibonacci'],\n      'Statistics': ['mean', 'median', 'standardDeviation'],\n      'Utilities': ['round', 'ceil', 'floor']\n    };\n  }\n\n  // Method shortcuts for common operations\n  add(a, b) { return this.calculate('add', a, b); }\n  subtract(a, b) { return this.calculate('subtract', a, b); }\n  multiply(a, b) { return this.calculate('multiply', a, b); }\n  divide(a, b) { return this.calculate('divide', a, b); }\n  sqrt(x) { return this.calculate('sqrt', x); }\n  power(base, exp) { return this.calculate('power', base, exp); }\n  factorial(n) { return this.calculate('factorial', n); }\n  \n  // Statistical analysis\n  analyzeDataset(data) {\n    return {\n      mean: this.calculate('mean', ...data),\n      median: this.calculate('median', ...data),\n      stdDev: this.calculate('standardDeviation', ...data),\n      min: this.calculate('min', ...data),\n      max: this.calculate('max', ...data)\n    };\n  }\n}\n\n// Usage example\nconst calculator = new AdvancedCalculator();\n\n// Wait for module to load\nsetTimeout(() => {\n  if (calculator.ready) {\n    console.log('5 + 3 =', calculator.add(5, 3));\n    console.log('√16 =', calculator.sqrt(16));\n    console.log('5! =', calculator.factorial(5));\n    \n    // Analyze dataset\n    const data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\n    const stats = calculator.analyzeDataset(data);\n    console.log('Dataset statistics:', stats);\n  }\n}, 1000);",
       "language": "javascript",
       "title": "Advanced Calculator Class"
     }
@@ -164,6 +164,12 @@
       "power",
       "factorial"
     ],
+    "Interpolation": [
+      "mod",
+      "clamp",
+      "lerp",
+      "map"
+    ],
     "Logarithms": [
       "log",
       "log10"
@@ -177,7 +183,11 @@
     "Statistics": [
       "mean",
       "median",
-      "standardDeviation"
+      "standardDeviation",
+      "mode",
+      "variance",
+      "percentile",
+      "correlation"
     ],
     "System": [
       "setSilentMode",
@@ -516,6 +526,111 @@
       "returnType": "number"
     },
     {
+      "category": "Interpolation",
+      "description": "Calculate modulo operation (remainder after division) for floating point numbers",
+      "errorPattern": "Returns string with error message for division by zero",
+      "example": "const result = math.call('mod', 17, 5); // Returns: 2",
+      "name": "mod",
+      "parameters": [
+        {
+          "description": "Dividend",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "Divisor (must not be zero)",
+          "name": "b",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Interpolation",
+      "description": "Constrain a value between minimum and maximum bounds",
+      "errorPattern": "Returns string with error message if min > max",
+      "example": "const result = math.call('clamp', 15, 0, 10); // Returns: 10",
+      "name": "clamp",
+      "parameters": [
+        {
+          "description": "Value to constrain",
+          "name": "value",
+          "type": "number"
+        },
+        {
+          "description": "Minimum bound",
+          "name": "min",
+          "type": "number"
+        },
+        {
+          "description": "Maximum bound",
+          "name": "max",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Interpolation",
+      "description": "Linear interpolation between two values",
+      "errorPattern": "Returns string with error message on failure",
+      "example": "const result = math.call('lerp', 0, 100, 0.5); // Returns: 50",
+      "name": "lerp",
+      "parameters": [
+        {
+          "description": "Start value",
+          "name": "a",
+          "type": "number"
+        },
+        {
+          "description": "End value",
+          "name": "b",
+          "type": "number"
+        },
+        {
+          "description": "Interpolation factor (0.0 to 1.0, but not restricted)",
+          "name": "t",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Interpolation",
+      "description": "Remap a value from one range to another range",
+      "errorPattern": "Returns string with error message if input range is zero",
+      "example": "const result = math.call('map', 5, 0, 10, 0, 100); // Returns: 50",
+      "name": "map",
+      "parameters": [
+        {
+          "description": "Value to remap",
+          "name": "value",
+          "type": "number"
+        },
+        {
+          "description": "Input range minimum",
+          "name": "inMin",
+          "type": "number"
+        },
+        {
+          "description": "Input range maximum",
+          "name": "inMax",
+          "type": "number"
+        },
+        {
+          "description": "Output range minimum",
+          "name": "outMin",
+          "type": "number"
+        },
+        {
+          "description": "Output range maximum",
+          "name": "outMax",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
       "category": "Statistics",
       "description": "Calculate the arithmetic mean (average) of multiple numbers",
       "errorPattern": "Returns string with error message if no arguments provided",
@@ -555,6 +670,71 @@
         {
           "description": "At least two numbers to calculate standard deviation for",
           "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Statistics",
+      "description": "Find the mode (most frequent value) in a dataset",
+      "errorPattern": "Returns string with error message if no arguments provided",
+      "example": "const result = math.call('mode', 1, 2, 2, 3, 3, 3, 4); // Returns: 3",
+      "name": "mode",
+      "parameters": [
+        {
+          "description": "At least one number to find mode for",
+          "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Statistics",
+      "description": "Calculate the variance of multiple numbers",
+      "errorPattern": "Returns string with error message if less than 2 arguments",
+      "example": "const result = math.call('variance', 2, 4, 4, 4, 5, 5, 7, 9); // Returns: 4",
+      "name": "variance",
+      "parameters": [
+        {
+          "description": "At least two numbers to calculate variance for",
+          "name": "...numbers",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Statistics",
+      "description": "Calculate the percentile of a dataset using linear interpolation",
+      "errorPattern": "Returns string with error message if p not in range [0, 100]",
+      "example": "const result = math.call('percentile', 75, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10); // Returns: 7.75",
+      "name": "percentile",
+      "parameters": [
+        {
+          "description": "Percentile to calculate (0-100)",
+          "name": "p",
+          "type": "number"
+        },
+        {
+          "description": "Values in the dataset",
+          "name": "...values",
+          "type": "number"
+        }
+      ],
+      "returnType": "number"
+    },
+    {
+      "category": "Statistics",
+      "description": "Calculate Pearson correlation coefficient between two variables",
+      "errorPattern": "Returns string with error message if even number of args not provided or variance is zero",
+      "example": "const result = math.call('correlation', 1, 2, 2, 4, 3, 6, 4, 8); // Returns: 1 (perfect positive correlation)",
+      "name": "correlation",
+      "parameters": [
+        {
+          "description": "Alternating x and y values (x1, y1, x2, y2, ...)",
+          "name": "...values",
           "type": "number"
         }
       ],
@@ -696,6 +876,8 @@
     "number-theory",
     "logarithms",
     "advanced-math",
+    "interpolation",
+    "correlation",
     "wasm",
     "go",
     "gowm"
@@ -711,12 +893,12 @@
     }
   ],
   "usageStats": {
-    "averageCallTime": "\u003c 1ms",
+    "averageCallTime": "<1ms",
     "complexity": "beginner-to-intermediate",
     "concurrency": "thread-safe",
     "memoryUsage": "lightweight"
   },
-  "version": "0.2.0",
+  "version": "0.3.0",
   "wasmConfig": {
     "filename": "main.wasm",
     "globalFunctions": true,

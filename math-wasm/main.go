@@ -399,6 +399,94 @@ func fibonacci(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(b)
 }
 
+// Interpolation and utility functions
+func mod(this js.Value, args []js.Value) interface{} {
+	if len(args) != 2 {
+		return js.ValueOf("Error: two arguments required for mod")
+	}
+
+	a := args[0].Float()
+	b := args[1].Float()
+
+	if b == 0 {
+		return js.ValueOf("Error: modulo by zero")
+	}
+
+	result := math.Mod(a, b)
+
+	if !silentMode {
+		fmt.Printf("Go WASM: %f mod %f = %f\n", a, b, result)
+	}
+	return js.ValueOf(result)
+}
+
+func clamp(this js.Value, args []js.Value) interface{} {
+	if len(args) != 3 {
+		return js.ValueOf("Error: three arguments required for clamp (value, min, max)")
+	}
+
+	value := args[0].Float()
+	minVal := args[1].Float()
+	maxVal := args[2].Float()
+
+	if minVal > maxVal {
+		return js.ValueOf("Error: min must be less than or equal to max")
+	}
+
+	result := value
+	if result < minVal {
+		result = minVal
+	}
+	if result > maxVal {
+		result = maxVal
+	}
+
+	if !silentMode {
+		fmt.Printf("Go WASM: clamp(%f, %f, %f) = %f\n", value, minVal, maxVal, result)
+	}
+	return js.ValueOf(result)
+}
+
+func lerp(this js.Value, args []js.Value) interface{} {
+	if len(args) != 3 {
+		return js.ValueOf("Error: three arguments required for lerp (a, b, t)")
+	}
+
+	a := args[0].Float()
+	b := args[1].Float()
+	t := args[2].Float()
+
+	result := a + (b-a)*t
+
+	if !silentMode {
+		fmt.Printf("Go WASM: lerp(%f, %f, %f) = %f\n", a, b, t, result)
+	}
+	return js.ValueOf(result)
+}
+
+func mapValue(this js.Value, args []js.Value) interface{} {
+	if len(args) != 5 {
+		return js.ValueOf("Error: five arguments required for map (value, inMin, inMax, outMin, outMax)")
+	}
+
+	value := args[0].Float()
+	inMin := args[1].Float()
+	inMax := args[2].Float()
+	outMin := args[3].Float()
+	outMax := args[4].Float()
+
+	if inMin == inMax {
+		return js.ValueOf("Error: input range cannot be zero")
+	}
+
+	result := outMin + (value-inMin)*(outMax-outMin)/(inMax-inMin)
+
+	if !silentMode {
+		fmt.Printf("Go WASM: map(%f, [%f, %f], [%f, %f]) = %f\n", value, inMin, inMax, outMin, outMax, result)
+	}
+	return js.ValueOf(result)
+}
+
 // Statistical functions
 func mean(this js.Value, args []js.Value) interface{} {
 	if len(args) == 0 {
@@ -473,6 +561,150 @@ func standardDeviation(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(result)
 }
 
+func mode(this js.Value, args []js.Value) interface{} {
+	if len(args) == 0 {
+		return js.ValueOf("Error: at least one argument required for mode")
+	}
+
+	// Count frequency of each number
+	frequency := make(map[float64]int)
+	for i := 0; i < len(args); i++ {
+		val := args[i].Float()
+		frequency[val]++
+	}
+
+	// Find the mode (most frequent value)
+	maxCount := 0
+	var modeVal float64
+	for val, count := range frequency {
+		if count > maxCount {
+			maxCount = count
+			modeVal = val
+		}
+	}
+
+	if !silentMode {
+		fmt.Printf("Go WASM: mode of %d numbers = %f (appears %d times)\n", len(args), modeVal, maxCount)
+	}
+	return js.ValueOf(modeVal)
+}
+
+func variance(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return js.ValueOf("Error: at least two arguments required for variance")
+	}
+
+	// Calculate mean
+	sum := 0.0
+	for i := 0; i < len(args); i++ {
+		sum += args[i].Float()
+	}
+	meanVal := sum / float64(len(args))
+
+	// Calculate variance
+	variance := 0.0
+	for i := 0; i < len(args); i++ {
+		diff := args[i].Float() - meanVal
+		variance += diff * diff
+	}
+	variance /= float64(len(args))
+
+	if !silentMode {
+		fmt.Printf("Go WASM: variance of %d numbers = %f\n", len(args), variance)
+	}
+	return js.ValueOf(variance)
+}
+
+func percentile(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return js.ValueOf("Error: at least two arguments required for percentile (p, ...values)")
+	}
+
+	p := args[0].Float()
+	if p < 0 || p > 100 {
+		return js.ValueOf("Error: percentile must be between 0 and 100")
+	}
+
+	// Collect values
+	values := make([]float64, len(args)-1)
+	for i := 1; i < len(args); i++ {
+		values[i-1] = args[i].Float()
+	}
+
+	// Sort values
+	sort.Float64s(values)
+
+	// Calculate percentile
+	n := len(values)
+	rank := (p / 100.0) * float64(n-1)
+	lowerIndex := int(math.Floor(rank))
+	upperIndex := int(math.Ceil(rank))
+
+	var result float64
+	if lowerIndex == upperIndex {
+		result = values[lowerIndex]
+	} else {
+		// Linear interpolation
+		fraction := rank - float64(lowerIndex)
+		result = values[lowerIndex] + fraction*(values[upperIndex]-values[lowerIndex])
+	}
+
+	if !silentMode {
+		fmt.Printf("Go WASM: %gth percentile of %d numbers = %f\n", p, n, result)
+	}
+	return js.ValueOf(result)
+}
+
+func correlation(this js.Value, args []js.Value) interface{} {
+	if len(args) < 4 || len(args)%2 != 0 {
+		return js.ValueOf("Error: even number of arguments required for correlation (x1, y1, x2, y2, ...)")
+	}
+
+	n := len(args) / 2
+
+	// Extract x and y values
+	xValues := make([]float64, n)
+	yValues := make([]float64, n)
+	for i := 0; i < n; i++ {
+		xValues[i] = args[i*2].Float()
+		yValues[i] = args[i*2+1].Float()
+	}
+
+	// Calculate means
+	xMean := 0.0
+	yMean := 0.0
+	for i := 0; i < n; i++ {
+		xMean += xValues[i]
+		yMean += yValues[i]
+	}
+	xMean /= float64(n)
+	yMean /= float64(n)
+
+	// Calculate correlation coefficient
+	numerator := 0.0
+	xVariance := 0.0
+	yVariance := 0.0
+
+	for i := 0; i < n; i++ {
+		xDiff := xValues[i] - xMean
+		yDiff := yValues[i] - yMean
+		numerator += xDiff * yDiff
+		xVariance += xDiff * xDiff
+		yVariance += yDiff * yDiff
+	}
+
+	if xVariance == 0 || yVariance == 0 {
+		return js.ValueOf("Error: variance is zero, correlation undefined")
+	}
+
+	result := numerator / math.Sqrt(xVariance*yVariance)
+
+	if !silentMode {
+		fmt.Printf("Go WASM: correlation of %d pairs = %f\n", n, result)
+	}
+	return js.ValueOf(result)
+}
+
 // Utility functions
 func round(this js.Value, args []js.Value) interface{} {
 	if len(args) < 1 || len(args) > 2 {
@@ -524,7 +756,7 @@ func floor(this js.Value, args []js.Value) interface{} {
 }
 
 func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
-	functions := []interface{}{
+	functions := []string{
 		// Basic arithmetic
 		"add", "subtract", "multiply", "divide", "power", "factorial",
 		// Advanced math
@@ -535,14 +767,22 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 		"log", "log10",
 		// Number theory
 		"gcd", "lcm", "isPrime", "fibonacci",
+		// Interpolation and utility
+		"mod", "clamp", "lerp", "map",
 		// Statistical
-		"mean", "median", "standardDeviation",
+		"mean", "median", "standardDeviation", "mode", "variance", "percentile", "correlation",
 		// Utility
 		"round", "ceil", "floor",
 		// System
 		"getAvailableFunctions", "setSilentMode",
 	}
-	return js.ValueOf(functions)
+
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 func main() {
@@ -577,10 +817,20 @@ func main() {
 	js.Global().Set("isPrime", js.FuncOf(isPrime))
 	js.Global().Set("fibonacci", js.FuncOf(fibonacci))
 
+	// Register interpolation and utility functions
+	js.Global().Set("mod", js.FuncOf(mod))
+	js.Global().Set("clamp", js.FuncOf(clamp))
+	js.Global().Set("lerp", js.FuncOf(lerp))
+	js.Global().Set("map", js.FuncOf(mapValue))
+
 	// Register statistical functions
 	js.Global().Set("mean", js.FuncOf(mean))
 	js.Global().Set("median", js.FuncOf(median))
 	js.Global().Set("standardDeviation", js.FuncOf(standardDeviation))
+	js.Global().Set("mode", js.FuncOf(mode))
+	js.Global().Set("variance", js.FuncOf(variance))
+	js.Global().Set("percentile", js.FuncOf(percentile))
+	js.Global().Set("correlation", js.FuncOf(correlation))
 
 	// Register utility functions
 	js.Global().Set("round", js.FuncOf(round))

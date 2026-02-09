@@ -1332,12 +1332,15 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Available functions: %d\n", len(functions))
 	}
 
-	return js.ValueOf(functions)
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 func main() {
-	c := make(chan struct{})
-
 	fmt.Println("Go WASM Validation Module initializing...")
 
 	// Register Email validation functions
@@ -1380,5 +1383,7 @@ func main() {
 	js.Global().Set("__gowm_ready", js.ValueOf(true))
 
 	fmt.Println("Go WASM Validation Module ready")
-	<-c
+
+	// Keep the program alive
+	select {}
 }

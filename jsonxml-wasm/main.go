@@ -1001,7 +1001,7 @@ func validateJSONSchema(this js.Value, args []js.Value) interface{} {
 
 // getAvailableFunctions - Return list of available functions
 func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
-	functions := []interface{}{
+	functions := []string{
 		"parseJSON",
 		"stringifyJSON",
 		"validateJSON",
@@ -1019,7 +1019,13 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 		"getAvailableFunctions",
 		"setSilentMode",
 	}
-	return js.ValueOf(functions)
+
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 // Helper functions
@@ -1258,8 +1264,6 @@ func getJSONType(data interface{}) string {
 }
 
 func main() {
-	done := make(chan struct{})
-
 	// Register all functions
 	js.Global().Set("parseJSON", js.FuncOf(parseJSON))
 	js.Global().Set("stringifyJSON", js.FuncOf(stringifyJSON))
@@ -1289,5 +1293,6 @@ func main() {
 	fmt.Println("- Advanced: extractJSONPath, validateJSONSchema")
 	fmt.Println("- Utility: getAvailableFunctions, setSilentMode")
 
-	<-done
+	// Keep the program alive
+	select {}
 }

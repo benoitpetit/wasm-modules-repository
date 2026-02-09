@@ -699,12 +699,15 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Available functions: %d\n", len(functions))
 	}
 
-	return js.ValueOf(functions)
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 func main() {
-	c := make(chan struct{})
-
 	// Register functions
 	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
 	js.Global().Set("textSimilarity", js.FuncOf(textSimilarity))
@@ -729,5 +732,7 @@ func main() {
 	js.Global().Set("__gowm_ready", js.ValueOf(true))
 
 	fmt.Println("Go Text Processing WASM Module Loaded")
-	<-c
+
+	// Keep the program alive
+	select {}
 }

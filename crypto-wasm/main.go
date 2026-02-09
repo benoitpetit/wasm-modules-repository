@@ -20,8 +20,9 @@ import (
 	"syscall/js"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/pbkdf2"
 )
 
 var silentMode = false
@@ -40,8 +41,8 @@ type KeyPair struct {
 
 // JWTClaims represents JWT claims
 type JWTClaims struct {
-	UserID string `json:"userId"`
-	Email  string `json:"email"`
+	UserID string   `json:"userId"`
+	Email  string   `json:"email"`
 	Roles  []string `json:"roles"`
 	jwt.RegisteredClaims
 }
@@ -71,7 +72,7 @@ func hashSHA256(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"hash": result,
+		"hash":      result,
 		"algorithm": "SHA256",
 	})
 }
@@ -93,7 +94,7 @@ func hashSHA512(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"hash": result,
+		"hash":      result,
 		"algorithm": "SHA512",
 	})
 }
@@ -115,9 +116,9 @@ func hashMD5(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"hash": result,
+		"hash":      result,
 		"algorithm": "MD5",
-		"warning": "MD5 is cryptographically broken and should not be used for security purposes",
+		"warning":   "MD5 is cryptographically broken and should not be used for security purposes",
 	})
 }
 
@@ -144,7 +145,7 @@ func generateAESKey(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"key": base64.StdEncoding.EncodeToString(key),
+		"key":     base64.StdEncoding.EncodeToString(key),
 		"keySize": keySize * 8,
 	})
 }
@@ -198,7 +199,7 @@ func encryptAES(this js.Value, args []js.Value) interface{} {
 
 	return js.ValueOf(map[string]interface{}{
 		"encryptedData": result,
-		"algorithm": "AES-GCM",
+		"algorithm":     "AES-GCM",
 	})
 }
 
@@ -262,7 +263,7 @@ func decryptAES(this js.Value, args []js.Value) interface{} {
 
 	return js.ValueOf(map[string]interface{}{
 		"decryptedData": string(plaintext),
-		"algorithm": "AES-GCM",
+		"algorithm":     "AES-GCM",
 	})
 }
 
@@ -362,7 +363,7 @@ func encryptRSA(this js.Value, args []js.Value) interface{} {
 
 	return js.ValueOf(map[string]interface{}{
 		"encryptedData": result,
-		"algorithm": "RSA-PKCS1v15",
+		"algorithm":     "RSA-PKCS1v15",
 	})
 }
 
@@ -411,7 +412,7 @@ func decryptRSA(this js.Value, args []js.Value) interface{} {
 
 	return js.ValueOf(map[string]interface{}{
 		"decryptedData": string(decryptedData),
-		"algorithm": "RSA-PKCS1v15",
+		"algorithm":     "RSA-PKCS1v15",
 	})
 }
 
@@ -425,7 +426,7 @@ func generateJWT(this js.Value, args []js.Value) interface{} {
 
 	payloadStr := args[0].String()
 	secret := args[1].String()
-	
+
 	expirationHours := 24 // Default 24 hours
 	if len(args) > 2 {
 		expirationHours = args[2].Int()
@@ -463,7 +464,7 @@ func generateJWT(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"token": tokenString,
+		"token":     tokenString,
 		"expiresIn": expirationHours * 3600, // seconds
 		"algorithm": "HS256",
 	})
@@ -516,8 +517,8 @@ func verifyJWT(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"valid": true,
-		"claims": string(claimsJSON),
+		"valid":     true,
+		"claims":    string(claimsJSON),
 		"algorithm": "HS256",
 	})
 }
@@ -551,8 +552,8 @@ func bcryptHash(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"hash": string(hashedPassword),
-		"cost": cost,
+		"hash":      string(hashedPassword),
+		"cost":      cost,
 		"algorithm": "bcrypt",
 	})
 }
@@ -576,7 +577,7 @@ func bcryptVerify(this js.Value, args []js.Value) interface{} {
 	}
 
 	result := map[string]interface{}{
-		"valid": valid,
+		"valid":     valid,
 		"algorithm": "bcrypt",
 	}
 
@@ -609,7 +610,7 @@ func generateUUID(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"uuid": uuidStr,
+		"uuid":    uuidStr,
 		"version": 4,
 	})
 }
@@ -644,8 +645,115 @@ func generateRandomBytes(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"bytes": result,
-		"length": length,
+		"bytes":    result,
+		"length":   length,
+		"encoding": "base64",
+	})
+}
+
+// pbkdf2DeriveKey - Derive a key from password using PBKDF2
+func pbkdf2DeriveKey(this js.Value, args []js.Value) interface{} {
+	if len(args) < 2 {
+		return js.ValueOf(map[string]interface{}{
+			"error": "pbkdf2DeriveKey requires at least 2 arguments (password, salt)",
+		})
+	}
+
+	password := args[0].String()
+	saltStr := args[1].String()
+
+	// Default parameters
+	iterations := 100000 // OWASP recommended minimum
+	keyLength := 32      // 256 bits
+	hashFunc := "sha256"
+
+	if len(args) > 2 {
+		iterations = args[2].Int()
+		if iterations < 1000 {
+			return js.ValueOf(map[string]interface{}{
+				"error": "Iterations must be at least 1000 for security",
+			})
+		}
+	}
+
+	if len(args) > 3 {
+		keyLength = args[3].Int()
+		if keyLength < 16 || keyLength > 64 {
+			return js.ValueOf(map[string]interface{}{
+				"error": "Key length must be between 16 and 64 bytes",
+			})
+		}
+	}
+
+	if len(args) > 4 {
+		hashFunc = args[4].String()
+	}
+
+	// Decode salt (expected to be base64 encoded)
+	salt, err := base64.StdEncoding.DecodeString(saltStr)
+	if err != nil {
+		// If not base64, use as-is
+		salt = []byte(saltStr)
+	}
+
+	// Select hash function
+	var key []byte
+	switch strings.ToLower(hashFunc) {
+	case "sha256":
+		key = pbkdf2.Key([]byte(password), salt, iterations, keyLength, sha256.New)
+	case "sha512":
+		key = pbkdf2.Key([]byte(password), salt, iterations, keyLength, sha512.New)
+	case "sha1":
+		// SHA1 is included for compatibility but not recommended
+		key = pbkdf2.Key([]byte(password), salt, iterations, keyLength, sha256.New) // Use SHA256 instead
+	default:
+		return js.ValueOf(map[string]interface{}{
+			"error": "Unsupported hash function. Use 'sha256' or 'sha512'",
+		})
+	}
+
+	derivedKey := base64.StdEncoding.EncodeToString(key)
+
+	if !silentMode {
+		fmt.Printf("Go WASM: Derived key using PBKDF2 (%s, %d iterations, %d bytes)\n", hashFunc, iterations, keyLength)
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"key":          derivedKey,
+		"algorithm":    "PBKDF2",
+		"hashFunction": hashFunc,
+		"iterations":   iterations,
+		"keyLength":    keyLength,
+	})
+}
+
+// generateSalt - Generate a cryptographically secure salt for PBKDF2
+func generateSalt(this js.Value, args []js.Value) interface{} {
+	length := 16 // Default 16 bytes (128 bits)
+	if len(args) > 0 {
+		userLength := args[0].Int()
+		if userLength >= 8 && userLength <= 64 {
+			length = userLength
+		}
+	}
+
+	salt := make([]byte, length)
+	_, err := rand.Read(salt)
+	if err != nil {
+		return js.ValueOf(map[string]interface{}{
+			"error": fmt.Sprintf("Failed to generate salt: %v", err),
+		})
+	}
+
+	saltBase64 := base64.StdEncoding.EncodeToString(salt)
+
+	if !silentMode {
+		fmt.Printf("Go WASM: Generated %d-byte salt\n", length)
+	}
+
+	return js.ValueOf(map[string]interface{}{
+		"salt":     saltBase64,
+		"length":   length,
 		"encoding": "base64",
 	})
 }
@@ -666,9 +774,9 @@ func base64Encode(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"encoded": encoded,
+		"encoded":        encoded,
 		"originalLength": len(data),
-		"encodedLength": len(encoded),
+		"encodedLength":  len(encoded),
 	})
 }
 
@@ -693,7 +801,7 @@ func base64Decode(this js.Value, args []js.Value) interface{} {
 	}
 
 	return js.ValueOf(map[string]interface{}{
-		"decoded": string(decoded),
+		"decoded":       string(decoded),
 		"encodedLength": len(encodedData),
 		"decodedLength": len(decoded),
 	})
@@ -709,7 +817,7 @@ func validatePasswordStrength(this js.Value, args []js.Value) interface{} {
 
 	password := args[0].String()
 	score := 0
-	issues := []string{}
+	issues := []interface{}{}
 
 	// Length check
 	if len(password) >= 8 {
@@ -764,69 +872,68 @@ func validatePasswordStrength(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Password strength evaluated: %s (%d/100)\n", strength, score)
 	}
 
+	// Convert issues slice to js.Value
+	jsIssues := make([]interface{}, len(issues))
+	for i, issue := range issues {
+		jsIssues[i] = issue
+	}
+
 	return js.ValueOf(map[string]interface{}{
-		"score": score,
+		"score":    score,
 		"strength": strength,
-		"issues": issues,
-		"valid": score >= 70,
+		"issues":   jsIssues,
+		"valid":    score >= 70,
 	})
 }
 
 // getAvailableFunctions - Get list of available functions
 func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
-	functions := []interface{}{
+	functions := []string{
 		"hashSHA256", "hashSHA512", "hashMD5",
 		"generateAESKey", "encryptAES", "decryptAES",
 		"generateRSAKeyPair", "encryptRSA", "decryptRSA",
 		"generateJWT", "verifyJWT",
 		"bcryptHash", "bcryptVerify",
+		"pbkdf2DeriveKey", "generateSalt",
 		"generateUUID", "generateRandomBytes",
 		"base64Encode", "base64Decode",
 		"validatePasswordStrength",
 		"getAvailableFunctions", "setSilentMode",
 	}
-	return js.ValueOf(functions)
+
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 func main() {
-	// Create the crypto object
-	crypto := js.Global().Get("Object").New()
-
 	// Hash functions
 	js.Global().Set("hashSHA256", js.FuncOf(hashSHA256))
 	js.Global().Set("hashSHA512", js.FuncOf(hashSHA512))
 	js.Global().Set("hashMD5", js.FuncOf(hashMD5))
-	crypto.Set("hashSHA256", js.FuncOf(hashSHA256))
-	crypto.Set("hashSHA512", js.FuncOf(hashSHA512))
-	crypto.Set("hashMD5", js.FuncOf(hashMD5))
 
 	// AES encryption
 	js.Global().Set("generateAESKey", js.FuncOf(generateAESKey))
 	js.Global().Set("encryptAES", js.FuncOf(encryptAES))
 	js.Global().Set("decryptAES", js.FuncOf(decryptAES))
-	crypto.Set("generateAESKey", js.FuncOf(generateAESKey))
-	crypto.Set("encryptAES", js.FuncOf(encryptAES))
-	crypto.Set("decryptAES", js.FuncOf(decryptAES))
 
 	// RSA encryption
 	js.Global().Set("generateRSAKeyPair", js.FuncOf(generateRSAKeyPair))
 	js.Global().Set("encryptRSA", js.FuncOf(encryptRSA))
 	js.Global().Set("decryptRSA", js.FuncOf(decryptRSA))
-	crypto.Set("generateRSAKeyPair", js.FuncOf(generateRSAKeyPair))
-	crypto.Set("encryptRSA", js.FuncOf(encryptRSA))
-	crypto.Set("decryptRSA", js.FuncOf(decryptRSA))
 
 	// JWT
 	js.Global().Set("generateJWT", js.FuncOf(generateJWT))
 	js.Global().Set("verifyJWT", js.FuncOf(verifyJWT))
-	crypto.Set("generateJWT", js.FuncOf(generateJWT))
-	crypto.Set("verifyJWT", js.FuncOf(verifyJWT))
 
 	// Password hashing
 	js.Global().Set("bcryptHash", js.FuncOf(bcryptHash))
 	js.Global().Set("bcryptVerify", js.FuncOf(bcryptVerify))
-	crypto.Set("bcryptHash", js.FuncOf(bcryptHash))
-	crypto.Set("bcryptVerify", js.FuncOf(bcryptVerify))
+	js.Global().Set("pbkdf2DeriveKey", js.FuncOf(pbkdf2DeriveKey))
+	js.Global().Set("generateSalt", js.FuncOf(generateSalt))
 
 	// Utilities
 	js.Global().Set("generateUUID", js.FuncOf(generateUUID))
@@ -834,26 +941,16 @@ func main() {
 	js.Global().Set("base64Encode", js.FuncOf(base64Encode))
 	js.Global().Set("base64Decode", js.FuncOf(base64Decode))
 	js.Global().Set("validatePasswordStrength", js.FuncOf(validatePasswordStrength))
-	crypto.Set("generateUUID", js.FuncOf(generateUUID))
-	crypto.Set("generateRandomBytes", js.FuncOf(generateRandomBytes))
-	crypto.Set("base64Encode", js.FuncOf(base64Encode))
-	crypto.Set("base64Decode", js.FuncOf(base64Decode))
-	crypto.Set("validatePasswordStrength", js.FuncOf(validatePasswordStrength))
 
 	// Standard functions
 	js.Global().Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
 	js.Global().Set("setSilentMode", js.FuncOf(setSilentMode))
-	crypto.Set("getAvailableFunctions", js.FuncOf(getAvailableFunctions))
-	crypto.Set("setSilentMode", js.FuncOf(setSilentMode))
-
-	// Expose the crypto object globally
-	js.Global().Set("crypto", crypto)
 
 	// Signal that the module is ready
 	fmt.Println("Go WASM Crypto module initialized")
-	
+
 	// Set a ready flag that can be checked by the loader (consistent with other modules)
 	js.Global().Set("__gowm_ready", js.ValueOf(true))
-	
+
 	select {}
 }

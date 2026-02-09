@@ -109,7 +109,7 @@ func setSilentMode(this js.Value, args []js.Value) interface{} {
 
 // getAvailableFunctions - Return list of available functions
 func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
-	functions := []interface{}{
+	functions := []string{
 		"generateQRCode",
 		"decodeQRCode",
 		"generateBarcode",
@@ -119,7 +119,13 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 		"getAvailableFunctions",
 		"setSilentMode",
 	}
-	return js.ValueOf(functions)
+
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 // generateQRCode - Generate QR code from text data

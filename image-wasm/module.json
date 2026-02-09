@@ -26,15 +26,15 @@
   "buildTime": 1750341639,
   "changelog": {
     "changes": [
-      "Multi-format image processing support",
-      "JPEG/PNG compression with quality control",
-      "WebP conversion for modern browsers",
-      "Image resizing with aspect ratio preservation",
-      "Added rotation and cropping capabilities",
-      "Base64 input/output for web compatibility"
+      "Added 6 image filters: grayscale, brightness, contrast, invert, blur, sharpen",
+      "Added 3 transformation functions: rotate, flip, crop",
+      "Enhanced error handling with object-based patterns",
+      "Improved filter performance with optimized algorithms",
+      "Added support for complex image manipulation workflows",
+      "Multi-format support (JPEG/PNG) for all operations"
     ],
-    "releaseDate": "2025-06-17",
-    "version": "0.2.1"
+    "releaseDate": "2025-02-09",
+    "version": "0.3.0"
   },
   "compatibility": {
     "browsers": [
@@ -46,7 +46,7 @@
     "gowm": "1.0.0+",
     "nodejs": "14.0.0+"
   },
-  "description": "WebAssembly module for image processing, compression, and format conversion",
+  "description": "WebAssembly module for advanced image processing with filters, transformations, compression, and format conversion",
   "ecosystem": {
     "category": "media",
     "industry": [
@@ -87,7 +87,7 @@
   },
   "examples": [
     {
-      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load image module from wasm-modules-repository\nconst image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'image-wasm',\n  filename: 'main.wasm',\n  name: 'image-wasm',\n  branch: 'master'\n});\n\n// Configure module\nimage.call('setSilentMode', true);\n\n// Convert file to base64\nconst fileInput = document.getElementById('imageFile');\nconst file = fileInput.files[0];\nconst base64 = await fileToBase64(file);\n\n// Compress JPEG with error handling\nconst result = image.call('compressJPEG', base64, 80);\nif (result.error) {\n  console.error('Compression failed:', result.error);\n} else {\n  console.log('Original size:', result.originalSize, 'bytes');\n  console.log('Compressed size:', result.newSize, 'bytes');\n  console.log('Compression ratio:', result.compressionRatio);\n}\n\n// Helper function\nfunction fileToBase64(file) {\n  return new Promise((resolve, reject) =\u003e {\n    const reader = new FileReader();\n    reader.readAsDataURL(file);\n    reader.onload = () =\u003e resolve(reader.result.split(',')[1]);\n    reader.onerror = error =\u003e reject(error);\n  });\n}",
+      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load image module from wasm-modules-repository\nconst image = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'image-wasm',\n  name: 'image-wasm',\n  branch: 'master'\n});\n\n// Configure module\nimage.call('setSilentMode', true);\n\n// Convert file to base64\nconst fileInput = document.getElementById('imageFile');\nconst file = fileInput.files[0];\nconst base64 = await fileToBase64(file);\n\n// Compress JPEG with error handling\nconst result = image.call('compressJPEG', base64, 80);\nif (result.error) {\n  console.error('Compression failed:', result.error);\n} else {\n  console.log('Original size:', result.originalSize, 'bytes');\n  console.log('Compressed size:', result.newSize, 'bytes');\n  console.log('Compression ratio:', result.compressionRatio);\n}\n\n// Helper function\nfunction fileToBase64(file) {\n  return new Promise((resolve, reject) =\u003e {\n    const reader = new FileReader();\n    reader.readAsDataURL(file);\n    reader.onload = () =\u003e resolve(reader.result.split(',')[1]);\n    reader.onerror = error =\u003e reject(error);\n  });\n}",
       "language": "javascript",
       "title": "GoWM Integration - Basic Image Compression"
     },

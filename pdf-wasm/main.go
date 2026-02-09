@@ -1497,12 +1497,15 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("Go WASM: Listed %d available PDF functions\n", len(functions))
 	}
 
-	return js.ValueOf(functions)
+	// Convert to JS Array (safe pattern)
+	arr := js.Global().Get("Array").New(len(functions))
+	for i, fn := range functions {
+		arr.SetIndex(i, fn)
+	}
+	return arr
 }
 
 func main() {
-	c := make(chan struct{})
-
 	// Core PDF operations
 	js.Global().Set("createPDF", js.FuncOf(createPDF))
 	js.Global().Set("addPage", js.FuncOf(addPage))
@@ -1538,13 +1541,14 @@ func main() {
 
 	js.Global().Set("__gowm_ready", js.ValueOf(true))
 
-	fmt.Println("🚀 Go WASM: Advanced PDF module v2.0.0 loaded successfully")
-	fmt.Println("📋 Core functions: createPDF, mergePDFs, splitPDF, extractText, compressPDF")
-	fmt.Println("🏢 Business functions: generateInvoice, generateCertificate, generateReport")
-	fmt.Println("🎨 Content functions: addTable, addChart, addWatermark")
-	fmt.Println("🔄 Conversion functions: htmlToPDF, markdownToPDF")
-	fmt.Println("📊 Analysis functions: analyzePDF, optimizePDF")
-	fmt.Println("ℹ️  Use getAvailableFunctions() to see all available functions")
+	fmt.Println("Go WASM: Advanced PDF module v2.0.0 loaded successfully")
+	fmt.Println("Core functions: createPDF, mergePDFs, splitPDF, extractText, compressPDF")
+	fmt.Println("Business functions: generateInvoice, generateCertificate, generateReport")
+	fmt.Println("Content functions: addTable, addChart, addWatermark")
+	fmt.Println("Conversion functions: htmlToPDF, markdownToPDF")
+	fmt.Println("Analysis functions: analyzePDF, optimizePDF")
+	fmt.Println("Use getAvailableFunctions() to see all available functions")
 
-	<-c
+	// Keep the program alive
+	select {}
 }
