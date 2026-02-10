@@ -108,10 +108,26 @@ func setSilentMode(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(silentMode)
 }
 
+// toJSValue safely converts a Go value to js.Value via JSON marshaling
+// This avoids issues with nested maps and slices that js.ValueOf cannot handle directly
+func toJSValue(v interface{}) js.Value {
+	jsonBytes, err := json.Marshal(v)
+	if err != nil {
+		return js.ValueOf(fmt.Sprintf("Error: Failed to marshal result: %v", err))
+	}
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(jsonBytes, &result); err != nil {
+		return js.ValueOf(fmt.Sprintf("Error: Failed to unmarshal result: %v", err))
+	}
+
+	return js.ValueOf(result)
+}
+
 // parseJSON - Parse JSON string and validate with memory management
 func parseJSON(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "INVALID_ARGS",
 				Message: "parseJSON requires exactly 1 argument (jsonString)",
@@ -129,7 +145,7 @@ func parseJSON(this js.Value, args []js.Value) interface{} {
 
 	// Check memory limit
 	if len(jsonString) > 128*1024*1024 { // 128MB limit
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "MEMORY_LIMIT",
 				Message: "JSON string exceeds memory limit",
@@ -145,7 +161,7 @@ func parseJSON(this js.Value, args []js.Value) interface{} {
 	err := json.Unmarshal([]byte(jsonString), &data)
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Valid:  false,
 			Size:   len(jsonString),
 			Format: "json",
@@ -166,7 +182,7 @@ func parseJSON(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("JSON WASM: Successfully parsed JSON (%d bytes)\n", len(jsonString))
 	}
 
-	return js.ValueOf(JSONResult{
+	return toJSValue(JSONResult{
 		Data:   data,
 		Valid:  true,
 		Size:   len(jsonString),
@@ -204,7 +220,7 @@ func getErrorContext(input string, err error) string {
 // stringifyJSON - Convert object to JSON string
 func stringifyJSON(this js.Value, args []js.Value) interface{} {
 	if len(args) < 1 {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "INVALID_ARGS",
 				Message: "stringifyJSON requires at least 1 argument (data)",
@@ -235,7 +251,7 @@ func stringifyJSON(this js.Value, args []js.Value) interface{} {
 	}
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "STRINGIFY_ERROR",
 				Message: fmt.Sprintf("Failed to stringify JSON: %v", err),
@@ -253,7 +269,7 @@ func stringifyJSON(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("JSON WASM: Generated JSON string (%d bytes, pretty: %v)\n", len(jsonString), pretty)
 	}
 
-	return js.ValueOf(JSONResult{
+	return toJSValue(JSONResult{
 		Data:   jsonString,
 		Valid:  true,
 		Size:   len(jsonString),
@@ -264,7 +280,7 @@ func stringifyJSON(this js.Value, args []js.Value) interface{} {
 // validateJSON - Validate JSON syntax
 func validateJSON(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(ValidationResult{
+		return toJSValue(ValidationResult{
 			Valid:  false,
 			Errors: []string{"validateJSON requires exactly 1 argument (jsonString)"},
 			Format: "json",
@@ -297,7 +313,7 @@ func validateJSON(this js.Value, args []js.Value) interface{} {
 // minifyJSON - Minify JSON by removing whitespace
 func minifyJSON(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "INVALID_ARGS",
 				Message: "minifyJSON requires exactly 1 argument (jsonString)",
@@ -315,7 +331,7 @@ func minifyJSON(this js.Value, args []js.Value) interface{} {
 	err := json.Unmarshal([]byte(jsonString), &data)
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Valid:  false,
 			Size:   len(jsonString),
 			Format: "json",
@@ -333,7 +349,7 @@ func minifyJSON(this js.Value, args []js.Value) interface{} {
 
 	minified, err := json.Marshal(data)
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "MINIFY_ERROR",
 				Message: fmt.Sprintf("Failed to minify JSON: %v", err),
@@ -351,7 +367,7 @@ func minifyJSON(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("JSON WASM: Minified JSON (%d bytes)\n", len(minifiedString))
 	}
 
-	return js.ValueOf(JSONResult{
+	return toJSValue(JSONResult{
 		Data:     minifiedString,
 		Valid:    true,
 		Size:     len(minifiedString),
@@ -363,7 +379,7 @@ func minifyJSON(this js.Value, args []js.Value) interface{} {
 // parseXML - Parse XML string and validate
 func parseXML(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(XMLResult{
+		return toJSValue(XMLResult{
 			Error: &StructuredError{
 				Code:    "INVALID_ARGS",
 				Message: "parseXML requires exactly 1 argument (xmlString)",
@@ -379,7 +395,7 @@ func parseXML(this js.Value, args []js.Value) interface{} {
 	doc, err := xmlquery.Parse(strings.NewReader(xmlString))
 
 	if err != nil {
-		return js.ValueOf(XMLResult{
+		return toJSValue(XMLResult{
 			Valid:  false,
 			Size:   len(xmlString),
 			Format: "xml",
@@ -403,7 +419,7 @@ func parseXML(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("XML WASM: Successfully parsed XML (%d bytes)\n", len(xmlString))
 	}
 
-	return js.ValueOf(XMLResult{
+	return toJSValue(XMLResult{
 		Data:     xmlNodeToMap(doc),
 		Valid:    true,
 		Size:     len(xmlString),
@@ -579,7 +595,7 @@ func jsonToXML(this js.Value, args []js.Value) interface{} {
 // validateXML - Validate XML syntax
 func validateXML(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(ValidationResult{
+		return toJSValue(ValidationResult{
 			Valid:  false,
 			Errors: []string{"validateXML requires exactly 1 argument (xmlString)"},
 			Format: "xml",
@@ -611,7 +627,7 @@ func validateXML(this js.Value, args []js.Value) interface{} {
 // csvToJSON - Convert CSV to JSON
 func csvToJSON(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "INVALID_ARGS",
 				Message: "csvToJSON requires exactly 1 argument (csvString)",
@@ -628,7 +644,7 @@ func csvToJSON(this js.Value, args []js.Value) interface{} {
 	records, err := reader.ReadAll()
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Valid:  false,
 			Size:   len(csvString),
 			Format: "json",
@@ -643,7 +659,7 @@ func csvToJSON(this js.Value, args []js.Value) interface{} {
 	}
 
 	if len(records) == 0 {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "EMPTY_CSV",
 				Message: "Empty CSV data",
@@ -677,7 +693,7 @@ func csvToJSON(this js.Value, args []js.Value) interface{} {
 
 	jsonBytes, err := json.Marshal(result)
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "CONVERSION_ERROR",
 				Message: fmt.Sprintf("Failed to convert to JSON: %v", err),
@@ -695,7 +711,7 @@ func csvToJSON(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("CSV WASM: Successfully converted CSV to JSON (%d bytes)\n", len(jsonString))
 	}
 
-	return js.ValueOf(JSONResult{
+	return toJSValue(JSONResult{
 		Data:   jsonString,
 		Valid:  true,
 		Size:   len(jsonString),
@@ -706,7 +722,7 @@ func csvToJSON(this js.Value, args []js.Value) interface{} {
 // jsonToCSV - Convert JSON to CSV
 func jsonToCSV(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(CSVResult{
+		return toJSValue(CSVResult{
 			Error: "jsonToCSV requires exactly 1 argument (jsonString)",
 		})
 	}
@@ -716,14 +732,14 @@ func jsonToCSV(this js.Value, args []js.Value) interface{} {
 	var data []map[string]interface{}
 	err := json.Unmarshal([]byte(jsonString), &data)
 	if err != nil {
-		return js.ValueOf(CSVResult{
+		return toJSValue(CSVResult{
 			Error:  fmt.Sprintf("Invalid JSON: %v", err),
 			Format: "csv",
 		})
 	}
 
 	if len(data) == 0 {
-		return js.ValueOf(CSVResult{
+		return toJSValue(CSVResult{
 			Error:  "Empty JSON array",
 			Format: "csv",
 		})
@@ -762,7 +778,7 @@ func jsonToCSV(this js.Value, args []js.Value) interface{} {
 			len(data), len(headers))
 	}
 
-	return js.ValueOf(CSVResult{
+	return toJSValue(CSVResult{
 		Data:    csvString,
 		Rows:    len(data),
 		Columns: len(headers),
@@ -773,7 +789,7 @@ func jsonToCSV(this js.Value, args []js.Value) interface{} {
 // yamlToJSON - Convert YAML to JSON
 func yamlToJSON(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "INVALID_ARGS",
 				Message: "yamlToJSON requires exactly 1 argument (yamlString)",
@@ -790,7 +806,7 @@ func yamlToJSON(this js.Value, args []js.Value) interface{} {
 	err := yaml.Unmarshal([]byte(yamlString), &data)
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Valid:  false,
 			Size:   len(yamlString),
 			Format: "json",
@@ -806,7 +822,7 @@ func yamlToJSON(this js.Value, args []js.Value) interface{} {
 
 	jsonBytes, err := json.Marshal(data)
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "CONVERSION_ERROR",
 				Message: fmt.Sprintf("Failed to convert to JSON: %v", err),
@@ -825,7 +841,7 @@ func yamlToJSON(this js.Value, args []js.Value) interface{} {
 			len(yamlString), len(jsonString))
 	}
 
-	return js.ValueOf(JSONResult{
+	return toJSValue(JSONResult{
 		Data:   jsonString,
 		Valid:  true,
 		Size:   len(jsonString),
@@ -836,7 +852,7 @@ func yamlToJSON(this js.Value, args []js.Value) interface{} {
 // jsonToYAML - Convert JSON to YAML
 func jsonToYAML(this js.Value, args []js.Value) interface{} {
 	if len(args) != 1 {
-		return js.ValueOf(YAMLResult{
+		return toJSValue(YAMLResult{
 			Error: "jsonToYAML requires exactly 1 argument (jsonString)",
 		})
 	}
@@ -846,7 +862,7 @@ func jsonToYAML(this js.Value, args []js.Value) interface{} {
 	var data interface{}
 	err := json.Unmarshal([]byte(jsonString), &data)
 	if err != nil {
-		return js.ValueOf(YAMLResult{
+		return toJSValue(YAMLResult{
 			Valid:  false,
 			Error:  fmt.Sprintf("Invalid JSON: %v", err),
 			Format: "yaml",
@@ -855,7 +871,7 @@ func jsonToYAML(this js.Value, args []js.Value) interface{} {
 
 	yamlBytes, err := yaml.Marshal(data)
 	if err != nil {
-		return js.ValueOf(YAMLResult{
+		return toJSValue(YAMLResult{
 			Error: fmt.Sprintf("Failed to convert to YAML: %v", err),
 		})
 	}
@@ -867,7 +883,7 @@ func jsonToYAML(this js.Value, args []js.Value) interface{} {
 			len(jsonString), len(yamlString))
 	}
 
-	return js.ValueOf(YAMLResult{
+	return toJSValue(YAMLResult{
 		Data:   yamlString,
 		Valid:  true,
 		Size:   len(yamlString),
@@ -878,7 +894,7 @@ func jsonToYAML(this js.Value, args []js.Value) interface{} {
 // extractJSONPath - Extract value from JSON using path
 func extractJSONPath(this js.Value, args []js.Value) interface{} {
 	if len(args) != 2 {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "INVALID_ARGS",
 				Message: "extractJSONPath requires exactly 2 arguments (jsonString, path)",
@@ -897,7 +913,7 @@ func extractJSONPath(this js.Value, args []js.Value) interface{} {
 	err := json.Unmarshal([]byte(jsonString), &data)
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Valid:  false,
 			Size:   len(jsonString),
 			Format: "json",
@@ -917,7 +933,7 @@ func extractJSONPath(this js.Value, args []js.Value) interface{} {
 	resultBytes, err := json.Marshal(result)
 
 	if err != nil {
-		return js.ValueOf(JSONResult{
+		return toJSValue(JSONResult{
 			Error: &StructuredError{
 				Code:    "SERIALIZATION_ERROR",
 				Message: fmt.Sprintf("Failed to serialize result: %v", err),
@@ -935,7 +951,7 @@ func extractJSONPath(this js.Value, args []js.Value) interface{} {
 		fmt.Printf("JSON WASM: Extracted JSON path '%s'\n", path)
 	}
 
-	return js.ValueOf(JSONResult{
+	return toJSValue(JSONResult{
 		Data:   resultString,
 		Valid:  true,
 		Size:   len(resultString),
@@ -946,7 +962,7 @@ func extractJSONPath(this js.Value, args []js.Value) interface{} {
 // validateJSONSchema - Basic JSON schema validation
 func validateJSONSchema(this js.Value, args []js.Value) interface{} {
 	if len(args) != 2 {
-		return js.ValueOf(ValidationResult{
+		return toJSValue(ValidationResult{
 			Valid:  false,
 			Errors: []string{"validateJSONSchema requires exactly 2 arguments (jsonString, schemaString)"},
 			Format: "json",
@@ -962,7 +978,7 @@ func validateJSONSchema(this js.Value, args []js.Value) interface{} {
 	// Validate JSON data
 	err := json.Unmarshal([]byte(jsonString), &data)
 	if err != nil {
-		return js.ValueOf(ValidationResult{
+		return toJSValue(ValidationResult{
 			Valid:  false,
 			Errors: []string{fmt.Sprintf("Invalid JSON data: %v", err)},
 			Format: "json",
@@ -972,7 +988,7 @@ func validateJSONSchema(this js.Value, args []js.Value) interface{} {
 	// Validate schema
 	err = json.Unmarshal([]byte(schemaString), &schema)
 	if err != nil {
-		return js.ValueOf(ValidationResult{
+		return toJSValue(ValidationResult{
 			Valid:  false,
 			Errors: []string{fmt.Sprintf("Invalid JSON schema: %v", err)},
 			Format: "json",

@@ -581,7 +581,7 @@ func bcryptVerify(this js.Value, args []js.Value) interface{} {
 		"algorithm": "bcrypt",
 	}
 
-	if !valid && err != nil {
+	if err != nil {
 		result["error"] = err.Error()
 	}
 
@@ -874,9 +874,7 @@ func validatePasswordStrength(this js.Value, args []js.Value) interface{} {
 
 	// Convert issues slice to js.Value
 	jsIssues := make([]interface{}, len(issues))
-	for i, issue := range issues {
-		jsIssues[i] = issue
-	}
+	copy(jsIssues, issues)
 
 	return js.ValueOf(map[string]interface{}{
 		"score":    score,

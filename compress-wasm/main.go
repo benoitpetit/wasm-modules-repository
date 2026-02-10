@@ -338,14 +338,15 @@ func lz4DecompressBlock(data []byte) ([]byte, error) {
 		marker := data[i]
 		i++
 
-		if marker == 1 {
+		switch marker {
+		case 1:
 			// Literal
 			if i >= len(data) {
 				return nil, fmt.Errorf("unexpected end of data during literal")
 			}
 			result = append(result, data[i])
 			i++
-		} else if marker == 0 {
+		case 0:
 			// Match reference
 			if i+2 >= len(data) {
 				return nil, fmt.Errorf("unexpected end of data during match")
@@ -362,7 +363,7 @@ func lz4DecompressBlock(data []byte) ([]byte, error) {
 			for j := 0; j < matchLen; j++ {
 				result = append(result, result[start+j])
 			}
-		} else {
+		default:
 			return nil, fmt.Errorf("unknown marker: %d", marker)
 		}
 	}
