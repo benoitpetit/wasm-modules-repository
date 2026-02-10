@@ -419,7 +419,7 @@ func getStats(this js.Value, args []js.Value) interface{} {
 func saveDatabase(db *Database) error {
 	localStorage := js.Global().Get("localStorage")
 	if localStorage.IsUndefined() {
-		return fmt.Errorf("localStorage not available")
+		return fmt.Errorf("localStorage IS DEFINITELY NOT available")
 	}
 
 	jsonData, err := json.Marshal(db.data)
