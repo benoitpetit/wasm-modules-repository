@@ -1,455 +1,521 @@
 {
-  "author": "Ben",
-  "buildInfo": {
-    "buildCommand": "wasm-manager build",
-    "buildTime": "2025-06-19T16:01:00+02:00",
-    "compilerFlags": [
-      "GOOS=js",
-      "GOARCH=wasm",
-      "CGO_ENABLED=0",
-      "-ldflags=-s -w -buildid=",
-      "-trimpath",
-      "-buildmode=default",
-      "-tags=netgo,osusergo",
-      "-a",
-      "-gcflags=-l=4 -B",
-      "wasm-opt=-Oz --enable-bulk-memory"
-    ],
-    "goModule": true,
-    "goVersion": "1.24.3",
-    "language": "Go",
-    "lastModified": "2025-06-19T16:00:58+02:00",
-    "optimizations": [
-      "Memory leak prevention",
-      "Concurrent request handling",
-      "Timeout optimization",
-      "Resource cleanup"
-    ],
-    "outputFile": "main.wasm",
-    "target": "js/wasm",
-    "wasmOptUsed": true
-  },
-  "buildTime": 1750341660,
-  "changelog": {
-    "changes": [
-      "Added request/response interceptor support",
-      "Implemented automatic retry with exponential backoff",
-      "Integrated circuit breaker pattern for fault tolerance",
-      "Configurable retry logic (attempts, delay, multiplier)",
-      "Circuit breaker states: closed, open, half-open",
-      "Enhanced error resilience and failure handling",
-      "Backward compatible with v0.1.0 API"
-    ],
-    "releaseDate": "2026-02-09",
-    "version": "0.3.0"
-  },
-  "compatibility": {
-    "browsers": [
-      "Chrome 69+",
-      "Firefox 62+",
-      "Safari 13+",
-      "Edge 79+"
-    ],
-    "gowm": "1.1.0+",
-    "nodejs": "16.0.0+"
-  },
-  "description": "Secure and complete HTTP client library written in Go and compiled to WebAssembly. Provides an axios-like interface optimized for GoWM integration.",
-  "ecosystem": {
-    "category": "networking",
-    "industry": [
-      "web-development",
-      "fintech",
-      "saas",
-      "e-commerce"
-    ],
-    "relatedModules": [
-      "crypto-wasm"
-    ],
-    "subcategory": "http-client",
-    "useCase": [
-      "api-integration",
-      "data-fetching",
-      "microservices",
-      "web-scraping"
-    ]
-  },
-  "errorHandling": {
-    "description": "Enhanced error handling system compatible with GOWM 1.1.0+",
-    "detection": "if (result.error) { const { code, message, details } = result.error; /* handle structured error */ }",
-    "examples": [
-      {
-        "cause": "Called request function with malformed URL",
-        "error": {
-          "code": "INVALID_URL",
-          "message": "Invalid URL: scheme must be http or https",
-          "details": {
-            "url": "ftp://example.com",
-            "validSchemes": [
-              "http",
-              "https"
-            ]
-          }
-        }
-      },
-      {
-        "cause": "Request exceeded configured timeout duration",
-        "error": {
-          "code": "TIMEOUT",
-          "message": "Network error: connection timeout",
-          "details": {
-            "timeout": 5000,
-            "elapsed": 5001,
-            "url": "https://api.example.com"
-          }
-        }
-      },
-      {
-        "cause": "Memory limit exceeded during request",
-        "error": {
-          "code": "MEMORY_LIMIT",
-          "message": "Operation exceeded memory limit",
-          "details": {
-            "limit": "64MB",
-            "attempted": "128MB",
-            "operation": "downloadFile"
-          }
-        }
-      }
-    ],
-    "pattern": "structured-error"
-  },
+ "author": "Ben",
+ "buildInfo": {
+  "buildCommand": "wasm-manager build",
+  "buildTime": "2025-06-19T16:01:00+02:00",
+  "compilerFlags": [
+   "GOOS=js",
+   "GOARCH=wasm",
+   "CGO_ENABLED=0",
+   "-ldflags=-s -w -buildid=",
+   "-trimpath",
+   "-buildmode=default",
+   "-tags=netgo,osusergo",
+   "-a",
+   "-gcflags=-l=4 -B",
+   "wasm-opt=-Oz --enable-bulk-memory"
+  ],
+  "goModule": true,
+  "goVersion": "1.24.3",
+  "language": "Go",
+  "lastModified": "2025-06-19T16:00:58+02:00",
+  "optimizations": [
+   "Memory leak prevention",
+   "Concurrent request handling",
+   "Timeout optimization",
+   "Resource cleanup"
+  ],
+  "outputFile": "main.wasm",
+  "target": "js/wasm",
+  "wasmOptUsed": true
+ },
+ "buildTime": 1750341660,
+ "changelog": {
+  "changes": [
+   "Added request/response interceptor support",
+   "Implemented automatic retry with exponential backoff",
+   "Integrated circuit breaker pattern for fault tolerance",
+   "Configurable retry logic (attempts, delay, multiplier)",
+   "Circuit breaker states: closed, open, half-open",
+   "Enhanced error resilience and failure handling",
+   "Backward compatible with v0.1.0 API"
+  ],
+  "releaseDate": "2026-02-09",
+  "version": "0.3.0"
+ },
+ "compatibility": {
+  "browsers": [
+   "Chrome 69+",
+   "Firefox 62+",
+   "Safari 13+",
+   "Edge 79+"
+  ],
+  "gowm": "1.1.0+",
+  "nodejs": "16.0.0+"
+ },
+ "description": "Secure and complete HTTP client library written in Go and compiled to WebAssembly. Provides an axios-like interface optimized for GoWM integration.",
+ "ecosystem": {
+  "category": "networking",
+  "industry": [
+   "web-development",
+   "fintech",
+   "saas",
+   "e-commerce"
+  ],
+  "relatedModules": [
+   "crypto-wasm"
+  ],
+  "subcategory": "http-client",
+  "useCase": [
+   "api-integration",
+   "data-fetching",
+   "microservices",
+   "web-scraping"
+  ]
+ },
+ "errorHandling": {
+  "description": "Enhanced error handling system compatible with GOWM 1.1.0+",
+  "detection": "if (result.error) { const { code, message, details } = result.error; /* handle structured error */ }",
   "examples": [
-    {
-      "code": "import { loadFromGitHub } from 'gowm';\n\n// Load goxios module from wasm-modules-repository\nconst goxios = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'goxios-wasm',\n  name: 'goxios-wasm',\n  branch: 'master'\n});\n\n// Configure module\ngoxios.call('setSilentMode', true);\n\n// Set global default configuration\nconst defaultConfig = JSON.stringify({\n  timeout: 10000,\n  headers: {\n    'Content-Type': 'application/json',\n    'User-Agent': 'MyApp/1.0'\n  }\n});\ngoxios.call('setDefaults', defaultConfig);\n\n// Make GET request with error handling\nconst response = goxios.call('get', 'https://jsonplaceholder.typicode.com/posts/1');\nif (response.error) {\n  console.error('GET request failed:', response.error);\n} else {\n  console.log('Status:', response.status);\n  console.log('Data:', JSON.parse(response.data));\n  console.log('Headers:', response.headers);\n}",
-      "language": "javascript",
-      "title": "GoWM Integration - Basic HTTP Requests"
-    },
-    {
-      "code": "// Create new post\nconst postData = JSON.stringify({\n  title: 'New Post',\n  body: 'This is the post content',\n  userId: 1\n});\n\nconst postResponse = goxios.call('post', 'https://jsonplaceholder.typicode.com/posts', postData);\nif (postResponse.error) {\n  console.error('POST failed:', postResponse.error);\n} else {\n  const createdPost = JSON.parse(postResponse.data);\n  console.log('Created post ID:', createdPost.id);\n  console.log('Response status:', postResponse.status);\n}\n\n// Update post with PUT\nconst updateData = JSON.stringify({\n  id: 1,\n  title: 'Updated Post Title',\n  body: 'Updated content',\n  userId: 1\n});\n\nconst putResponse = goxios.call('put', 'https://jsonplaceholder.typicode.com/posts/1', updateData);\nif (putResponse.error) {\n  console.error('PUT failed:', putResponse.error);\n} else {\n  console.log('Updated successfully:', JSON.parse(putResponse.data));\n}",
-      "language": "javascript",
-      "title": "POST Request with Data"
-    },
-    {
-      "code": "// Comprehensive HTTP client with robust error handling\nimport { loadFromGitHub } from 'gowm';\n\nclass ApiClient {\n  constructor() {\n    this.goxios = null;\n    this.ready = false;\n    this.requestCount = 0;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.goxios = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'goxios-wasm',\n              name: 'goxios-wasm',\n        branch: 'master'\n      });\n      \n      // Configure for production use\n      this.goxios.call('setSilentMode', true);\n      \n      // Set default configuration\n      const defaultConfig = JSON.stringify({\n        timeout: 10000,\n        headers: { \n          'Content-Type': 'application/json',\n          'User-Agent': 'Goxios-WASM-Client/1.0'\n        }\n      });\n      this.goxios.call('setDefaults', defaultConfig);\n      \n      // Get available functions\n      const functions = this.goxios.call('getAvailableFunctions');\n      console.log('Available HTTP functions:', functions);\n      \n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load Goxios module:', error);\n    }\n  }\n\n  // Safe HTTP request wrapper\n  makeRequest(method, url, data = null, config = null) {\n    if (!this.ready) {\n      throw new Error('Goxios module not ready');\n    }\n    \n    this.requestCount++;\n    console.log(`[Request ${this.requestCount}] ${method.toUpperCase()} ${url}`);\n    \n    let response;\n    if (data && config) {\n      response = this.goxios.call(method, url, data, config);\n    } else if (data) {\n      response = this.goxios.call(method, url, data);\n    } else if (config) {\n      response = this.goxios.call(method, url, config);\n    } else {\n      response = this.goxios.call(method, url);\n    }\n    \n    if (response.error) {\n      throw new Error(`HTTP ${method.toUpperCase()} failed: ${response.error}`);\n    }\n    \n    return response;\n  }\n\n  // REST API methods\n  get(url, config = null) {\n    return this.makeRequest('get', url, null, config);\n  }\n\n  post(url, data, config = null) {\n    return this.makeRequest('post', url, data, config);\n  }\n\n  put(url, data, config = null) {\n    return this.makeRequest('put', url, data, config);\n  }\n\n  delete(url, config = null) {\n    return this.makeRequest('delete', url, null, config);\n  }\n\n  patch(url, data, config = null) {\n    return this.makeRequest('patch', url, data, config);\n  }\n\n  // High-level API operations\n  async fetchPosts(limit = 10) {\n    const response = this.get('https://jsonplaceholder.typicode.com/posts');\n    const posts = JSON.parse(response.data);\n    return posts.slice(0, limit);\n  }\n\n  async createPost(title, body, userId = 1) {\n    const postData = JSON.stringify({ title, body, userId });\n    const response = this.post('https://jsonplaceholder.typicode.com/posts', postData);\n    return JSON.parse(response.data);\n  }\n\n  async updatePost(id, updates) {\n    const updateData = JSON.stringify(updates);\n    const response = this.put(`https://jsonplaceholder.typicode.com/posts/${id}`, updateData);\n    return JSON.parse(response.data);\n  }\n\n  async deletePost(id) {\n    const response = this.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);\n    return response.status === 200;\n  }\n\n  // Statistics and monitoring\n  getStats() {\n    return {\n      ready: this.ready,\n      requestCount: this.requestCount,\n      defaults: this.ready ? this.goxios.call('getDefaults') : null\n    };\n  }\n}\n\n// Usage example\nconst apiClient = new ApiClient();\n\n// Wait for module to load\nsetTimeout(async () => {\n  if (apiClient.ready) {\n    try {\n      // Fetch posts\n      console.log('Fetching posts...');\n      const posts = await apiClient.fetchPosts(5);\n      console.log('Posts fetched:', posts.length);\n      posts.forEach(post => {\n        console.log(`- ${post.title} (User ${post.userId})`);\n      });\n      \n      // Create new post\n      console.log('\\nCreating new post...');\n      const newPost = await apiClient.createPost(\n        'Test Post from Goxios WASM',\n        'This post was created using the Goxios WASM module with GoWM.',\n        1\n      );\n      console.log('Post created:', {\n        id: newPost.id,\n        title: newPost.title,\n        userId: newPost.userId\n      });\n      \n      // Update post\n      console.log('\\nUpdating post...');\n      const updatedPost = await apiClient.updatePost(1, {\n        title: 'Updated Title',\n        body: 'Updated content'\n      });\n      console.log('Post updated:', updatedPost.title);\n      \n      // Statistics\n      console.log('\\nAPI Client Stats:', apiClient.getStats());\n      \n    } catch (error) {\n      console.error('API operation failed:', error.message);\n    }\n  }\n}, 1000);",
-      "language": "javascript",
-      "title": "HTTP Client Integration"
-    },
-    {
-      "code": "// Custom request with full configuration\nconst advancedConfig = JSON.stringify({\n  method: 'POST',\n  url: 'https://api.example.com/data',\n  data: JSON.stringify({ key: 'value' }),\n  headers: {\n    'Authorization': 'Bearer your-token-here',\n    'Content-Type': 'application/json',\n    'X-Custom-Header': 'custom-value'\n  },\n  timeout: 15000\n});\n\nconst response = goxios.call('request', advancedConfig);\nif (response.error) {\n  console.error('Advanced request failed:', response.error);\n} else {\n  console.log('Success - Status:', response.status);\n  console.log('Response headers:', response.headers);\n  console.log('Response data:', response.data);\n}\n\n// Create instance with default configuration\nconst instanceConfig = JSON.stringify({\n  baseURL: 'https://api.example.com',\n  headers: {\n    'Authorization': 'Bearer token',\n    'Content-Type': 'application/json'\n  },\n  timeout: 10000\n});\n\nconst instance = goxios.call('create', instanceConfig);\nif (instance.error) {\n  console.error('Failed to create instance:', instance.error);\n} else {\n  console.log('Instance created successfully');\n  // Use instance.get(), instance.post(), etc. with the default config\n}",
-      "language": "javascript",
-      "title": "Advanced Request Configuration"
-    },
-    {
-      "code": "// Helper function for consistent HTTP error handling\nfunction handleHttpResponse(response, successCallback, errorCallback) {\n  if (response.error) {\n    errorCallback(response.error, response.status || null);\n  } else {\n    successCallback(response.data, response.status, response.headers);\n  }\n}\n\n// Usage examples with different request types\nconst requests = [\n  { method: 'get', url: 'https://jsonplaceholder.typicode.com/posts/1' },\n  { method: 'get', url: 'https://invalid-domain-that-does-not-exist.com' }, // Will fail\n  { method: 'post', url: 'https://jsonplaceholder.typicode.com/posts', data: JSON.stringify({title: 'Test'}) },\n  { method: 'delete', url: 'https://jsonplaceholder.typicode.com/posts/1' }\n];\n\nrequests.forEach((req, index) =\u003e {\n  const response = req.data ? \n    goxios.call(req.method, req.url, req.data) : \n    goxios.call(req.method, req.url);\n  \n  handleHttpResponse(\n    response,\n    (data, status, headers) =\u003e {\n      console.log(`Request ${index + 1} (${req.method.toUpperCase()}) success:`);\n      console.log(`  Status: ${status}`);\n      console.log(`  Data: ${typeof data === 'string' ? data.substring(0, 100) + '...' : data}`);\n    },\n    (error, status) =\u003e {\n      console.error(`Request ${index + 1} (${req.method.toUpperCase()}) failed:`);\n      console.error(`  Error: ${error}`);\n      if (status) console.error(`  Status: ${status}`);\n    }\n  );\n});",
-      "language": "javascript",
-      "title": "Error Handling Patterns"
+   {
+    "cause": "Called request function with malformed URL",
+    "error": {
+     "code": "INVALID_URL",
+     "message": "Invalid URL: scheme must be http or https",
+     "details": {
+      "url": "ftp://example.com",
+      "validSchemes": [
+       "http",
+       "https"
+      ]
+     }
     }
-  ],
-  "fileInfo": {
-    "binarySize": "9.1 MB",
-    "compressedSize": "2.6 MB",
-    "compressionRatio": "72%",
-    "sourceLines": 550
-  },
-  "functions": [
-    {
-      "description": "Make a GET request",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const response = goxios.call('get', 'https://api.example.com/users');\nif (response.error) {\n  console.error('GET request failed:', response.error);\n} else {\n  console.log('Status:', response.status, 'Data:', response.data);\n}",
-      "name": "get",
-      "parameters": [
-        {
-          "description": "The URL to make the request to",
-          "name": "url",
-          "type": "string"
-        },
-        {
-          "description": "Optional JSON configuration string",
-          "name": "config",
-          "optional": true,
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Make a POST request",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const response = goxios.call('post', 'https://api.example.com/users', JSON.stringify({name: 'John'}));\nif (response.error) {\n  console.error('POST failed:', response.error);\n} else {\n  console.log('Created user:', response.data);\n}",
-      "name": "post",
-      "parameters": [
-        {
-          "description": "The URL to make the request to",
-          "name": "url",
-          "type": "string"
-        },
-        {
-          "description": "JSON data to send in the request body",
-          "name": "data",
-          "optional": true,
-          "type": "string"
-        },
-        {
-          "description": "Optional JSON configuration string",
-          "name": "config",
-          "optional": true,
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Make a PUT request",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const response = goxios.call('put', 'https://api.example.com/users/1', JSON.stringify({name: 'John Updated'}));",
-      "name": "put",
-      "parameters": [
-        {
-          "description": "The URL to make the request to",
-          "name": "url",
-          "type": "string"
-        },
-        {
-          "description": "JSON data to send in the request body",
-          "name": "data",
-          "optional": true,
-          "type": "string"
-        },
-        {
-          "description": "Optional JSON configuration string",
-          "name": "config",
-          "optional": true,
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Make a DELETE request",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const response = goxios.call('delete', 'https://api.example.com/users/1');\nif (response.error) {\n  console.error('DELETE failed:', response.error);\n} else {\n  console.log('User deleted successfully');\n}",
-      "name": "delete",
-      "parameters": [
-        {
-          "description": "The URL to make the request to",
-          "name": "url",
-          "type": "string"
-        },
-        {
-          "description": "Optional JSON configuration string",
-          "name": "config",
-          "optional": true,
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Make a PATCH request",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const response = goxios.call('patch', 'https://api.example.com/users/1', JSON.stringify({email: 'new@email.com'}));",
-      "name": "patch",
-      "parameters": [
-        {
-          "description": "The URL to make the request to",
-          "name": "url",
-          "type": "string"
-        },
-        {
-          "description": "JSON data to send in the request body",
-          "name": "data",
-          "optional": true,
-          "type": "string"
-        },
-        {
-          "description": "Optional JSON configuration string",
-          "name": "config",
-          "optional": true,
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Make a generic HTTP request with full configuration",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const config = JSON.stringify({method: 'GET', url: 'https://api.example.com/data', headers: {'Authorization': 'Bearer token'}});\nconst response = goxios.call('request', config);\nif (response.error) {\n  console.error('Request failed:', response.error);\n} else {\n  console.log('Response:', response.data);\n}",
-      "name": "request",
-      "parameters": [
-        {
-          "description": "JSON configuration string with method, url, data, headers, timeout",
-          "name": "config",
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Create a new goxios instance with default configuration",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const instance = goxios.call('create', JSON.stringify({baseURL: 'https://api.example.com', headers: {'Content-Type': 'application/json'}}));",
-      "name": "create",
-      "parameters": [
-        {
-          "description": "JSON configuration string with baseURL, headers, timeout defaults",
-          "name": "config",
-          "optional": true,
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Set global default configuration for all requests",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const result = goxios.call('setDefaults', JSON.stringify({timeout: 10000, headers: {'User-Agent': 'MyApp/1.0'}}));\nconsole.log('Defaults set:', result.success);",
-      "name": "setDefaults",
-      "parameters": [
-        {
-          "description": "JSON configuration string with default settings",
-          "name": "config",
-          "type": "string"
-        }
-      ],
-      "returnType": "object"
-    },
-    {
-      "description": "Get current global default configuration",
-      "errorPattern": "Returns object with 'error' field on failure",
-      "example": "const defaults = goxios.call('getDefaults');\nconsole.log('Current defaults:', defaults.config);",
-      "name": "getDefaults",
-      "parameters": [],
-      "returnType": "object"
-    },
-    {
-      "description": "Enable/disable silent mode for console logs",
-      "example": "goxios.call('setSilentMode', true); // returns true and enables silent mode",
-      "name": "setSilentMode",
-      "parameters": [
-        {
-          "description": "true to enable silent mode, false to disable it",
-          "name": "silent",
-          "type": "boolean"
-        }
-      ],
-      "returnType": "boolean"
-    },
-    {
-      "description": "Get list of all available functions in the module",
-      "example": "const functions = goxios.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);",
-      "name": "getAvailableFunctions",
-      "parameters": [],
-      "returnType": "Array\u003cstring\u003e"
+   },
+   {
+    "cause": "Request exceeded configured timeout duration",
+    "error": {
+     "code": "TIMEOUT",
+     "message": "Network error: connection timeout",
+     "details": {
+      "timeout": 5000,
+      "elapsed": 5001,
+      "url": "https://api.example.com"
+     }
     }
-  ],
-  "gowmConfig": {
-    "autoDetect": true,
-    "errorPattern": "object-based",
-    "preferredFilename": "main.wasm",
-    "readySignal": "__gowm_ready",
-    "standardFunctions": [
-      "getAvailableFunctions",
-      "setSilentMode"
-    ],
-    "supportedBranches": [
-      "master",
-      "stable"
-    ]
-  },
-  "gzipSize": 2726842,
-  "license": "MIT",
-  "name": "goxios-wasm",
-  "performance": {
-    "features": [
-      "Compiled WebAssembly for optimal performance",
-      "Native Go HTTP client implementation",
-      "Connection pooling and reuse",
-      "Efficient memory usage",
-      "Silent mode for production environments",
-      "Optimized for GoWM integration"
-    ]
-  },
-  "quality": {
-    "documentation": "complete",
-    "maintainability": "high",
-    "stability": "stable",
-    "testing": "comprehensive"
-  },
-  "security": {
-    "features": [
-      "CORS-compliant requests",
-      "SSL/TLS certificate validation",
-      "Request/response interceptors",
-      "Timeout protection against hanging requests",
-      "Input validation and sanitization",
-      "Memory-safe Go implementation",
-      "Protection against request smuggling"
-    ]
-  },
-  "size": 9587187,
-  "tags": [
-    "http",
-    "client",
-    "axios",
-    "requests",
-    "api",
-    "wasm",
-    "go",
-    "gowm",
-    "security"
-  ],
-  "types": [
-    {
-      "description": "Standard HTTP response object",
-      "name": "HttpResponse",
-      "properties": {
-        "config": "object (request configuration used)",
-        "data": "any (response body data)",
-        "error": "string (optional, present on failure)",
-        "headers": "object (response headers)",
-        "status": "number (HTTP status code)"
-      }
-    },
-    {
-      "description": "HTTP request configuration object",
-      "name": "RequestConfig",
-      "properties": {
-        "baseURL": "string (optional, base URL for relative requests)",
-        "data": "any (request body data)",
-        "headers": "object (request headers)",
-        "method": "string (HTTP method: GET, POST, PUT, DELETE, PATCH)",
-        "params": "object (URL query parameters)",
-        "timeout": "number (request timeout in milliseconds)",
-        "url": "string (request URL)"
-      }
-    },
-    {
-      "description": "Goxios instance with methods: get(), post(), put(), delete(), patch(), request()",
-      "name": "GoxiosInstance",
-      "properties": {
-        "delete": "function (url, config?) =\u003e HttpResponse",
-        "error": "string (optional, present on failure)",
-        "get": "function (url, config?) =\u003e HttpResponse",
-        "patch": "function (url, data?, config?) =\u003e HttpResponse",
-        "post": "function (url, data?, config?) =\u003e HttpResponse",
-        "put": "function (url, data?, config?) =\u003e HttpResponse",
-        "request": "function (config) =\u003e HttpResponse"
-      }
+   },
+   {
+    "cause": "Memory limit exceeded during request",
+    "error": {
+     "code": "MEMORY_LIMIT",
+     "message": "Operation exceeded memory limit",
+     "details": {
+      "limit": "64MB",
+      "attempted": "128MB",
+      "operation": "downloadFile"
+     }
     }
+   }
   ],
-  "usageStats": {
-    "averageCallTime": "50-500ms",
-    "complexity": "intermediate",
-    "concurrency": "thread-safe",
-    "memoryUsage": "moderate"
+  "pattern": "structured-error"
+ },
+ "examples": [
+  {
+   "code": "import { loadFromGitHub } from 'gowm';\n\n// Load goxios module from wasm-modules-repository\nconst goxios = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'goxios-wasm',\n  name: 'goxios-wasm',\n  branch: 'master'\n});\n\n// Configure module\ngoxios.call('setSilentMode', true);\n\n// Set global default configuration\nconst defaultConfig = JSON.stringify({\n  timeout: 10000,\n  headers: {\n    'Content-Type': 'application/json',\n    'User-Agent': 'MyApp/1.0'\n  }\n});\ngoxios.call('setDefaults', defaultConfig);\n\n// Make GET request with error handling\nconst response = goxios.call('get', 'https://jsonplaceholder.typicode.com/posts/1');\nif (response.error) {\n  console.error('GET request failed:', response.error);\n} else {\n  console.log('Status:', response.status);\n  console.log('Data:', JSON.parse(response.data));\n  console.log('Headers:', response.headers);\n}",
+   "language": "javascript",
+   "title": "GoWM Integration - Basic HTTP Requests"
   },
-  "version": "0.1.0",
-  "wasmConfig": {
-    "filename": "main.wasm",
-    "globalFunctions": true,
-    "goWasmExecRequired": true,
-    "memoryInitialPages": 1024,
-    "memoryMaximumPages": 4096,
-    "readySignal": "__gowm_ready"
+  {
+   "code": "// Create new post\nconst postData = JSON.stringify({\n  title: 'New Post',\n  body: 'This is the post content',\n  userId: 1\n});\n\nconst postResponse = goxios.call('post', 'https://jsonplaceholder.typicode.com/posts', postData);\nif (postResponse.error) {\n  console.error('POST failed:', postResponse.error);\n} else {\n  const createdPost = JSON.parse(postResponse.data);\n  console.log('Created post ID:', createdPost.id);\n  console.log('Response status:', postResponse.status);\n}\n\n// Update post with PUT\nconst updateData = JSON.stringify({\n  id: 1,\n  title: 'Updated Post Title',\n  body: 'Updated content',\n  userId: 1\n});\n\nconst putResponse = goxios.call('put', 'https://jsonplaceholder.typicode.com/posts/1', updateData);\nif (putResponse.error) {\n  console.error('PUT failed:', putResponse.error);\n} else {\n  console.log('Updated successfully:', JSON.parse(putResponse.data));\n}",
+   "language": "javascript",
+   "title": "POST Request with Data"
+  },
+  {
+   "code": "// Comprehensive HTTP client with robust error handling\nimport { loadFromGitHub } from 'gowm';\n\nclass ApiClient {\n  constructor() {\n    this.goxios = null;\n    this.ready = false;\n    this.requestCount = 0;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.goxios = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'goxios-wasm',\n              name: 'goxios-wasm',\n        branch: 'master'\n      });\n      \n      // Configure for production use\n      this.goxios.call('setSilentMode', true);\n      \n      // Set default configuration\n      const defaultConfig = JSON.stringify({\n        timeout: 10000,\n        headers: { \n          'Content-Type': 'application/json',\n          'User-Agent': 'Goxios-WASM-Client/1.0'\n        }\n      });\n      this.goxios.call('setDefaults', defaultConfig);\n      \n      // Get available functions\n      const functions = this.goxios.call('getAvailableFunctions');\n      console.log('Available HTTP functions:', functions);\n      \n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load Goxios module:', error);\n    }\n  }\n\n  // Safe HTTP request wrapper\n  makeRequest(method, url, data = null, config = null) {\n    if (!this.ready) {\n      throw new Error('Goxios module not ready');\n    }\n    \n    this.requestCount++;\n    console.log(`[Request ${this.requestCount}] ${method.toUpperCase()} ${url}`);\n    \n    let response;\n    if (data && config) {\n      response = this.goxios.call(method, url, data, config);\n    } else if (data) {\n      response = this.goxios.call(method, url, data);\n    } else if (config) {\n      response = this.goxios.call(method, url, config);\n    } else {\n      response = this.goxios.call(method, url);\n    }\n    \n    if (response.error) {\n      throw new Error(`HTTP ${method.toUpperCase()} failed: ${response.error}`);\n    }\n    \n    return response;\n  }\n\n  // REST API methods\n  get(url, config = null) {\n    return this.makeRequest('get', url, null, config);\n  }\n\n  post(url, data, config = null) {\n    return this.makeRequest('post', url, data, config);\n  }\n\n  put(url, data, config = null) {\n    return this.makeRequest('put', url, data, config);\n  }\n\n  delete(url, config = null) {\n    return this.makeRequest('delete', url, null, config);\n  }\n\n  patch(url, data, config = null) {\n    return this.makeRequest('patch', url, data, config);\n  }\n\n  // High-level API operations\n  async fetchPosts(limit = 10) {\n    const response = this.get('https://jsonplaceholder.typicode.com/posts');\n    const posts = JSON.parse(response.data);\n    return posts.slice(0, limit);\n  }\n\n  async createPost(title, body, userId = 1) {\n    const postData = JSON.stringify({ title, body, userId });\n    const response = this.post('https://jsonplaceholder.typicode.com/posts', postData);\n    return JSON.parse(response.data);\n  }\n\n  async updatePost(id, updates) {\n    const updateData = JSON.stringify(updates);\n    const response = this.put(`https://jsonplaceholder.typicode.com/posts/${id}`, updateData);\n    return JSON.parse(response.data);\n  }\n\n  async deletePost(id) {\n    const response = this.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);\n    return response.status === 200;\n  }\n\n  // Statistics and monitoring\n  getStats() {\n    return {\n      ready: this.ready,\n      requestCount: this.requestCount,\n      defaults: this.ready ? this.goxios.call('getDefaults') : null\n    };\n  }\n}\n\n// Usage example\nconst apiClient = new ApiClient();\n\n// Wait for module to load\nsetTimeout(async () => {\n  if (apiClient.ready) {\n    try {\n      // Fetch posts\n      console.log('Fetching posts...');\n      const posts = await apiClient.fetchPosts(5);\n      console.log('Posts fetched:', posts.length);\n      posts.forEach(post => {\n        console.log(`- ${post.title} (User ${post.userId})`);\n      });\n      \n      // Create new post\n      console.log('\\nCreating new post...');\n      const newPost = await apiClient.createPost(\n        'Test Post from Goxios WASM',\n        'This post was created using the Goxios WASM module with GoWM.',\n        1\n      );\n      console.log('Post created:', {\n        id: newPost.id,\n        title: newPost.title,\n        userId: newPost.userId\n      });\n      \n      // Update post\n      console.log('\\nUpdating post...');\n      const updatedPost = await apiClient.updatePost(1, {\n        title: 'Updated Title',\n        body: 'Updated content'\n      });\n      console.log('Post updated:', updatedPost.title);\n      \n      // Statistics\n      console.log('\\nAPI Client Stats:', apiClient.getStats());\n      \n    } catch (error) {\n      console.error('API operation failed:', error.message);\n    }\n  }\n}, 1000);",
+   "language": "javascript",
+   "title": "HTTP Client Integration"
+  },
+  {
+   "code": "// Custom request with full configuration\nconst advancedConfig = JSON.stringify({\n  method: 'POST',\n  url: 'https://api.example.com/data',\n  data: JSON.stringify({ key: 'value' }),\n  headers: {\n    'Authorization': 'Bearer your-token-here',\n    'Content-Type': 'application/json',\n    'X-Custom-Header': 'custom-value'\n  },\n  timeout: 15000\n});\n\nconst response = goxios.call('request', advancedConfig);\nif (response.error) {\n  console.error('Advanced request failed:', response.error);\n} else {\n  console.log('Success - Status:', response.status);\n  console.log('Response headers:', response.headers);\n  console.log('Response data:', response.data);\n}\n\n// Create instance with default configuration\nconst instanceConfig = JSON.stringify({\n  baseURL: 'https://api.example.com',\n  headers: {\n    'Authorization': 'Bearer token',\n    'Content-Type': 'application/json'\n  },\n  timeout: 10000\n});\n\nconst instance = goxios.call('create', instanceConfig);\nif (instance.error) {\n  console.error('Failed to create instance:', instance.error);\n} else {\n  console.log('Instance created successfully');\n  // Use instance.get(), instance.post(), etc. with the default config\n}",
+   "language": "javascript",
+   "title": "Advanced Request Configuration"
+  },
+  {
+   "code": "// Helper function for consistent HTTP error handling\nfunction handleHttpResponse(response, successCallback, errorCallback) {\n  if (response.error) {\n    errorCallback(response.error, response.status || null);\n  } else {\n    successCallback(response.data, response.status, response.headers);\n  }\n}\n\n// Usage examples with different request types\nconst requests = [\n  { method: 'get', url: 'https://jsonplaceholder.typicode.com/posts/1' },\n  { method: 'get', url: 'https://invalid-domain-that-does-not-exist.com' }, // Will fail\n  { method: 'post', url: 'https://jsonplaceholder.typicode.com/posts', data: JSON.stringify({title: 'Test'}) },\n  { method: 'delete', url: 'https://jsonplaceholder.typicode.com/posts/1' }\n];\n\nrequests.forEach((req, index) => {\n  const response = req.data ? \n    goxios.call(req.method, req.url, req.data) : \n    goxios.call(req.method, req.url);\n  \n  handleHttpResponse(\n    response,\n    (data, status, headers) => {\n      console.log(`Request ${index + 1} (${req.method.toUpperCase()}) success:`);\n      console.log(`  Status: ${status}`);\n      console.log(`  Data: ${typeof data === 'string' ? data.substring(0, 100) + '...' : data}`);\n    },\n    (error, status) => {\n      console.error(`Request ${index + 1} (${req.method.toUpperCase()}) failed:`);\n      console.error(`  Error: ${error}`);\n      if (status) console.error(`  Status: ${status}`);\n    }\n  );\n});",
+   "language": "javascript",
+   "title": "Error Handling Patterns"
   }
+ ],
+ "fileInfo": {
+  "binarySize": "9.1 MB",
+  "compressedSize": "2.6 MB",
+  "compressionRatio": "72%",
+  "sourceLines": 550
+ },
+ "functions": [
+  {
+   "description": "Make a GET request",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const response = goxios.call('get', 'https://api.example.com/users');\nif (response.error) {\n  console.error('GET request failed:', response.error);\n} else {\n  console.log('Status:', response.status, 'Data:', response.data);\n}",
+   "name": "get",
+   "parameters": [
+    {
+     "description": "The URL to make the request to",
+     "name": "url",
+     "type": "string"
+    },
+    {
+     "description": "Optional JSON configuration string",
+     "name": "config",
+     "optional": true,
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Make a POST request",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const response = goxios.call('post', 'https://api.example.com/users', JSON.stringify({name: 'John'}));\nif (response.error) {\n  console.error('POST failed:', response.error);\n} else {\n  console.log('Created user:', response.data);\n}",
+   "name": "post",
+   "parameters": [
+    {
+     "description": "The URL to make the request to",
+     "name": "url",
+     "type": "string"
+    },
+    {
+     "description": "JSON data to send in the request body",
+     "name": "data",
+     "optional": true,
+     "type": "string"
+    },
+    {
+     "description": "Optional JSON configuration string",
+     "name": "config",
+     "optional": true,
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Make a PUT request",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const response = goxios.call('put', 'https://api.example.com/users/1', JSON.stringify({name: 'John Updated'}));",
+   "name": "put",
+   "parameters": [
+    {
+     "description": "The URL to make the request to",
+     "name": "url",
+     "type": "string"
+    },
+    {
+     "description": "JSON data to send in the request body",
+     "name": "data",
+     "optional": true,
+     "type": "string"
+    },
+    {
+     "description": "Optional JSON configuration string",
+     "name": "config",
+     "optional": true,
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Make a DELETE request",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const response = goxios.call('delete', 'https://api.example.com/users/1');\nif (response.error) {\n  console.error('DELETE failed:', response.error);\n} else {\n  console.log('User deleted successfully');\n}",
+   "name": "delete",
+   "parameters": [
+    {
+     "description": "The URL to make the request to",
+     "name": "url",
+     "type": "string"
+    },
+    {
+     "description": "Optional JSON configuration string",
+     "name": "config",
+     "optional": true,
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Make a PATCH request",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const response = goxios.call('patch', 'https://api.example.com/users/1', JSON.stringify({email: 'new@email.com'}));",
+   "name": "patch",
+   "parameters": [
+    {
+     "description": "The URL to make the request to",
+     "name": "url",
+     "type": "string"
+    },
+    {
+     "description": "JSON data to send in the request body",
+     "name": "data",
+     "optional": true,
+     "type": "string"
+    },
+    {
+     "description": "Optional JSON configuration string",
+     "name": "config",
+     "optional": true,
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Make a generic HTTP request with full configuration",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const config = JSON.stringify({method: 'GET', url: 'https://api.example.com/data', headers: {'Authorization': 'Bearer token'}});\nconst response = goxios.call('request', config);\nif (response.error) {\n  console.error('Request failed:', response.error);\n} else {\n  console.log('Response:', response.data);\n}",
+   "name": "request",
+   "parameters": [
+    {
+     "description": "JSON configuration string with method, url, data, headers, timeout",
+     "name": "config",
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Create a new goxios instance with default configuration",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const instance = goxios.call('create', JSON.stringify({baseURL: 'https://api.example.com', headers: {'Content-Type': 'application/json'}}));",
+   "name": "create",
+   "parameters": [
+    {
+     "description": "JSON configuration string with baseURL, headers, timeout defaults",
+     "name": "config",
+     "optional": true,
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Set global default configuration for all requests",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const result = goxios.call('setDefaults', JSON.stringify({timeout: 10000, headers: {'User-Agent': 'MyApp/1.0'}}));\nconsole.log('Defaults set:', result.success);",
+   "name": "setDefaults",
+   "parameters": [
+    {
+     "description": "JSON configuration string with default settings",
+     "name": "config",
+     "type": "string"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Get current global default configuration",
+   "errorPattern": "Returns object with 'error' field on failure",
+   "example": "const defaults = goxios.call('getDefaults');\nconsole.log('Current defaults:', defaults.config);",
+   "name": "getDefaults",
+   "parameters": [],
+   "returnType": "object"
+  },
+  {
+   "description": "Add a request interceptor function called before every HTTP request",
+   "errorPattern": "Returns object with 'error' field if argument is not a function",
+   "example": "const result = goxios.call('addRequestInterceptor', (config) => { config.headers = { ...config.headers, 'X-Custom': 'value' }; return config; });\n// result: { success: true, count: 1 }",
+   "name": "addRequestInterceptor",
+   "parameters": [
+    {
+     "description": "Function(config) => config called before each request",
+     "name": "interceptorFn",
+     "type": "Function"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Add a response interceptor function called after every HTTP response",
+   "errorPattern": "Returns object with 'error' field if argument is not a function",
+   "example": "const result = goxios.call('addResponseInterceptor', (response) => { console.log('status:', response.status); return response; });\n// result: { success: true, count: 1 }",
+   "name": "addResponseInterceptor",
+   "parameters": [
+    {
+     "description": "Function(response) => response called after each response",
+     "name": "interceptorFn",
+     "type": "Function"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Remove all registered request and response interceptors",
+   "errorPattern": "Always succeeds",
+   "example": "const result = goxios.call('clearInterceptors');\n// result: { success: true, requestCleared: 1, responseCleared: 1 }",
+   "name": "clearInterceptors",
+   "parameters": [],
+   "returnType": "object"
+  },
+  {
+   "description": "Get the current state of the circuit breaker (closed, open, or half-open)",
+   "errorPattern": "Always succeeds",
+   "example": "const state = goxios.call('getCircuitBreakerState');\n// state: { state: 'closed', failureCount: 0, successCount: 0, threshold: 5, timeout: 30000 }",
+   "name": "getCircuitBreakerState",
+   "parameters": [],
+   "returnType": "object"
+  },
+  {
+   "description": "Manually reset the circuit breaker to the closed (normal) state",
+   "errorPattern": "Always succeeds",
+   "example": "const result = goxios.call('resetCircuitBreaker');\n// result: { success: true, oldState: 'open', newState: 'closed' }",
+   "name": "resetCircuitBreaker",
+   "parameters": [],
+   "returnType": "object"
+  },
+  {
+   "description": "Configure the circuit breaker failure threshold and recovery timeout",
+   "errorPattern": "Returns object with 'error' field if config is missing",
+   "example": "const result = goxios.call('configureCircuitBreaker', { threshold: 5, timeout: 30000 });\n// result: { success: true, threshold: 5, timeout: 30000 }",
+   "name": "configureCircuitBreaker",
+   "parameters": [
+    {
+     "description": "Configuration object with optional 'threshold' (failure count to open) and 'timeout' (ms before half-open retry)",
+     "name": "config",
+     "type": "object"
+    }
+   ],
+   "returnType": "object"
+  },
+  {
+   "description": "Enable/disable silent mode for console logs",
+   "example": "goxios.call('setSilentMode', true); // returns true and enables silent mode",
+   "name": "setSilentMode",
+   "parameters": [
+    {
+     "description": "true to enable silent mode, false to disable it",
+     "name": "silent",
+     "type": "boolean"
+    }
+   ],
+   "returnType": "boolean"
+  },
+  {
+   "description": "Get list of all available functions in the module",
+   "example": "const functions = goxios.call('getAvailableFunctions');\nconsole.log('Available functions:', functions);",
+   "name": "getAvailableFunctions",
+   "parameters": [],
+   "returnType": "Array<string>"
+  }
+ ],
+ "gowmConfig": {
+  "autoDetect": true,
+  "errorPattern": "object-based",
+  "preferredFilename": "main.wasm",
+  "readySignal": "__gowm_ready",
+  "standardFunctions": [
+   "getAvailableFunctions",
+   "setSilentMode"
+  ],
+  "supportedBranches": [
+   "master",
+   "stable"
+  ]
+ },
+ "gzipSize": 2726842,
+ "license": "MIT",
+ "name": "goxios-wasm",
+ "performance": {
+  "features": [
+   "Compiled WebAssembly for optimal performance",
+   "Native Go HTTP client implementation",
+   "Connection pooling and reuse",
+   "Efficient memory usage",
+   "Silent mode for production environments",
+   "Optimized for GoWM integration"
+  ]
+ },
+ "quality": {
+  "documentation": "complete",
+  "maintainability": "high",
+  "stability": "stable",
+  "testing": "comprehensive"
+ },
+ "security": {
+  "features": [
+   "CORS-compliant requests",
+   "SSL/TLS certificate validation",
+   "Request/response interceptors",
+   "Timeout protection against hanging requests",
+   "Input validation and sanitization",
+   "Memory-safe Go implementation",
+   "Protection against request smuggling"
+  ]
+ },
+ "size": 9587187,
+ "tags": [
+  "http",
+  "client",
+  "axios",
+  "requests",
+  "api",
+  "wasm",
+  "go",
+  "gowm",
+  "security"
+ ],
+ "types": [
+  {
+   "description": "Standard HTTP response object",
+   "name": "HttpResponse",
+   "properties": {
+    "config": "object (request configuration used)",
+    "data": "any (response body data)",
+    "error": "string (optional, present on failure)",
+    "headers": "object (response headers)",
+    "status": "number (HTTP status code)"
+   }
+  },
+  {
+   "description": "HTTP request configuration object",
+   "name": "RequestConfig",
+   "properties": {
+    "baseURL": "string (optional, base URL for relative requests)",
+    "data": "any (request body data)",
+    "headers": "object (request headers)",
+    "method": "string (HTTP method: GET, POST, PUT, DELETE, PATCH)",
+    "params": "object (URL query parameters)",
+    "timeout": "number (request timeout in milliseconds)",
+    "url": "string (request URL)"
+   }
+  },
+  {
+   "description": "Goxios instance with methods: get(), post(), put(), delete(), patch(), request()",
+   "name": "GoxiosInstance",
+   "properties": {
+    "delete": "function (url, config?) => HttpResponse",
+    "error": "string (optional, present on failure)",
+    "get": "function (url, config?) => HttpResponse",
+    "patch": "function (url, data?, config?) => HttpResponse",
+    "post": "function (url, data?, config?) => HttpResponse",
+    "put": "function (url, data?, config?) => HttpResponse",
+    "request": "function (config) => HttpResponse"
+   }
+  }
+ ],
+ "usageStats": {
+  "averageCallTime": "50-500ms",
+  "complexity": "intermediate",
+  "concurrency": "thread-safe",
+  "memoryUsage": "moderate"
+ },
+ "version": "0.1.0",
+ "wasmConfig": {
+  "filename": "main.wasm",
+  "globalFunctions": true,
+  "goWasmExecRequired": true,
+  "memoryInitialPages": 1024,
+  "memoryMaximumPages": 4096,
+  "readySignal": "__gowm_ready"
+ }
 }

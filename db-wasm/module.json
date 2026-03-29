@@ -1,497 +1,505 @@
 {
-    "name": "db-wasm",
-    "version": "0.1.0",
-    "description": "A lightweight local file-based database module for WASM, storing data in localStorage with full CRUD operations",
-    "author": "Ben",
-    "language": "Go",
-    "buildTime": 1739103000,
-    "buildInfo": {
-        "buildCommand": "wasm-manager build",
-        "buildTime": "2026-02-09T14:30:00+02:00",
-        "compilerFlags": [
-            "GOOS=js",
-            "GOARCH=wasm",
-            "CGO_ENABLED=0",
-            "-ldflags=-s -w -buildid=",
-            "-trimpath",
-            "-buildmode=default",
-            "-tags=netgo,osusergo",
-            "-a",
-            "-gcflags=-l=4 -B",
-            "wasm-opt=-Oz --enable-bulk-memory"
-        ],
-        "dependencies": [],
-        "goModule": true,
-        "goVersion": "1.24.3",
-        "language": "Go",
-        "lastModified": "2026-02-09T14:30:00+02:00",
-        "optimizations": [
-            "Strip debugging symbols (-ldflags=\"-s -w\")",
-            "Trim path information (-trimpath)",
-            "Disable CGO for security",
-            "wasm-opt optimization when available"
-        ],
-        "outputFile": "main.wasm",
-        "target": "js/wasm",
-        "wasmOptUsed": true
+ "name": "db-wasm",
+ "version": "0.1.0",
+ "description": "A lightweight local file-based database module for WASM, storing data in localStorage with full CRUD operations",
+ "author": "Ben",
+ "language": "Go",
+ "buildTime": 1739103000,
+ "buildInfo": {
+  "buildCommand": "wasm-manager build",
+  "buildTime": "2026-02-09T14:30:00+02:00",
+  "compilerFlags": [
+   "GOOS=js",
+   "GOARCH=wasm",
+   "CGO_ENABLED=0",
+   "-ldflags=-s -w -buildid=",
+   "-trimpath",
+   "-buildmode=default",
+   "-tags=netgo,osusergo",
+   "-a",
+   "-gcflags=-l=4 -B",
+   "wasm-opt=-Oz --enable-bulk-memory"
+  ],
+  "dependencies": [],
+  "goModule": true,
+  "goVersion": "1.24.3",
+  "language": "Go",
+  "lastModified": "2026-02-09T14:30:00+02:00",
+  "optimizations": [
+   "Strip debugging symbols (-ldflags=\"-s -w\")",
+   "Trim path information (-trimpath)",
+   "Disable CGO for security",
+   "wasm-opt optimization when available"
+  ],
+  "outputFile": "main.wasm",
+  "target": "js/wasm",
+  "wasmOptUsed": true
+ },
+ "changelog": {
+  "version": "0.1.0",
+  "releaseDate": "2026-02-09",
+  "changes": [
+   "Initial release of db-wasm module",
+   "Implemented create/open database functionality",
+   "Added insert, update, and delete operations",
+   "Implemented data retrieval by key",
+   "Added list all keys functionality",
+   "Added get all data functionality",
+   "Implemented clear database operation",
+   "Added delete database functionality",
+   "Implemented export database to JSON",
+   "Added import database from JSON with merge/replace options",
+   "Added database statistics (entries count, storage size)",
+   "Implemented localStorage persistence",
+   "Added silent mode for console logging",
+   "Comprehensive error handling with structured responses"
+  ]
+ },
+ "compatibility": {
+  "browsers": [
+   "Chrome 57+",
+   "Firefox 52+",
+   "Safari 11+",
+   "Edge 16+"
+  ],
+  "gowm": "1.1.0+",
+  "nodejs": false,
+  "environments": [
+   "Browser with localStorage support"
+  ]
+ },
+ "errorHandling": {
+  "description": "Database module returns objects with 'success' field. Check success=true for valid operations, success=false with 'error' field on failure",
+  "detection": "if (!result.success) { /* handle error: result.error */ } else { /* use result.data */ }",
+  "examples": [
+   {
+    "cause": "Called getData() on non-existent database",
+    "error": "Database 'dbname' does not exist"
+   },
+   {
+    "cause": "Called getData() with non-existent key",
+    "error": "Key 'keyname' not found in database"
+   },
+   {
+    "cause": "Called importDatabase() with invalid JSON",
+    "error": "Invalid JSON format"
+   },
+   {
+    "cause": "Called with missing required parameter",
+    "error": "Invalid parameters"
+   }
+  ],
+  "pattern": "object-based with success flag"
+ },
+ "ecosystem": {
+  "category": "data-storage",
+  "industry": [
+   "web-development",
+   "offline-first",
+   "progressive-web-apps",
+   "data-management"
+  ],
+  "relatedModules": [
+   "jsonxml-wasm"
+  ],
+  "subcategory": "local-database",
+  "useCase": [
+   "offline-storage",
+   "client-side-database",
+   "browser-persistence",
+   "data-backup",
+   "local-cache"
+  ]
+ },
+ "features": [
+  "Local file-based database using localStorage",
+  "Create and manage multiple databases",
+  "Full CRUD operations (Create, Read, Update, Delete)",
+  "Support for multiple data types (string, number, boolean, objects)",
+  "Export/Import database as JSON",
+  "Database statistics and monitoring",
+  "Persistent storage across sessions",
+  "Silent mode for production use",
+  "Structured response format with timestamps",
+  "Error handling and validation"
+ ],
+ "functions": [
+  {
+   "name": "createDatabase",
+   "description": "Create a new database or open an existing one",
+   "parameters": [
+    {
+     "name": "name",
+     "type": "string",
+     "description": "Name of the database to create/open"
+    }
+   ],
+   "returns": "Object with success status, message, and database info"
+  },
+  {
+   "name": "insertData",
+   "description": "Insert or update a key-value pair in the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
     },
-    "changelog": {
-        "version": "0.1.0",
-        "releaseDate": "2026-02-09",
-        "changes": [
-            "Initial release of db-wasm module",
-            "Implemented create/open database functionality",
-            "Added insert, update, and delete operations",
-            "Implemented data retrieval by key",
-            "Added list all keys functionality",
-            "Added get all data functionality",
-            "Implemented clear database operation",
-            "Added delete database functionality",
-            "Implemented export database to JSON",
-            "Added import database from JSON with merge/replace options",
-            "Added database statistics (entries count, storage size)",
-            "Implemented localStorage persistence",
-            "Added silent mode for console logging",
-            "Comprehensive error handling with structured responses"
-        ]
+    {
+     "name": "key",
+     "type": "string",
+     "description": "Key to insert/update"
     },
-    "compatibility": {
-        "browsers": [
-            "Chrome 57+",
-            "Firefox 52+",
-            "Safari 11+",
-            "Edge 16+"
-        ],
-        "gowm": "1.1.0+",
-        "nodejs": false,
-        "environments": [
-            "Browser with localStorage support"
-        ]
+    {
+     "name": "value",
+     "type": "any",
+     "description": "Value to store (string, number, boolean, or object)"
+    }
+   ],
+   "returns": "Object with success status and inserted data"
+  },
+  {
+   "name": "getData",
+   "description": "Retrieve a value by key from the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
     },
-    "errorHandling": {
-        "description": "Database module returns objects with 'success' field. Check success=true for valid operations, success=false with 'error' field on failure",
-        "detection": "if (!result.success) { /* handle error: result.error */ } else { /* use result.data */ }",
-        "examples": [
-            {
-                "cause": "Called getData() on non-existent database",
-                "error": "Database 'dbname' does not exist"
-            },
-            {
-                "cause": "Called getData() with non-existent key",
-                "error": "Key 'keyname' not found in database"
-            },
-            {
-                "cause": "Called importDatabase() with invalid JSON",
-                "error": "Invalid JSON format"
-            },
-            {
-                "cause": "Called with missing required parameter",
-                "error": "Invalid parameters"
-            }
-        ],
-        "pattern": "object-based with success flag"
+    {
+     "name": "key",
+     "type": "string",
+     "description": "Key to retrieve"
+    }
+   ],
+   "returns": "Object with success status and retrieved value"
+  },
+  {
+   "name": "deleteData",
+   "description": "Remove a key-value pair from the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
     },
-    "ecosystem": {
-        "category": "data-storage",
-        "industry": [
-            "web-development",
-            "offline-first",
-            "progressive-web-apps",
-            "data-management"
-        ],
-        "relatedModules": [
-            "jsonxml-wasm"
-        ],
-        "subcategory": "local-database",
-        "useCase": [
-            "offline-storage",
-            "client-side-database",
-            "browser-persistence",
-            "data-backup",
-            "local-cache"
-        ]
+    {
+     "name": "key",
+     "type": "string",
+     "description": "Key to delete"
+    }
+   ],
+   "returns": "Object with success status and deleted key"
+  },
+  {
+   "name": "listKeys",
+   "description": "Returns all keys in the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
+    }
+   ],
+   "returns": "Object with success status, array of keys, and count"
+  },
+  {
+   "name": "getAllData",
+   "description": "Returns all data in the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
+    }
+   ],
+   "returns": "Object with success status, all data, and count"
+  },
+  {
+   "name": "clearDatabase",
+   "description": "Removes all data from the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
+    }
+   ],
+   "returns": "Object with success status and deleted count"
+  },
+  {
+   "name": "deleteDatabase",
+   "description": "Removes the database entirely from storage",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database to delete"
+    }
+   ],
+   "returns": "Object with success status"
+  },
+  {
+   "name": "exportDatabase",
+   "description": "Exports the database as JSON string",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database to export"
+    }
+   ],
+   "returns": "Object with success status and JSON data string"
+  },
+  {
+   "name": "importDatabase",
+   "description": "Imports data from JSON into the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
     },
-    "features": [
-        "Local file-based database using localStorage",
-        "Create and manage multiple databases",
-        "Full CRUD operations (Create, Read, Update, Delete)",
-        "Support for multiple data types (string, number, boolean, objects)",
-        "Export/Import database as JSON",
-        "Database statistics and monitoring",
-        "Persistent storage across sessions",
-        "Silent mode for production use",
-        "Structured response format with timestamps",
-        "Error handling and validation"
-    ],
-    "functions": [
-        {
-            "name": "createDatabase",
-            "description": "Create a new database or open an existing one",
-            "parameters": [
-                {
-                    "name": "name",
-                    "type": "string",
-                    "description": "Name of the database to create/open"
-                }
-            ],
-            "returns": "Object with success status, message, and database info"
-        },
-        {
-            "name": "insertData",
-            "description": "Insert or update a key-value pair in the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                },
-                {
-                    "name": "key",
-                    "type": "string",
-                    "description": "Key to insert/update"
-                },
-                {
-                    "name": "value",
-                    "type": "any",
-                    "description": "Value to store (string, number, boolean, or object)"
-                }
-            ],
-            "returns": "Object with success status and inserted data"
-        },
-        {
-            "name": "getData",
-            "description": "Retrieve a value by key from the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                },
-                {
-                    "name": "key",
-                    "type": "string",
-                    "description": "Key to retrieve"
-                }
-            ],
-            "returns": "Object with success status and retrieved value"
-        },
-        {
-            "name": "deleteData",
-            "description": "Remove a key-value pair from the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                },
-                {
-                    "name": "key",
-                    "type": "string",
-                    "description": "Key to delete"
-                }
-            ],
-            "returns": "Object with success status and deleted key"
-        },
-        {
-            "name": "listKeys",
-            "description": "Returns all keys in the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                }
-            ],
-            "returns": "Object with success status, array of keys, and count"
-        },
-        {
-            "name": "getAllData",
-            "description": "Returns all data in the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                }
-            ],
-            "returns": "Object with success status, all data, and count"
-        },
-        {
-            "name": "clearDatabase",
-            "description": "Removes all data from the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                }
-            ],
-            "returns": "Object with success status and deleted count"
-        },
-        {
-            "name": "deleteDatabase",
-            "description": "Removes the database entirely from storage",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database to delete"
-                }
-            ],
-            "returns": "Object with success status"
-        },
-        {
-            "name": "exportDatabase",
-            "description": "Exports the database as JSON string",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database to export"
-                }
-            ],
-            "returns": "Object with success status and JSON data string"
-        },
-        {
-            "name": "importDatabase",
-            "description": "Imports data from JSON into the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                },
-                {
-                    "name": "jsonData",
-                    "type": "string",
-                    "description": "JSON string to import"
-                },
-                {
-                    "name": "replace",
-                    "type": "boolean",
-                    "optional": true,
-                    "description": "If true, replaces all data; if false, merges with existing data (default: false)"
-                }
-            ],
-            "returns": "Object with success status, imported count, and total count"
-        },
-        {
-            "name": "getStats",
-            "description": "Returns statistics about the database",
-            "parameters": [
-                {
-                    "name": "dbName",
-                    "type": "string",
-                    "description": "Name of the database"
-                }
-            ],
-            "returns": "Object with database statistics (name, entries, storage size)"
-        },
-        {
-            "name": "setSilentMode",
-            "description": "Enable or disable console logging",
-            "parameters": [
-                {
-                    "name": "enabled",
-                    "type": "boolean",
-                    "description": "True to enable silent mode, false to disable"
-                }
-            ],
-            "returns": "Current silent mode state"
-        }
-    ],
-    "examples": [
-        {
-            "title": "GoWM Integration - Create and Use Database",
-            "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\n// Load db module from wasm-modules-repository\nconst db = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'db-wasm',\n  name: 'db-wasm',\n  branch: 'master'\n});\n\n// Configure module\ndb.call('setSilentMode', true);\n\n// Create a new database\nconst createResult = db.call('createDatabase', 'mydb');\nif (createResult.success) {\n  console.log('Database created:', createResult.message);\n}\n\n// Insert data - supports all types\ndb.call('insertData', 'mydb', 'username', 'john_doe');\ndb.call('insertData', 'mydb', 'age', 25);\ndb.call('insertData', 'mydb', 'settings', {theme: 'dark', lang: 'fr'});\ndb.call('insertData', 'mydb', 'active', true);\n\n// Get data\nconst user = db.call('getData', 'mydb', 'username');\nif (user.success) {\n  console.log('Username:', user.data.value); // 'john_doe'\n}\n\n// List all keys\nconst keys = db.call('listKeys', 'mydb');\nconsole.log('Keys:', keys.data.keys); // ['username', 'age', 'settings', 'active']\nconsole.log('Count:', keys.data.count); // 4"
-        },
-        {
-            "title": "Export and Import Database",
-            "language": "javascript",
-            "code": "// Export database to JSON\nconst exported = db.call('exportDatabase', 'mydb');\nif (exported.success) {\n  const jsonData = exported.data.data;\n  console.log('Exported data:', jsonData);\n  \n  // Save to file or send to server\n  const blob = new Blob([jsonData], {type: 'application/json'});\n  const url = URL.createObjectURL(blob);\n  const link = document.createElement('a');\n  link.href = url;\n  link.download = 'mydb-export.json';\n  link.click();\n}\n\n// Create new database and import\ndb.call('createDatabase', 'backup');\n\n// Import with merge (keeps existing data)\nconst importResult = db.call('importDatabase', 'backup', jsonData, false);\nconsole.log('Imported:', importResult.data.imported, 'entries');\n\n// Or import with replace (clears existing data)\ndb.call('importDatabase', 'backup', jsonData, true);\n\n// Get database statistics\nconst stats = db.call('getStats', 'backup');\nconsole.log('Database stats:', {\n  name: stats.data.name,\n  entries: stats.data.entries,\n  size: stats.data.storageSizeKB + ' KB'\n});"
-        },
-        {
-            "title": "Complete CRUD Operations",
-            "language": "javascript",
-            "code": "// Create database\ndb.call('createDatabase', 'users');\n\n// CREATE - Insert multiple users\ndb.call('insertData', 'users', 'user1', {\n  name: 'Alice',\n  email: 'alice@example.com',\n  role: 'admin',\n  createdAt: new Date().toISOString()\n});\ndb.call('insertData', 'users', 'user2', {\n  name: 'Bob',\n  email: 'bob@example.com',\n  role: 'user',\n  createdAt: new Date().toISOString()\n});\n\n// READ - Get specific user\nconst alice = db.call('getData', 'users', 'user1');\nif (alice.success) {\n  console.log('User:', alice.data.value.name);\n  console.log('Role:', alice.data.value.role);\n}\n\n// UPDATE - Modify user\ndb.call('insertData', 'users', 'user1', {\n  name: 'Alice',\n  email: 'alice@example.com',\n  role: 'superadmin',  // Updated role\n  updatedAt: new Date().toISOString()\n});\n\n// DELETE - Remove user\nconst deleted = db.call('deleteData', 'users', 'user2');\nif (deleted.success) {\n  console.log('Deleted:', deleted.data.key);\n}\n\n// GET ALL - Retrieve all users\nconst allUsers = db.call('getAllData', 'users');\nconsole.log('All users:', allUsers.data.data);\nconsole.log('Total count:', allUsers.data.count);"
-        },
-        {
-            "title": "Database Manager Class",
-            "language": "javascript",
-            "code": "import { loadFromGitHub } from 'gowm';\n\nclass DatabaseManager {\n  constructor() {\n    this.db = null;\n    this.ready = false;\n    this.currentDatabase = null;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.db = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'db-wasm',\n              name: 'db-wasm'\n      });\n      \n      // Configure for production use\n      this.db.call('setSilentMode', true);\n      \n      // Get available functions\n      const functions = this.db.call('getAvailableFunctions');\n      console.log('Available db functions:', functions);\n      \n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load db module:', error);\n    }\n  }\n\n  // Initialize or open database\n  useDatabase(name) {\n    if (!this.ready) throw new Error('Database module not ready');\n    \n    const result = this.db.call('createDatabase', name);\n    if (result.success) {\n      this.currentDatabase = name;\n    }\n    return result;\n  }\n\n  // CRUD operations on current database\n  set(key, value) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('insertData', this.currentDatabase, key, value);\n  }\n\n  get(key) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('getData', this.currentDatabase, key);\n    return result.success ? result.data.value : null;\n  }\n\n  delete(key) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('deleteData', this.currentDatabase, key);\n  }\n\n  keys() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('listKeys', this.currentDatabase);\n    return result.success ? result.data.keys : [];\n  }\n\n  all() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('getAllData', this.currentDatabase);\n    return result.success ? result.data.data : {};\n  }\n\n  clear() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('clearDatabase', this.currentDatabase);\n  }\n\n  stats() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('getStats', this.currentDatabase);\n    return result.success ? result.data : null;\n  }\n\n  // Export/Import utilities\n  export() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('exportDatabase', this.currentDatabase);\n    return result.success ? result.data.data : null;\n  }\n\n  import(jsonData, replace = false) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('importDatabase', this.currentDatabase, jsonData, replace);\n  }\n}\n\n// Usage example\nconst dbManager = new DatabaseManager();\n\n// Wait for module to load\nsetTimeout(() => {\n  if (dbManager.ready) {\n    // Use database\n    dbManager.useDatabase('myapp');\n    \n    // Set data\n    dbManager.set('config', {theme: 'dark', language: 'fr'});\n    dbManager.set('user', {name: 'Alice', id: 123});\n    \n    // Get data\n    console.log('Config:', dbManager.get('config'));\n    console.log('User:', dbManager.get('user'));\n    \n    // List all keys\n    console.log('All keys:', dbManager.keys());\n    \n    // Get all data\n    console.log('All data:', dbManager.all());\n    \n    // Database stats\n    console.log('Stats:', dbManager.stats());\n    \n    // Export data\n    const exported = dbManager.export();\n    console.log('Exported:', exported);\n  }\n}, 1000);"
-        }
-    ],
-    "fileInfo": {
-        "binarySize": "3.1 MB",
-        "compressedSize": "879 KB",
-        "compressionRatio": "72%",
-        "sourceLines": 531
+    {
+     "name": "jsonData",
+     "type": "string",
+     "description": "JSON string to import"
     },
-    "gowmConfig": {
-        "autoDetect": true,
-        "errorPattern": "object-based",
-        "preferredFilename": "main.wasm",
-        "readySignal": "__gowm_ready",
-        "standardFunctions": [
-            "getAvailableFunctions",
-            "setSilentMode"
-        ],
-        "supportedBranches": [
-            "master",
-            "stable"
-        ]
+    {
+     "name": "replace",
+     "type": "boolean",
+     "optional": true,
+     "description": "If true, replaces all data; if false, merges with existing data (default: false)"
+    }
+   ],
+   "returns": "Object with success status, imported count, and total count"
+  },
+  {
+   "name": "getStats",
+   "description": "Returns statistics about the database",
+   "parameters": [
+    {
+     "name": "dbName",
+     "type": "string",
+     "description": "Name of the database"
+    }
+   ],
+   "returns": "Object with database statistics (name, entries, storage size)"
+  },
+  {
+   "name": "setSilentMode",
+   "description": "Enable or disable console logging",
+   "parameters": [
+    {
+     "name": "enabled",
+     "type": "boolean",
+     "description": "True to enable silent mode, false to disable"
+    }
+   ],
+   "returns": "Current silent mode state"
+  },
+  {
+   "description": "Get list of all available functions in the module",
+   "errorPattern": "Always succeeds",
+   "example": "const functions = db.call('getAvailableFunctions');",
+   "name": "getAvailableFunctions",
+   "parameters": [],
+   "returnType": "Array<string>"
+  }
+ ],
+ "examples": [
+  {
+   "title": "GoWM Integration - Create and Use Database",
+   "language": "javascript",
+   "code": "import { loadFromGitHub } from 'gowm';\n\n// Load db module from wasm-modules-repository\nconst db = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n  path: 'db-wasm',\n  name: 'db-wasm',\n  branch: 'master'\n});\n\n// Configure module\ndb.call('setSilentMode', true);\n\n// Create a new database\nconst createResult = db.call('createDatabase', 'mydb');\nif (createResult.success) {\n  console.log('Database created:', createResult.message);\n}\n\n// Insert data - supports all types\ndb.call('insertData', 'mydb', 'username', 'john_doe');\ndb.call('insertData', 'mydb', 'age', 25);\ndb.call('insertData', 'mydb', 'settings', {theme: 'dark', lang: 'fr'});\ndb.call('insertData', 'mydb', 'active', true);\n\n// Get data\nconst user = db.call('getData', 'mydb', 'username');\nif (user.success) {\n  console.log('Username:', user.data.value); // 'john_doe'\n}\n\n// List all keys\nconst keys = db.call('listKeys', 'mydb');\nconsole.log('Keys:', keys.data.keys); // ['username', 'age', 'settings', 'active']\nconsole.log('Count:', keys.data.count); // 4"
+  },
+  {
+   "title": "Export and Import Database",
+   "language": "javascript",
+   "code": "// Export database to JSON\nconst exported = db.call('exportDatabase', 'mydb');\nif (exported.success) {\n  const jsonData = exported.data.data;\n  console.log('Exported data:', jsonData);\n  \n  // Save to file or send to server\n  const blob = new Blob([jsonData], {type: 'application/json'});\n  const url = URL.createObjectURL(blob);\n  const link = document.createElement('a');\n  link.href = url;\n  link.download = 'mydb-export.json';\n  link.click();\n}\n\n// Create new database and import\ndb.call('createDatabase', 'backup');\n\n// Import with merge (keeps existing data)\nconst importResult = db.call('importDatabase', 'backup', jsonData, false);\nconsole.log('Imported:', importResult.data.imported, 'entries');\n\n// Or import with replace (clears existing data)\ndb.call('importDatabase', 'backup', jsonData, true);\n\n// Get database statistics\nconst stats = db.call('getStats', 'backup');\nconsole.log('Database stats:', {\n  name: stats.data.name,\n  entries: stats.data.entries,\n  size: stats.data.storageSizeKB + ' KB'\n});"
+  },
+  {
+   "title": "Complete CRUD Operations",
+   "language": "javascript",
+   "code": "// Create database\ndb.call('createDatabase', 'users');\n\n// CREATE - Insert multiple users\ndb.call('insertData', 'users', 'user1', {\n  name: 'Alice',\n  email: 'alice@example.com',\n  role: 'admin',\n  createdAt: new Date().toISOString()\n});\ndb.call('insertData', 'users', 'user2', {\n  name: 'Bob',\n  email: 'bob@example.com',\n  role: 'user',\n  createdAt: new Date().toISOString()\n});\n\n// READ - Get specific user\nconst alice = db.call('getData', 'users', 'user1');\nif (alice.success) {\n  console.log('User:', alice.data.value.name);\n  console.log('Role:', alice.data.value.role);\n}\n\n// UPDATE - Modify user\ndb.call('insertData', 'users', 'user1', {\n  name: 'Alice',\n  email: 'alice@example.com',\n  role: 'superadmin',  // Updated role\n  updatedAt: new Date().toISOString()\n});\n\n// DELETE - Remove user\nconst deleted = db.call('deleteData', 'users', 'user2');\nif (deleted.success) {\n  console.log('Deleted:', deleted.data.key);\n}\n\n// GET ALL - Retrieve all users\nconst allUsers = db.call('getAllData', 'users');\nconsole.log('All users:', allUsers.data.data);\nconsole.log('Total count:', allUsers.data.count);"
+  },
+  {
+   "title": "Database Manager Class",
+   "language": "javascript",
+   "code": "import { loadFromGitHub } from 'gowm';\n\nclass DatabaseManager {\n  constructor() {\n    this.db = null;\n    this.ready = false;\n    this.currentDatabase = null;\n    this.loadModule();\n  }\n\n  async loadModule() {\n    try {\n      this.db = await loadFromGitHub('benoitpetit/wasm-modules-repository', {\n        path: 'db-wasm',\n              name: 'db-wasm'\n      });\n      \n      // Configure for production use\n      this.db.call('setSilentMode', true);\n      \n      // Get available functions\n      const functions = this.db.call('getAvailableFunctions');\n      console.log('Available db functions:', functions);\n      \n      this.ready = true;\n    } catch (error) {\n      console.error('Failed to load db module:', error);\n    }\n  }\n\n  // Initialize or open database\n  useDatabase(name) {\n    if (!this.ready) throw new Error('Database module not ready');\n    \n    const result = this.db.call('createDatabase', name);\n    if (result.success) {\n      this.currentDatabase = name;\n    }\n    return result;\n  }\n\n  // CRUD operations on current database\n  set(key, value) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('insertData', this.currentDatabase, key, value);\n  }\n\n  get(key) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('getData', this.currentDatabase, key);\n    return result.success ? result.data.value : null;\n  }\n\n  delete(key) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('deleteData', this.currentDatabase, key);\n  }\n\n  keys() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('listKeys', this.currentDatabase);\n    return result.success ? result.data.keys : [];\n  }\n\n  all() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('getAllData', this.currentDatabase);\n    return result.success ? result.data.data : {};\n  }\n\n  clear() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('clearDatabase', this.currentDatabase);\n  }\n\n  stats() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('getStats', this.currentDatabase);\n    return result.success ? result.data : null;\n  }\n\n  // Export/Import utilities\n  export() {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    const result = this.db.call('exportDatabase', this.currentDatabase);\n    return result.success ? result.data.data : null;\n  }\n\n  import(jsonData, replace = false) {\n    if (!this.currentDatabase) throw new Error('No database selected');\n    return this.db.call('importDatabase', this.currentDatabase, jsonData, replace);\n  }\n}\n\n// Usage example\nconst dbManager = new DatabaseManager();\n\n// Wait for module to load\nsetTimeout(() => {\n  if (dbManager.ready) {\n    // Use database\n    dbManager.useDatabase('myapp');\n    \n    // Set data\n    dbManager.set('config', {theme: 'dark', language: 'fr'});\n    dbManager.set('user', {name: 'Alice', id: 123});\n    \n    // Get data\n    console.log('Config:', dbManager.get('config'));\n    console.log('User:', dbManager.get('user'));\n    \n    // List all keys\n    console.log('All keys:', dbManager.keys());\n    \n    // Get all data\n    console.log('All data:', dbManager.all());\n    \n    // Database stats\n    console.log('Stats:', dbManager.stats());\n    \n    // Export data\n    const exported = dbManager.export();\n    console.log('Exported:', exported);\n  }\n}, 1000);"
+  }
+ ],
+ "fileInfo": {
+  "binarySize": "3.1 MB",
+  "compressedSize": "879 KB",
+  "compressionRatio": "72%",
+  "sourceLines": 531
+ },
+ "gowmConfig": {
+  "autoDetect": true,
+  "errorPattern": "object-based",
+  "preferredFilename": "main.wasm",
+  "readySignal": "__gowm_ready",
+  "standardFunctions": [
+   "getAvailableFunctions",
+   "setSilentMode"
+  ],
+  "supportedBranches": [
+   "master",
+   "stable"
+  ]
+ },
+ "gzipSize": 900096,
+ "size": 3145728,
+ "performance": {
+  "benchmarks": {
+   "createDatabase": "< 1ms",
+   "insertData": "< 0.5ms per operation",
+   "getData": "< 0.3ms per operation",
+   "getAllData": "< 2ms for 100 entries",
+   "exportDatabase": "< 3ms for 100 entries",
+   "importDatabase": "< 5ms for 100 entries"
+  },
+  "features": [
+   "Compiled WebAssembly for optimal performance",
+   "Native Go JSON encoding/decoding",
+   "Efficient localStorage operations",
+   "Minimal JavaScript overhead",
+   "Silent mode for production environments",
+   "Optimized for GoWM integration",
+   "Fast key-value lookups",
+   "Batch operations support"
+  ]
+ },
+ "quality": {
+  "documentation": "complete",
+  "maintainability": "high",
+  "stability": "stable",
+  "testing": "comprehensive"
+ },
+ "security": {
+  "features": [
+   "Client-side only (no network access)",
+   "localStorage isolation per domain",
+   "Memory-safe Go implementation",
+   "Input validation and sanitization",
+   "Protection against injection attacks",
+   "Secure JSON parsing and serialization",
+   "No external dependencies"
+  ]
+ },
+ "tags": [
+  "database",
+  "storage",
+  "localStorage",
+  "crud",
+  "key-value",
+  "persistence",
+  "json",
+  "offline",
+  "browser",
+  "wasm",
+  "go",
+  "gowm"
+ ],
+ "types": [
+  {
+   "name": "DatabaseResult",
+   "type": "object",
+   "description": "Standard result type for database operations",
+   "details": "Returns object with 'success' boolean and 'data' on success, or 'error' field on failure"
+  },
+  {
+   "name": "CreateDatabaseResult",
+   "properties": {
+    "success": "boolean",
+    "message": "string",
+    "data": {
+     "name": "string (database name)",
+     "created": "boolean (true if created, false if already existed)",
+     "timestamp": "string (ISO 8601 timestamp)"
     },
-    "gzipSize": 900096,
-    "size": 3145728,
-    "performance": {
-        "benchmarks": {
-            "createDatabase": "< 1ms",
-            "insertData": "< 0.5ms per operation",
-            "getData": "< 0.3ms per operation",
-            "getAllData": "< 2ms for 100 entries",
-            "exportDatabase": "< 3ms for 100 entries",
-            "importDatabase": "< 5ms for 100 entries"
-        },
-        "features": [
-            "Compiled WebAssembly for optimal performance",
-            "Native Go JSON encoding/decoding",
-            "Efficient localStorage operations",
-            "Minimal JavaScript overhead",
-            "Silent mode for production environments",
-            "Optimized for GoWM integration",
-            "Fast key-value lookups",
-            "Batch operations support"
-        ]
+    "error": "string (optional, present on failure)"
+   }
+  },
+  {
+   "name": "InsertDataResult",
+   "properties": {
+    "success": "boolean",
+    "data": {
+     "key": "string",
+     "value": "any",
+     "valueType": "string (string|number|boolean|object)",
+     "timestamp": "string (ISO 8601 timestamp)"
     },
-    "quality": {
-        "documentation": "complete",
-        "maintainability": "high",
-        "stability": "stable",
-        "testing": "comprehensive"
+    "error": "string (optional, present on failure)"
+   }
+  },
+  {
+   "name": "GetDataResult",
+   "properties": {
+    "success": "boolean",
+    "data": {
+     "key": "string",
+     "value": "any",
+     "valueType": "string",
+     "timestamp": "string"
     },
-    "security": {
-        "features": [
-            "Client-side only (no network access)",
-            "localStorage isolation per domain",
-            "Memory-safe Go implementation",
-            "Input validation and sanitization",
-            "Protection against injection attacks",
-            "Secure JSON parsing and serialization",
-            "No external dependencies"
-        ]
+    "error": "string (optional, present on failure)"
+   }
+  },
+  {
+   "name": "ListKeysResult",
+   "properties": {
+    "success": "boolean",
+    "data": {
+     "keys": "string[] (array of all keys)",
+     "count": "number (total number of keys)"
     },
-    "tags": [
-        "database",
-        "storage",
-        "localStorage",
-        "crud",
-        "key-value",
-        "persistence",
-        "json",
-        "offline",
-        "browser",
-        "wasm",
-        "go",
-        "gowm"
-    ],
-    "types": [
-        {
-            "name": "DatabaseResult",
-            "type": "object",
-            "description": "Standard result type for database operations",
-            "details": "Returns object with 'success' boolean and 'data' on success, or 'error' field on failure"
-        },
-        {
-            "name": "CreateDatabaseResult",
-            "properties": {
-                "success": "boolean",
-                "message": "string",
-                "data": {
-                    "name": "string (database name)",
-                    "created": "boolean (true if created, false if already existed)",
-                    "timestamp": "string (ISO 8601 timestamp)"
-                },
-                "error": "string (optional, present on failure)"
-            }
-        },
-        {
-            "name": "InsertDataResult",
-            "properties": {
-                "success": "boolean",
-                "data": {
-                    "key": "string",
-                    "value": "any",
-                    "valueType": "string (string|number|boolean|object)",
-                    "timestamp": "string (ISO 8601 timestamp)"
-                },
-                "error": "string (optional, present on failure)"
-            }
-        },
-        {
-            "name": "GetDataResult",
-            "properties": {
-                "success": "boolean",
-                "data": {
-                    "key": "string",
-                    "value": "any",
-                    "valueType": "string",
-                    "timestamp": "string"
-                },
-                "error": "string (optional, present on failure)"
-            }
-        },
-        {
-            "name": "ListKeysResult",
-            "properties": {
-                "success": "boolean",
-                "data": {
-                    "keys": "string[] (array of all keys)",
-                    "count": "number (total number of keys)"
-                },
-                "error": "string (optional, present on failure)"
-            }
-        },
-        {
-            "name": "StatsResult",
-            "properties": {
-                "success": "boolean",
-                "data": {
-                    "name": "string (database name)",
-                    "entries": "number (total entries)",
-                    "storageSizeKB": "number (storage size in KB)"
-                },
-                "error": "string (optional, present on failure)"
-            }
-        }
-    ],
-    "usageStats": {
-        "averageCallTime": "< 1ms",
-        "complexity": "beginner",
-        "concurrency": "thread-safe",
-        "memoryUsage": "lightweight"
+    "error": "string (optional, present on failure)"
+   }
+  },
+  {
+   "name": "StatsResult",
+   "properties": {
+    "success": "boolean",
+    "data": {
+     "name": "string (database name)",
+     "entries": "number (total entries)",
+     "storageSizeKB": "number (storage size in KB)"
     },
-    "wasmConfig": {
-        "filename": "main.wasm",
-        "globalFunctions": true,
-        "goWasmExecRequired": true,
-        "memoryInitialPages": 256,
-        "memoryMaximumPages": 512,
-        "readySignal": "__gowm_ready"
-    },
-    "keywords": [
-        "database",
-        "storage",
-        "localStorage",
-        "crud",
-        "key-value",
-        "persistence",
-        "json",
-        "export",
-        "import",
-        "local-database"
-    ],
-    "license": "MIT",
-    "repository": "wasm-modules-repository",
-    "documentation": "https://github.com/benoitpetit/wasm-modules-repository/tree/master/db-wasm"
+    "error": "string (optional, present on failure)"
+   }
+  }
+ ],
+ "usageStats": {
+  "averageCallTime": "< 1ms",
+  "complexity": "beginner",
+  "concurrency": "thread-safe",
+  "memoryUsage": "lightweight"
+ },
+ "wasmConfig": {
+  "filename": "main.wasm",
+  "globalFunctions": true,
+  "goWasmExecRequired": true,
+  "memoryInitialPages": 256,
+  "memoryMaximumPages": 512,
+  "readySignal": "__gowm_ready"
+ },
+ "keywords": [
+  "database",
+  "storage",
+  "localStorage",
+  "crud",
+  "key-value",
+  "persistence",
+  "json",
+  "export",
+  "import",
+  "local-database"
+ ],
+ "license": "MIT",
+ "repository": "wasm-modules-repository",
+ "documentation": "https://github.com/benoitpetit/wasm-modules-repository/tree/master/db-wasm"
 }

@@ -497,7 +497,7 @@ func getAvailableFunctions(this js.Value, args []js.Value) interface{} {
 }
 
 func main() {
-	fmt.Println("🚀 DB-WASM v0.1.0 starting...")
+	fmt.Println("DB-WASM v0.1.0 starting...")
 
 	// Register database management functions
 	js.Global().Set("createDatabase", js.FuncOf(createDatabase))
@@ -523,7 +523,7 @@ func main() {
 	// Signal readiness for GoWM
 	js.Global().Set("__gowm_ready", js.ValueOf(true))
 
-	fmt.Println("✅ DB-WASM ready!")
+	fmt.Println("DB-WASM ready!")
 	fmt.Println("Available functions: createDatabase, insertData, getData, deleteData, getAllData, listKeys, clearDatabase, deleteDatabase, exportDatabase, importDatabase, getStats, setSilentMode")
 
 	// Keep the program alive

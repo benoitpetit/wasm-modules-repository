@@ -1421,7 +1421,7 @@ func optimizePDF(this js.Value, args []js.Value) interface{} {
 func getModuleInfo(this js.Value, args []js.Value) interface{} {
 	info := map[string]interface{}{
 		"name":        "pdf-wasm",
-		"version":     "2.0.0",
+		"version":     "0.0.2",
 		"description": "Advanced PDF manipulation module with comprehensive features",
 		"author":      "Ben",
 		"language":    "Go",
@@ -1452,7 +1452,7 @@ func getModuleInfo(this js.Value, args []js.Value) interface{} {
 	}
 
 	if !silentMode {
-		fmt.Printf("Go WASM: Module info retrieved for pdf-wasm v2.0.0\n")
+		fmt.Printf("Go WASM: Module info retrieved for pdf-wasm v0.0.2\n")
 	}
 
 	// Convert to JSON and back to avoid nested map issues with js.ValueOf
@@ -1541,7 +1541,7 @@ func main() {
 
 	js.Global().Set("__gowm_ready", js.ValueOf(true))
 
-	fmt.Println("Go WASM: Advanced PDF module v2.0.0 loaded successfully")
+	fmt.Println("Go WASM: Advanced PDF module v0.0.2 loaded successfully")
 	fmt.Println("Core functions: createPDF, mergePDFs, splitPDF, extractText, compressPDF")
 	fmt.Println("Business functions: generateInvoice, generateCertificate, generateReport")
 	fmt.Println("Content functions: addTable, addChart, addWatermark")
